@@ -3,6 +3,8 @@ package com.example.projetjeegroupeq.model;
 
 import jakarta.persistence.*;
 
+// TODO mettre à jour à l'aide du fichier sql pour que ça corresponds
+
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -14,6 +16,11 @@ public class Employee {
     private String firstName;
     private String grade;
     private String post;
+    private Double salary;
+    private String username;
+    private String password;
+    private String department;
+
 
     // Constructeur par défaut, obligatoire pour Hibernate
     public Employee() {}
