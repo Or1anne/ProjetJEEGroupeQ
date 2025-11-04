@@ -109,8 +109,8 @@ CREATE TABLE employee_project(
 -- ===========================
 CREATE TABLE employee_role(
     employeeId INT,
-    projectId INT,
-    PRIMARY KEY (employeeId,projectId),
+    roleId INT,
+    PRIMARY KEY (employeeId,roleId),
     FOREIGN KEY (employeeId) REFERENCES employee(id_employee) ON DELETE CASCADE ,
     FOREIGN KEY (roleId) REFERENCES role(id_role) ON DELETE CASCADE
 )ENGINE=InnoDB;
