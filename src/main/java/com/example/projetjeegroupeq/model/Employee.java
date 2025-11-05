@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 // TODO mettre à jour à l'aide du fichier sql pour que ça corresponds
 
 @Entity
-@Table(name = "employees")
+@Table(name = "employee")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Gère la génération et l'incrémentation automatiquement

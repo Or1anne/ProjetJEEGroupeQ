@@ -1,6 +1,7 @@
 -- ===========================
 --   Création de la base
 -- ===========================
+DROP DATABASE IF EXISTS Artic;
 CREATE DATABASE Artic CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE Artic;
 
@@ -42,7 +43,7 @@ CREATE TABLE department(
 CREATE TABLE project(
     id_project INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    status ENUM('WORKED_ON','FINISHED','CANCELED') NOT NULL DEFAULT 'WORKED_ON',
+    status ENUM('WORKED_ON','FINISHED','CANCELLED') NOT NULL DEFAULT 'WORKED_ON',
     chefIdPro INT NULL
 )ENGINE=InnoDB;
 
