@@ -9,5 +9,5 @@
 ## Lancer la plateforme
 ### Windows
 Lancer WampServer  
-Sur Mysqlworkbench, ouvrir le fichier CreateDataBase.sql  
+Sur Mysqlworkbench, ouvrir le fichier `CreateDataBase.sql`  
 et exécuter le code.  
