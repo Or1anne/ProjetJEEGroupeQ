@@ -43,13 +43,8 @@ CREATE TABLE department(
 CREATE TABLE project(
     idProject INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-<<<<<<< HEAD
     status ENUM('WORKED_ON','FINISHED','CANCELLED') NOT NULL DEFAULT 'WORKED_ON',
-    chefIdPro INT NULL
-=======
-    status ENUM('WORKED_ON','FINISHED','CANCELED') NOT NULL DEFAULT 'WORKED_ON',
     idChefPro INT NULL
->>>>>>> correction-SQL
 )ENGINE=InnoDB;
 
 
