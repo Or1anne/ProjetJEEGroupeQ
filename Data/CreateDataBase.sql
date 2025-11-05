@@ -1,6 +1,7 @@
 -- ===========================
 --   Création de la base
 -- ===========================
+DROP DATABASE IF EXISTS Artic;
 CREATE DATABASE Artic CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE Artic;
 
