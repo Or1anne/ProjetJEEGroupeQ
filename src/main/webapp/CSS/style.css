@@ -1,13 +1,19 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #3abfcb;
-    padding: 40px;
+    display: flex; /* Active le modèle Flexbox */
+    justify-content: center; /* Centre horizontalement le contenu */
+    align-items: center; /* Centre verticalement le contenu */
 }
 
 h2{
     color : white;
     text-align: center;
     font-size: 40px;
+}
+
+.form-container{
+    width: 100%;
 }
 
 form {
@@ -19,13 +25,18 @@ form {
     margin: auto;
 }
 
+form h2 {
+    color : black;
+    font-size: 35px;
+}
+
 form label {
     display: block;
     margin-top: 10px;
     font-weight: bold;
 }
 
-form input[type="text"], input[type="submit"], form select, form input[type="number"] {
+form input[type="text"], input[type="submit"], form select, form input[type="number"], form input[type="password"] {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
