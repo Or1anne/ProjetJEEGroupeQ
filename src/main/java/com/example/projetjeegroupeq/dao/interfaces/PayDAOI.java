@@ -1,4 +1,4 @@
-package com.example.projetjeegroupeq.dao;
+package com.example.projetjeegroupeq.dao.interfaces;
 
 import com.example.projetjeegroupeq.model.Pay;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 //TODO voir comment chercher par dates
 
-public interface PayDAO {
+public interface PayDAOI {
     public void addPay(Pay pay);
     public void updatePay(int id, Pay pay);
     public void deletePay(int id);

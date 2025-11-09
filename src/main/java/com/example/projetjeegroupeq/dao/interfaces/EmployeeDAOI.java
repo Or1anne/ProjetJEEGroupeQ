@@ -1,4 +1,4 @@
-package com.example.projetjeegroupeq.dao;
+package com.example.projetjeegroupeq.dao.interfaces;
 
 import com.example.projetjeegroupeq.model.Employee;
 
@@ -6,7 +6,7 @@ import com.example.projetjeegroupeq.sortingType.EmployeeSortingType;
 
 import java.util.List;
 
-public interface EmployeeDAO {
+public interface EmployeeDAOI {
     void addEmployee(Employee employee);
     void updateEmployee(int id, Employee employee);
     void deleteEmployee(int id);
