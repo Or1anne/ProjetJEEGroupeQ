@@ -1,0 +1,218 @@
+package com.example.projetjeegroupeq.dao;
+
+import com.example.projetjeegroupeq.model.Pay;
+import com.example.projetjeegroupeq.sortingType.PaySortingType;
+import jakarta.persistence.EntityManager;
+
+import com.example.projetjeegroupeq.util.HibernateUtil;
+
+import java.util.Date;
+import java.util.List;
+
+public class PayDAOImpl implements PayDAO {
+    private EntityManager em;
+
+    public PayDAOImpl() {};
+
+    @Override
+    public void addPay(Pay pay) {
+        em = HibernateUtil.getEntityManager();
+
+        em.getTransaction().begin();
+
+        try {
+            em.persist(pay);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de l'ajout d'une paye");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void updatePay(int id, Pay pay) {
+        em = HibernateUtil.getEntityManager();
+
+        em.getTransaction().begin();
+
+        try {
+            Pay payFound = em.find(Pay.class, id);
+
+            if (payFound == null) {
+                System.err.println("Aucune paye trouvée avec l'id : " + id);
+                em.getTransaction().rollback();
+                return;
+            }
+
+            payFound.setDate(pay.getDate());
+            payFound.setBonus(pay.getBonus());
+            payFound.setDeduction(pay.getDeduction());
+            payFound.setNet(pay.getNet());
+            payFound.setEmployee(pay.getEmployee());
+
+            em.merge(payFound);
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche d'une paye");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void deletePay(int id) {
+        em = HibernateUtil.getEntityManager();
+
+        em.getTransaction().begin();
+
+        try {
+            Pay payFound = em.find(Pay.class, id);
+            em.remove(payFound);
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la suppression d'une paye");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public Pay searchPayById(int id) {
+        em = HibernateUtil.getEntityManager();
+
+        try {
+            Pay payFound = em.find(Pay.class, id);
+
+            if (payFound == null) {
+                System.err.println("Aucune paye trouvée avec l'id : " + id);
+                em.getTransaction().rollback();
+                return null;
+            }
+
+            return payFound;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche d'une paye");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Pay> searchByBonus(double minBonus, double maxBonus) {
+        em = HibernateUtil.getEntityManager();
+
+        String query = "SELECT p FROM Pay WHERE p.bonus BETWEEN '" + minBonus + "' AND '" + maxBonus + "'";
+
+        List<Pay> pays = List.of();
+
+        try {
+            pays = em.createQuery(query, Pay.class).getResultList();
+
+            return pays;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche de pays par bonus");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Pay> searchByDeduction(double minDeduction, double maxDeduction) {
+        em = HibernateUtil.getEntityManager();
+
+        String query = "SELECT p FROM Pay WHERE p.deduction BETWEEN '" + minDeduction + "' AND '" + maxDeduction + "'";
+
+        List<Pay> pays = List.of();
+
+        try {
+            pays = em.createQuery(query, Pay.class).getResultList();
+
+            return pays;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche de pays par deduction");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Pay> searchByNet(double minNet, double maxNet) {
+        em = HibernateUtil.getEntityManager();
+
+        String query = "SELECT p FROM Pay WHERE p.net BETWEEN '" + minNet + "' AND '" + maxNet + "'";
+
+        List<Pay> pays = List.of();
+
+        try {
+            pays = em.createQuery(query, Pay.class).getResultList();
+
+            return pays;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche de pays par net");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Pay> searchByDate(Date minDate, Date maxDate) {
+        em = HibernateUtil.getEntityManager();
+
+        String query = "SELECT p FROM Pay WHERE p.date BETWEEN '" + minDate + "' AND '" + maxDate + "'";
+
+        List<Pay> pays = List.of();
+
+        try {
+            pays = em.createQuery(query, Pay.class).getResultList();
+
+            return pays;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche de pays par dates");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Pay> getAllPaySorted(PaySortingType sortingType) {
+        em = HibernateUtil.getEntityManager();
+
+        String query;
+
+        List<Pay> pays = List.of();
+
+        switch (sortingType) {
+            case BY_BONUS:
+                query = "SELECT p FROM Pay ORDER BY p.bonus";
+                break;
+            case BY_EMPLOYEE:
+                query = "SELECT p FROM Pay ORDER BY p.employeeId";
+                break;
+            case BY_DEDUCTION:
+                query = "SELECT p FROM Pay ORDER BY p.deduction";
+                break;
+            default:
+                query = "SELECT p FROM Pay ORDER BY p.date";
+                break;
+        }
+
+        try {
+            pays = em.createQuery(query, Pay.class).getResultList();
+
+            return pays;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche globale triée avec le critère '" + sortingType.name() + "'");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Pay> getAllPay() {
+        return this.getAllPaySorted(PaySortingType.BY_DATE);
+    }
+}
