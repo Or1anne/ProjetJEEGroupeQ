@@ -19,6 +19,8 @@ public class Employee {
     private Double salary;
     private String username;
     private String password;
+
+    // TODO transformer en @JoinColomn clée étrangere
     private String department;
 
 
