@@ -31,5 +31,10 @@ public class Department {
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
-
+    public void setChefDepartment(Employee chefDepartment) {
+        this.chefDepartment = chefDepartment;
+    }
+    public Employee getChefDepartment() {
+        return chefDepartment;
+    }
 }

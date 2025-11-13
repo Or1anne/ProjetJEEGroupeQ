@@ -47,8 +47,8 @@ public class DepartmentDAO implements DepartmentDAOI {
                 return;
             }
 
-            departmentFound.setName(department.getName());
-            departmentFound.setChef(department.getChef());
+            departmentFound.setDepartmentName(department.getDepartmentName());
+            departmentFound.setChefDepartment(department.getChefDepartment());
 
             em.merge(departmentFound);
 

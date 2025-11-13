@@ -49,9 +49,9 @@ public class ProjectDAO implements ProjectDAOI {
                 return;
             }
 
-            projectFound.setName(project.getName());
+            projectFound.setName_project(project.getName_project());
             projectFound.setStatus(project.getStatus());
-            projectFound.setChef(project.getChef());
+            projectFound.setChefProj(project.getChefProj());
 
             em.merge(projectFound);
 
