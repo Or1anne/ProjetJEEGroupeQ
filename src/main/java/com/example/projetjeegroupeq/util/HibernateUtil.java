@@ -36,10 +36,6 @@ public class HibernateUtil {
     public static EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-
-    public static void closeEntityManager() {
-        emf.close();
-    }
 }
 
 
