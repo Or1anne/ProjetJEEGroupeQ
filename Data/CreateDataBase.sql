@@ -82,14 +82,13 @@ ALTER TABLE project
 -- ===========================
 CREATE TABLE pay (
     idPay INT AUTO_INCREMENT PRIMARY KEY,
-    month INT NOT NULL,
-    year INT NOT NULL ,
+    date DATE NOT NULL,
     bonus DOUBLE DEFAULT 0.0,
     deductions DOUBLE DEFAULT 0.0,
     net DOUBLE NOT NULL,
     idEmployee INT NOT NULL ,
     FOREIGN KEY (idEmployee) REFERENCES employee(idEmployee) ON DELETE CASCADE,
-    CONSTRAINT uc_pay_employee_period UNIQUE (idEmployee,month,year)
+    CONSTRAINT uc_pay_employee_period UNIQUE (idEmployee, date)
 )ENGINE=InnoDB;
 
 

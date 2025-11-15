@@ -46,11 +46,11 @@ public class PayDAO implements PayDAOI {
                 return;
             }
 
-            //payFound.setDate(pay.getDate()); TODO ERREUR
+            payFound.setDate(pay.getDate());
             payFound.setBonus(pay.getBonus());
             payFound.setDeductions(pay.getDeductions());
             payFound.setSalary_net(pay.getSalary_net());
-            //payFound.setEmployee(pay.getEmployee()); TODO ERREUR
+            payFound.setEmployee(pay.getEmployee());
 
             em.merge(payFound);
 
