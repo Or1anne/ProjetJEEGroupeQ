@@ -1,35 +1,106 @@
 body {
+    margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
     background-color: #3abfcb;
-    display: flex; /* Active le modèle Flexbox */
-    justify-content: center; /* Centre horizontalement le contenu */
-    align-items: center; /* Centre verticalement le contenu */
+    display: flex;
+    flex-direction: column;
 }
 
+.hero-body {
+    margin-top: 80px; /* espace sous la navbar */
+    padding: 40px;
+    display: flex;
+    flex-direction: column; /* empile les éléments verticalement */
+    align-items: center; /* centre horizontalement le contenu */
+    text-align: center;
+}
+
+
+/* Navbar */
+.navbar {
+    position: fixed; /* ✅ reste en haut */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10; /* ✅ reste au-dessus du contenu */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, #278088, #3abfcb);
+    color: white;
+    height: 50px;
+}
+
+.navbar .container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    /* Sépare Home et les autres éléments */
+    align-items: center;
+    margin-top: 0;
+}
+
+.navbar-start {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-end {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Espacement entre les liens */
+}
+
+
+/* Liens de navigation  vers les autres pages*/
+.navbar-item {
+    color: white !important;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.navbar-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+
+/* Titres */
 h2{
     color : white;
     text-align: center;
     font-size: 40px;
 }
 
+
+/* Formulaires */
 .form-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
+    height: 100%;
 }
 
 form {
     background: #fff;
-    padding: 20px;
+    padding: 20px 30px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     max-width: 400px;
-    margin: auto;
+    width: 100%;
 }
 
 form h2 {
-    color : black;
-    font-size: 35px;
+    color: #333;
+    text-align: center;
+    font-size: 32px;
 }
 
+/* Input des formulaires */
 form label {
     display: block;
     margin-top: 10px;
@@ -43,6 +114,7 @@ form input[type="text"], input[type="submit"], form select, form input[type="num
     border-radius: 5px;
     border: 1px solid #ccc;
     text-align: center;
+    box-sizing: border-box;
 }
 
 form input[type="submit"] {
@@ -53,9 +125,136 @@ form input[type="submit"] {
     border: none;
     margin-top: 15px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 form input[type="submit"]:hover {
     background-color: #278088;
 }
 
+
+/* Liens sous le titre */
+.hero-body nav {
+    margin-bottom: 30px;
+}
+
+.hero-body nav a {
+    color: white;
+    background: #278088;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 0 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.hero-body nav a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+
+/* Tableau */
+.table {
+    width: 90%;
+    max-width: 1000px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.table th {
+    background-color: #278088;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tr:hover {
+    background-color: #eaf7f8;
+}
+
+/* Liens d’actions */
+.table a {
+    color: #278088;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.table a:hover {
+    text-decoration: underline;
+}
+
+
+/* Mise en page du tableau de bord (page Gestion.jsp) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    width: 80%;
+    margin: 3rem auto auto;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 250px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.card h2 {
+    color: #278088;
+    font-size: 24px;
+    margin-bottom: 1rem;
+    text-align: center;
+    border-bottom: 2px solid #3abfcb;
+    padding-bottom: 0.5rem;}
+
+.card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.card li {
+    margin: 0.8rem 0;
+    text-align: center;
+}
+
+.card a {
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    text-decoration: none;
+    background-color: #278088;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.card a:hover {
+    color: #3abfcb;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+
+}
