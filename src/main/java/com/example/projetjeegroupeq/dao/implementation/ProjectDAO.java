@@ -13,12 +13,11 @@ import java.util.List;
 //TODO Gérer la recherche par membres du projet
 
 public class ProjectDAO implements ProjectDAOI {
-    private EntityManager em;
-
     public ProjectDAO() {};
 
     @Override
     public void addProject(Project project) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -30,12 +29,15 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de l'ajout d'un projet : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public void updateProject(int id, Project project) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -59,12 +61,15 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour d'un projet : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public void deleteProject(int id) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -84,12 +89,15 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression d'un projet : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public Project searchProjectById(int id) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -105,16 +113,19 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un projet par id : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Project> searchByStatus(String status) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT p FROM Project WHERE p.status = '" + status + "'";
+            String query = "SELECT p FROM Project p WHERE p.status = '" + status + "'";
 
             List<Project> projects = List.of();
 
@@ -124,16 +135,19 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un projet par statut : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public Project searchByName(String name) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT p FROM Project WHERE p.name = '" + name + "'";
+            String query = "SELECT p FROM Project p WHERE p.name_project = '" + name + "'";
 
             Project projects;
 
@@ -143,16 +157,19 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un projet par nom : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Project> searchByChef(Employee chef) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT p FROM Project WHERE p.chefIdProj = '" + chef.getId() + "'";
+            String query = "SELECT p FROM Project p WHERE p.ChefProj.id = '" + chef.getId() + "'";
 
             List<Project> projects = List.of();
 
@@ -162,16 +179,18 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un projet par chef de projet : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
-    /*
     @Override
     public List<Project> searchByMember(Employee member) {
+        EntityManager em = null;
         em = HibernateUtil.getEntityManager();
 
-        String query = "SELECT p FROM Project WHERE p.members = '" + chef.getId() + "'";
+        String query = "SELECT p FROM Project p WHERE p.ChefProj.id = '" + member.getId() + "'";
 
         List<Project> projects = List.of();
 
@@ -182,13 +201,15 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un projet par chef de projet : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
-     */
 
     @Override
     public List<Project> getAllProjectSorted(ProjectSortingType sortingType) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -198,13 +219,13 @@ public class ProjectDAO implements ProjectDAOI {
 
             switch (sortingType) {
                 case BY_STATUS:
-                    query = "SELECT p FROM Project ORDER BY p.status";
+                    query = "SELECT p FROM Project p ORDER BY p.status";
                     break;
                 case BY_CHEF:
-                    query = "SELECT p FROM Project ORDER BY p.chefIdPro";
+                    query = "SELECT p FROM Project p ORDER BY p.ChefProj.id";
                     break;
                 default:
-                    query = "SELECT p FROM Project ORDER BY p.name";
+                    query = "SELECT p FROM Project p ORDER BY p.name_project";
                     break;
             }
 
@@ -214,7 +235,9 @@ public class ProjectDAO implements ProjectDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche globale de projet selon le critère '" + sortingType.name() + "' : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 

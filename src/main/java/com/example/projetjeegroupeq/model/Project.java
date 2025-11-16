@@ -11,8 +11,10 @@ public class Project
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Gère la génération et l'incrémentation automatiquement
+    @Column(name = "idProject")
     private int id;
 
+    @Column(name = "name")
     private String name_project;
 
     @Enumerated(EnumType.STRING)

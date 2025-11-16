@@ -10,15 +10,14 @@ import com.example.projetjeegroupeq.util.HibernateUtil;
 import java.util.List;
 
 public class EmployeeDAO implements EmployeeDAOI {
-    private EntityManager em;
 
     public EmployeeDAO() {}
 
-    //TODO Actuellement toutes les méthodes sont vides, il faut les remplir
-
     @Override
     public void addEmployee(Employee employee) {
+        EntityManager em = null;
         try {
+            em = HibernateUtil.getEntityManager();
             em = HibernateUtil.getEntityManager();
 
             em.getTransaction().begin();
@@ -28,12 +27,15 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de l'ajout d'un employée : " +  e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public void updateEmployee(int id, Employee employee) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -58,12 +60,15 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour d'un employé : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public void deleteEmployee(int id) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -82,12 +87,15 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression d'un employé : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public Employee searchEmployeeById(int id) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -104,7 +112,9 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un employé : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
@@ -115,6 +125,7 @@ public class EmployeeDAO implements EmployeeDAOI {
 
     @Override
     public List<Employee> getAllEmployeesSorted(EmployeeSortingType sortingType) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -123,27 +134,27 @@ public class EmployeeDAO implements EmployeeDAOI {
 
             switch (sortingType) {
                 case BY_GRADE:
-                    query = "SELECT e FROM Employee ORDER BY e.grade";
+                    query = "SELECT e FROM Employee e ORDER BY e.grade";
                     break;
 
                 case BY_SALARY:
-                    query = "SELECT e FROM Employee ORDER BY e.salary";
+                    query = "SELECT e FROM Employee e ORDER BY e.salary";
                     break;
 
                 case BY_DEPARTMENT:
-                    query = "SELECT e FROM Employee ORDER BY e.departmentId";
+                    query = "SELECT e FROM Employee e ORDER BY e.department.id";
                     break;
 
                 case BY_POST:
-                    query = "SELECT e FROM Employee ORDER BY e.post";
+                    query = "SELECT e FROM Employee e ORDER BY e.post";
                     break;
 
                 case BY_LASTNAME:
-                    query = "SELECT e FROM Employee ORDER BY e.lastname";
+                    query = "SELECT e FROM Employee e ORDER BY e.lastName";
                     break;
 
                 default:
-                    query = "SELECT e FROM Employee ORDER BY e.firstname";
+                    query = "SELECT e FROM Employee e ORDER BY e.firstName";
                     break;
             }
 
@@ -153,18 +164,21 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'employé par " + sortingType.name() + " : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Employee> searchEmployeesByGrade(String gradeName) {
+        EntityManager em = null;
          try {
              em = HibernateUtil.getEntityManager();
 
              List<Employee> employees = List.of();
 
-             String query = "SELECT e FROM Employee WHERE e.grade = '" + gradeName + "'";
+             String query = "SELECT e FROM Employee e WHERE e.grade = '" + gradeName + "'";
 
              em.createQuery(query, Employee.class).getResultList();
 
@@ -172,18 +186,21 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un employé par grade : " + e.getMessage());
         } finally {
-            em.close();
+             if (em != null) {
+                 em.close();
+             }
         }
     }
 
     @Override
     public List<Employee> searchEmployeesByPost(String postName) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
             List<Employee> employees = List.of();
 
-            String query = "SELECT e FROM Employee WHERE e.post = '" + postName + "'";
+            String query = "SELECT e FROM Employee e WHERE e.post = '" + postName + "'";
 
             em.createQuery(query, Employee.class).getResultList();
 
@@ -191,18 +208,21 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un employé par poste : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Employee> searchEmployeesByDepartmentId(int departmentId) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
             List<Employee> employees = List.of();
 
-            String query = "SELECT e FROM Employee WHERE e.departmentId = '" + departmentId + "'";
+            String query = "SELECT e FROM Employee e WHERE e.department.id = '" + departmentId + "'";
 
             em.createQuery(query, Employee.class).getResultList();
 
@@ -210,7 +230,9 @@ public class EmployeeDAO implements EmployeeDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un employé par departement : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 }

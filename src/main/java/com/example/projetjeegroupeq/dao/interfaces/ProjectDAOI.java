@@ -18,7 +18,7 @@ public interface ProjectDAOI {
     public List<Project> searchByStatus(String status);
     public Project searchByName(String name);
     public List<Project> searchByChef(Employee chef);
-    // public List<Project> searchByMember(Employee member);
+    public List<Project> searchByMember(Employee member);
     // public List<Project> searchByMembers(List<Employee> members);
 
     public List<Project> getAllProject();

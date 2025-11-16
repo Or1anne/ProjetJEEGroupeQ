@@ -1,29 +1,34 @@
 package com.example.projetjeegroupeq.model;
 import jakarta.persistence.*;
 
+import java.sql.Date;
+
 
 @Entity
 @Table(name = "pay")
 public class Pay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Gère la génération et l'incrémentation automatiquement
+    @Column(name = "idPay")
     private int id;
-    private int month;
-    private int year;
+    private Date date;
     private double bonus;
     private double deductions;
+    @Column(name = "net")
     private double salary_net;
-    //TODO mettre foreing key employee
+    @ManyToOne
+    @JoinColumn(name = "idEmployee")
+    private Employee employee;
+
 // verifier ou mettre le calcul
 
     // Constructeur par défaut, obligatoire pour Hibernate
     public Pay() {}
 
     // Constructeur pour ajouter des employees
-    public Pay(int month, int year, double bonus, double deductions, double salary_net) {
+    public Pay(Date date, double bonus, double deductions, double salary_net) {
 
-        this.month = month;
-        this.year = year;
+        this.date = date;
         this.bonus = bonus;
         this.deductions = deductions;
         this.salary_net = salary_net;
@@ -36,17 +41,11 @@ public class Pay {
     public void setId(int id) {
         this.id = id;
     }
-    public int getMonth() {
-        return month;
+    public Date getDate() {
+        return date;
     }
-    public void setMonth(int month) {
-        this.month = month;
-    }
-    public int getYear() {
-        return year;
-    }
-    public void setYear(int year) {
-        this.year = year;
+    public void setDate(Date date) {
+        this.date = date;
     }
     public double getBonus() {
         return bonus;
@@ -66,6 +65,8 @@ public class Pay {
     public void setSalary_net(double salary_net) {
         this.salary_net = salary_net;
     }
+    public Employee getEmployee() { return employee;}
+    public void setEmployee(Employee employee) {this.employee = employee;}
 
     }
 

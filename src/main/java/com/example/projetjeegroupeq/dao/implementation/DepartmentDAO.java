@@ -11,12 +11,12 @@ import com.example.projetjeegroupeq.util.HibernateUtil;
 import java.util.List;
 
 public class DepartmentDAO implements DepartmentDAOI {
-    private EntityManager em;
 
     public DepartmentDAO() {};
 
     @Override
     public void addDepartment(Department department) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -34,6 +34,7 @@ public class DepartmentDAO implements DepartmentDAOI {
 
     @Override
     public void updateDepartment(int id, Department department) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -56,12 +57,15 @@ public class DepartmentDAO implements DepartmentDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de l'ajout d'un département : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public void deleteDepartment(int id) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -81,12 +85,15 @@ public class DepartmentDAO implements DepartmentDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression d'un département : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public Department searchDepartmentById(int id) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -102,16 +109,19 @@ public class DepartmentDAO implements DepartmentDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche par id d'un département : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public Department searchByName(String name) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT d FROM Department WHERE d.name = '" + name + "'";
+            String query = "SELECT d FROM Department d WHERE d.departmentName = '" + name + "'";
 
             Department departmentFound = em.createQuery(query, Department.class).getSingleResult();
 
@@ -125,16 +135,19 @@ public class DepartmentDAO implements DepartmentDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche par id d'un département : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Department> searchByChef(Employee chef) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT d FROM Department WHERE d.chefIdDep = '" + chef.getId() + "'";
+            String query = "SELECT d FROM Department d WHERE d.chefDepartment.id = '" + chef.getId() + "'";
 
             List<Department> departments = List.of();
 
@@ -144,12 +157,15 @@ public class DepartmentDAO implements DepartmentDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche par id d'un département : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Department> getAllDepartmentSorted(DepartmentSortingType sortingType) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -159,10 +175,10 @@ public class DepartmentDAO implements DepartmentDAOI {
 
             switch (sortingType) {
                 case BY_CHEF:
-                    query = "SELECT d FROM Department ORDER BY d.chefIdDep";
+                    query = "SELECT d FROM Department d ORDER BY d.chefDepartment.id";
                     break;
                 default:
-                    query = "SELECT d FROM Department ORDER BY d.name";
+                    query = "SELECT d FROM Department d ORDER BY d.departmentName";
                     break;
             }
 
@@ -172,7 +188,9 @@ public class DepartmentDAO implements DepartmentDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche globale des départements selon le critère '" + sortingType.name() + "' : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Gère la génération et l'incrémentation automatiquement
+    @Column(name = "idEmployee")
     private int id;
 
     private String lastName;
@@ -20,8 +21,9 @@ public class Employee {
     private String username;
     private String password;
 
-    // TODO transformer en @JoinColomn clée étrangere
-    private String department;
+    @ManyToOne
+    @JoinColumn(name = "idDepartment")
+    private Department department;
 
 
     // Constructeur par défaut, obligatoire pour Hibernate
@@ -72,4 +74,31 @@ public class Employee {
         this.post = post;
     }
 
+    public String getUsername() {return this.username;}
+
+    public void setUsername(String username) {this.username = username;}
+
+    public Double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Double salary) {
+        this.salary = salary;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 }

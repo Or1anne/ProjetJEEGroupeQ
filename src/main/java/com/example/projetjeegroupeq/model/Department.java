@@ -7,12 +7,13 @@ import jakarta.persistence.*;
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idDepartment")
     private int id;
     private String departmentName;
 
     // TODO transformer en @JoinColomn clée étrangere
     @ManyToOne
-    @JoinColumn()
+    @JoinColumn(name = "idChefDep")
     private Employee chefDepartment;
 
     public Department() {}
