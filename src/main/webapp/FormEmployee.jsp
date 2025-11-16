@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
 <html>
 <head>
     <title>Formulaire de création d'un employé</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
 </head>
 <body>
     <div class="form-container">
