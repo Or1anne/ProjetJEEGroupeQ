@@ -132,7 +132,3 @@ VALUES (
     (SELECT idEmployee FROM employee WHERE username = 'admin' LIMIT 1),
     (SELECT idRole FROM role WHERE roleName = 'ADMIN' LIMIT 1)
 );
-
-
-
-

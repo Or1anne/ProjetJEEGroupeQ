@@ -11,28 +11,30 @@ import java.util.Date;
 import java.util.List;
 
 public class PayDAO implements PayDAOI {
-    private EntityManager em;
-
     public PayDAO() {};
 
     @Override
     public void addPay(Pay pay) {
-        em = HibernateUtil.getEntityManager();
-
-        em.getTransaction().begin();
+        EntityManager em = null;
 
         try {
+            em = HibernateUtil.getEntityManager();
+
+            em.getTransaction().begin();
             em.persist(pay);
             em.getTransaction().commit();
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de l'ajout d'une paye : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public void updatePay(int id, Pay pay) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -59,12 +61,15 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'une paye : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public void deletePay(int id) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -77,15 +82,18 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression d'une paye : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public Pay searchPayById(int id) {
-        em = HibernateUtil.getEntityManager();
+        EntityManager em = null;
 
         try {
+            em = HibernateUtil.getEntityManager();
             Pay payFound = em.find(Pay.class, id);
 
             if (payFound == null) {
@@ -98,16 +106,19 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'une paye : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Pay> searchByBonus(double minBonus, double maxBonus) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT p FROM Pay WHERE p.bonus BETWEEN '" + minBonus + "' AND '" + maxBonus + "'";
+            String query = "SELECT p FROM Pay p WHERE p.bonus BETWEEN '" + minBonus + "' AND '" + maxBonus + "'";
 
             List<Pay> pays = List.of();
 
@@ -117,16 +128,19 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche de pays par bonus : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Pay> searchByDeduction(double minDeduction, double maxDeduction) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT p FROM Pay WHERE p.deduction BETWEEN '" + minDeduction + "' AND '" + maxDeduction + "'";
+            String query = "SELECT p FROM Pay p WHERE p.deductions BETWEEN '" + minDeduction + "' AND '" + maxDeduction + "'";
 
             List<Pay> pays = List.of();
 
@@ -136,16 +150,19 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche de pays par deduction : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Pay> searchByNet(double minNet, double maxNet) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT p FROM Pay WHERE p.net BETWEEN '" + minNet + "' AND '" + maxNet + "'";
+            String query = "SELECT p FROM Pay p WHERE p.salary_net BETWEEN '" + minNet + "' AND '" + maxNet + "'";
 
             List<Pay> pays = List.of();
 
@@ -155,16 +172,19 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche de pays par net : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Pay> searchByDate(Date minDate, Date maxDate) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT p FROM Pay WHERE p.date BETWEEN '" + minDate + "' AND '" + maxDate + "'";
+            String query = "SELECT p FROM Pay p WHERE p.date BETWEEN '" + minDate + "' AND '" + maxDate + "'";
 
             List<Pay> pays = List.of();
 
@@ -174,12 +194,15 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche de pays par dates : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     @Override
     public List<Pay> getAllPaySorted(PaySortingType sortingType) {
+        EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -189,16 +212,16 @@ public class PayDAO implements PayDAOI {
 
             switch (sortingType) {
                 case BY_BONUS:
-                    query = "SELECT p FROM Pay ORDER BY p.bonus";
+                    query = "SELECT p FROM Pay p ORDER BY p.bonus";
                     break;
                 case BY_EMPLOYEE:
-                    query = "SELECT p FROM Pay ORDER BY p.employeeId";
+                    query = "SELECT p FROM Pay p ORDER BY p.employee.id";
                     break;
                 case BY_DEDUCTION:
-                    query = "SELECT p FROM Pay ORDER BY p.deduction";
+                    query = "SELECT p FROM Pay p ORDER BY p.deductions";
                     break;
                 default:
-                    query = "SELECT p FROM Pay ORDER BY p.date";
+                    query = "SELECT p FROM Pay p ORDER BY p.date";
                     break;
             }
 
@@ -208,7 +231,9 @@ public class PayDAO implements PayDAOI {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche globale triée avec le critère '" + sortingType.name() + "' : " + e.getMessage());
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 

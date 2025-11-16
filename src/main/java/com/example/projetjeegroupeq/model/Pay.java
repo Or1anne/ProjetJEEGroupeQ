@@ -9,10 +9,12 @@ import java.sql.Date;
 public class Pay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Gère la génération et l'incrémentation automatiquement
+    @Column(name = "idPay")
     private int id;
     private Date date;
     private double bonus;
     private double deductions;
+    @Column(name = "net")
     private double salary_net;
     @ManyToOne
     @JoinColumn(name = "idEmployee")
