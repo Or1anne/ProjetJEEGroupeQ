@@ -20,19 +20,16 @@
             <th>ID</th>
             <th>Nom</th>
             <th>Description</th>
-            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <!-- Exemple -->
         <!-- TODO Mettre les départements en dynamique -->
-        <tr>
+        <tr onclick="window.location.href='ViewDepartment.jsp?id=1'"> <!-- TODO Mettre le bon id en dynamique -->
             <td>1</td>
             <td>Informatique</td>
             <td>Développement et maintenance des systèmes</td>
-            <td>
-                <a href="ViewDepartment.jsp">Voir membres</a>
-            </td>
+
         </tr>
         </tbody>
     </table>

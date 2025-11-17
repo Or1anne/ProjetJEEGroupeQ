@@ -20,8 +20,6 @@
             <th>ID</th>
             <th>Nom</th>
             <th>Chef de projet</th>
-            <th>Début</th>
-            <th>Fin</th>
             <th>État</th>
             <th>Actions</th>
         </tr>
@@ -31,11 +29,9 @@
             <td>PRJ001</td>
             <td>Migration Cloud</td>
             <td>Lucas Martin</td>
-            <td>2025-02-01</td>
-            <td>2025-06-30</td>
             <td>En cours</td>
             <td>
-                <a href="AffectProjectEmployee.jsp">Affecter employés</a> |
+                <a href="AffectEmployeeProject.jsp">Affecter employés</a> |
                 <a href="TrackProject.jsp">Suivre</a>
             </td>
         </tr>

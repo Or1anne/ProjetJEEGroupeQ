@@ -36,8 +36,7 @@
             <td>Informatique</td>
             <td>
                 <a href="FormModifyEmployee.jsp">Modifier</a> |
-                <a href="DeleteEmployee.jsp">Supprimer</a> | <!-- TODO mettre un bouton et non un lien hypertexte-->
-                <a href="AffectEmployeeProject.jsp">Affecter projet</a>
+                <a href="DeleteEmployee.jsp">Supprimer</a> <!-- TODO mettre un bouton et non un lien hypertexte-->
             </td>
         </tr>
         <tr>
@@ -48,8 +47,7 @@
             <td>Informatique</td>
             <td>
                 <a href="FormModifyEmployee.jsp">Modifier</a> |
-                <a href="DeleteEmployee.jsp">Supprimer</a> | <!-- TODO mettre un bouton et non un lien hypertexte-->
-                <a href="AffectEmployeeProject.jsp">Affecter projet</a>
+                <a href="DeleteEmployee.jsp">Supprimer</a> <!-- TODO mettre un bouton et non un lien hypertexte-->
             </td>
         </tr>
         </tbody>

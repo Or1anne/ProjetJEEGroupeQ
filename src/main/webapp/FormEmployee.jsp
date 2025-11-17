@@ -35,7 +35,7 @@
                 <input type="text" id="salary" name="salary">
             </p>
             <p>
-                <label for="department">Département :</label>
+                <label for="department">Département</label>
                 <select name="departmentId" id="department" required>
                     <option value="">-- Choisir un département --</option>
                     <%-- TODO Mettre les bonnes options de départements --%>

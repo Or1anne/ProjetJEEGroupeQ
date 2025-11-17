@@ -10,7 +10,7 @@
             <h2>Connexion</h2>
             <input type="hidden" name="action" value="add" />
             <p>
-                <label for="username">Username</label>
+                <label for="username">Nom d'utilisateur</label>
                 <input type="text" id="username" name="username" required>
             </p>
             <p>

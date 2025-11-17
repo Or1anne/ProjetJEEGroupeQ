@@ -39,6 +39,8 @@ body {
     /* Sépare Home et les autres éléments */
     align-items: center;
     margin-top: 0;
+    margin-right: 15px;
+    margin-left: 15px;
 }
 
 .navbar-start {
@@ -102,12 +104,13 @@ form h2 {
 
 /* Input des formulaires */
 form label {
+    text-align: start; !important;
     display: block;
     margin-top: 10px;
     font-weight: bold;
 }
 
-form input[type="text"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea {
+form input[type="text"], form input[type="email"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
@@ -257,4 +260,14 @@ form input[type="submit"]:hover {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 5px;
 
+}
+
+
+
+
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
