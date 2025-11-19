@@ -5,6 +5,26 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
 </head>
 <body>
+<div class="hero-head">
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-start">
+                <a href="index.jsp" class="navbar-item">Accueil</a>
+                <a href="Search.jsp" class="navbar-item">Recherche</a>
+                <a href="Gestion.jsp" class="navbar-item">Gestion</a>
+            </div>
+
+            <div class="navbar-end">
+                <a href="Profile.jsp" class="navbar-item">Profil</a>
+                <a href="FormConnection.jsp" class="navbar-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="hero-body">
+    <nav>
+        <a href="ListEmployee.jsp">Liste des départements</a>
+    </nav>
     <div class="form-container">
         <form action="EmployeeServlet" method="post" class="employee-form">
             <h2>Ajouter un employé</h2>
@@ -35,7 +55,7 @@
                 <input type="text" id="salary" name="salary">
             </p>
             <p>
-                <label for="department">Département :</label>
+                <label for="department">Département</label>
                 <select name="departmentId" id="department" required>
                     <option value="">-- Choisir un département --</option>
                     <%-- TODO Mettre les bonnes options de départements --%>
@@ -51,5 +71,6 @@
             <input type="submit" value="Enregistrer">
         </form>
     </div>
+</div>
 </body>
 </html>

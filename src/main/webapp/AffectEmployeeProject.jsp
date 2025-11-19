@@ -1,10 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <html>
 <head>
-    <title>Créer un projet</title>
+    <meta charset="UTF-8">
+    <title>Affectation d’un employé à un projet</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
 </head>
-
 <body>
 <div class="hero-head">
     <nav class="navbar">
@@ -23,36 +23,35 @@
     </nav>
 </div>
 <div class="hero-body">
+    <nav>
+        <a href="ListEmployee.jsp">Retour à la liste</a>
+    </nav>
+
     <div class="form-container">
-        <form action="AddProject" method="post" class="employee-form"> <!-- TODO Ou mettre ProjectServelt ? -->
-            <h2>Créer un projet</h2>
+        <form action="" method="post" class="form"> <!-- TODO action du formulaire -->
+            <h2>Affecter un employé à un projet</h2>
             <input type="hidden" name="action" value="add" />
-            <p>
-                <label for="projectName">Nom du projet</label>
-                <input type="text" id="projectName" name="projectName" required>
-            </p>
-            <p>
-                <label for="description">Description</label>
-                <textarea name="description" id="description"></textarea>
-            </p>
 
             <p>
-                <label for="manager">Chef de projet</label>
-                <input type="text" name="manager" id="manager" required>
+                <label for="employee">Employé</label>
+                <select id="employee" name="employee"> <!-- TODO mettre les employés en dynamique -->
+                    <option>-- Sélectionner --</option>
+                    <option>Durand Claire</option>
+                    <option>Martin Lucas</option>
+                </select>
             </p>
-
-            <!--
-            <label>Date de début :</label>
-            <input type="date" name="startDate">
-
-            <label>Date de fin prévue :</label>
-            <input type="date" name="endDate">
-            -->
+            <p>
+                <label for="project">Projet</label>
+                <select id="project" name="project"> <!-- TODO mettre les projets en dynamique -->
+                    <option>-- Sélectionner --</option>
+                    <option>Projet Intranet</option>
+                    <option>Migration Cloud</option>
+                </select>
+            </p>
 
             <input type="submit" value="Enregistrer">
         </form>
     </div>
 </div>
 </body>
-
 </html>

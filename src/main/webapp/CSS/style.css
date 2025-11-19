@@ -39,6 +39,8 @@ body {
     /* Sépare Home et les autres éléments */
     align-items: center;
     margin-top: 0;
+    margin-right: 15px;
+    margin-left: 15px;
 }
 
 .navbar-start {
@@ -102,12 +104,13 @@ form h2 {
 
 /* Input des formulaires */
 form label {
+    text-align: start; !important;
     display: block;
     margin-top: 10px;
     font-weight: bold;
 }
 
-form input[type="text"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea {
+form input[type="text"], form input[type="email"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
@@ -132,6 +135,26 @@ form input[type="submit"]:hover {
     background-color: #278088;
 }
 
+.form-action a {
+    display: inline-block;
+    width: 100%;
+    font-size: 20px;
+    box-sizing: border-box;
+    text-decoration: none;
+    background-color: #3abfcb;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-content: center;
+}
+
+.form-action a:hover {
+    background-color: #278088;
+    border-radius: 5px;
+
+}
 
 /* Liens sous le titre */
 .hero-body nav {
@@ -207,11 +230,29 @@ form input[type="submit"]:hover {
     margin: 3rem auto auto;
 }
 
+.hero-body > main.container {
+    align-self: stretch !important;
+    width: 100%;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.dashboard-grid .card {
+    align-self: start !important;
+    justify-self: stretch !important;
+    text-align: left;
+}
+
 .card {
+    align-items: start !important;
     background-color: #ffffff;
     border-radius: 12px;
     padding: 1.5rem;
-    height: 250px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -250,6 +291,7 @@ form input[type="submit"]:hover {
     border-radius: 6px;
     font-weight: bold;
     transition: background-color 0.2s;
+    align-content: center;
 }
 
 .card a:hover {
@@ -258,3 +300,4 @@ form input[type="submit"]:hover {
     border-radius: 5px;
 
 }
+

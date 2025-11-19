@@ -1,6 +1,5 @@
 package com.example.projetjeegroupeq.model;
 
-
 import jakarta.persistence.*;
 
 
@@ -23,6 +22,8 @@ public class Project
     @ManyToOne
     @JoinColumn(name = "idChefPro")
     private Employee ChefProj;
+
+
 
     public  Project()
     {}

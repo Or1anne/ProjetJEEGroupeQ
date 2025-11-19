@@ -1,9 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Liste des départements</title>
+    <title>Membres du département</title>
     <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
@@ -25,27 +24,31 @@
 </div>
 
 <div class="hero-body">
-    <h2>Liste des départements</h2>
+    <h2>Membres du département : "NOM DEPARTEMENT"</h2> <!-- TODO Récupérer le nom du département dynamiquement -->
     <nav>
-        <a href="FormDepartment.jsp">Ajouter un département</a>
+        <a href="ListDepartment.jsp">Retour</a>
     </nav>
-
     <table class="table">
         <thead>
         <tr>
-            <th>ID</th>
             <th>Nom</th>
-            <th>Description</th>
+            <th>Prénom</th>
+            <th>Grade</th>
+            <th>Poste</th>
         </tr>
         </thead>
         <tbody>
-        <!-- Exemple -->
-        <!-- TODO Mettre les départements en dynamique -->
-        <tr onclick="window.location.href='ViewDepartment.jsp?id=1'"> <!-- TODO Mettre le bon id en dynamique -->
-            <td>1</td>
-            <td>Informatique</td>
-            <td>Développement et maintenance des systèmes</td>
-
+        <tr>
+            <td>Durand</td>
+            <td>Claire</td>
+            <td>Cadre</td>
+            <td>Développeuse</td>
+        </tr>
+        <tr>
+            <td>Martin</td>
+            <td>Lucas</td>
+            <td>Cadre</td>
+            <td>Chef de projet</td>
         </tr>
         </tbody>
     </table>
