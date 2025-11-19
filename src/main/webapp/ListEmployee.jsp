@@ -1,4 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.model.Department" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,10 +12,18 @@
 </head>
 <body>
 
+<%
+    List<Employee> employees = (List<Employee>) request.getAttribute("employees");
+    if (employees == null) {
+        employees = Collections.emptyList();
+    }
+    String contextPath = request.getContextPath();
+%>
+
 <div class="hero-body">
     <h2>Liste des employés</h2>
     <nav>
-        <a href="FormEmployee.jsp">Ajouter un employé</a>
+        <a class="btn" href="<%= contextPath %>/employee?action=add">Ajouter un employé</a>
     </nav>
 
     <table class="table">
@@ -26,32 +38,28 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Exemple statique -->
-        <!-- TODO Mettre les employés en dynamique -->
-        <tr>
-            <td>Durand</td>
-            <td>Claire</td>
-            <td>Cadre</td>
-            <td>Développeuse</td>
-            <td>Informatique</td>
-            <td>
-                <a href="FormModifyEmployee.jsp">Modifier</a> |
-                <a href="DeleteEmployee.jsp">Supprimer</a> | <!-- TODO mettre un bouton et non un lien hypertexte-->
-                <a href="AffectEmployeeProject.jsp">Affecter projet</a>
-            </td>
-        </tr>
-        <tr>
-            <td>Durand</td>
-            <td>Claire</td>
-            <td>Cadre</td>
-            <td>Développeuse</td>
-            <td>Informatique</td>
-            <td>
-                <a href="FormModifyEmployee.jsp">Modifier</a> |
-                <a href="DeleteEmployee.jsp">Supprimer</a> | <!-- TODO mettre un bouton et non un lien hypertexte-->
-                <a href="AffectEmployeeProject.jsp">Affecter projet</a>
-            </td>
-        </tr>
+        <% if (employees.isEmpty()) { %>
+            <tr>
+                <td colspan="6">Aucun employé enregistré.</td>
+            </tr>
+        <% } else {
+               for (Employee employee : employees) {
+                   Department department = employee.getDepartment();
+        %>
+            <tr>
+                <td><%= employee.getLastName() != null ? employee.getLastName() : "" %></td>
+                <td><%= employee.getFirstName() != null ? employee.getFirstName() : "" %></td>
+                <td><%= employee.getGrade() != null ? employee.getGrade() : "" %></td>
+                <td><%= employee.getPost() != null ? employee.getPost() : "" %></td>
+                <td><%= department != null ? department.getDepartmentName() : "-" %></td>
+                <td>
+                    <a href="<%= contextPath %>/employee?action=edit&id=<%= employee.getId() %>">Modifier</a> |
+                    <a href="<%= contextPath %>/employee?action=delete&id=<%= employee.getId() %>"
+                       onclick="return confirm('Supprimer cet employé ?');">Supprimer</a>
+                </td>
+            </tr>
+        <%     }
+           } %>
         </tbody>
     </table>
 </div>

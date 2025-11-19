@@ -1,55 +1,91 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="com.example.projetjeegroupeq.model.Department" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Formulaire de création d'un employé</title>
+    <title>Gestion des employés</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
 </head>
 <body>
-    <div class="form-container">
-        <form action="EmployeeServlet" method="post" class="employee-form">
-            <h2>Ajouter un employé</h2>
-            <input type="hidden" name="action" value="add" />
+<div class="form-container">
+    <%
+        Employee employee = (Employee) request.getAttribute("employee");
+        if (employee == null) {
+            employee = new Employee();
+        }
+        List<Department> departments = (List<Department>) request.getAttribute("departments");
+        boolean isEditMode = "edit".equals(request.getAttribute("formMode"));
+        String errorMessage = (String) request.getAttribute("errorMessage");
+        String gradeValue = employee.getGrade() != null ? employee.getGrade().toLowerCase() : "";
+        String contextPath = request.getContextPath();
+    %>
 
-            <p>
-                <label for="lastname">Nom</label>
-                <input type="text" id="lastname" name="lastname" required>
-            </p>
-            <p>
-                <label for="firstname">Prénom</label>
-                <input type="text" id="firstname" name="firstname" required>
-            </p>
-            <p>
-                <label for="grade">Grade</label>
-                <select name="gradeID" id="grade" required>
-                    <option value="">-- Choisir un grade --</option>
-                    <option value="cadre">Cadre</option>
-                    <option value="stagiaire">Stagiaire</option>
+    <form action="<%= contextPath %>/employee" method="post" class="employee-form">
+        <h2><%= isEditMode ? "Modifier un employé" : "Ajouter un employé" %></h2>
+
+        <input type="hidden" name="action" value="<%= isEditMode ? "edit" : "add" %>" />
+        <% if (isEditMode) { %>
+            <input type="hidden" name="id" value="<%= employee.getId() %>" />
+        <% } %>
+
+        <% if (errorMessage != null && !errorMessage.isBlank()) { %>
+            <div class="error-message"><%= errorMessage %></div>
+        <% } %>
+
+        <p>
+            <label for="lastName">Nom</label>
+            <input type="text" id="lastName" name="lastName" value="<%= employee.getLastName() != null ? employee.getLastName() : "" %>" required>
+        </p>
+
+        <p>
+            <label for="firstName">Prénom</label>
+            <input type="text" id="firstName" name="firstName" value="<%= employee.getFirstName() != null ? employee.getFirstName() : "" %>" required>
+        </p>
+
+        <p>
+            <label for="grade">Grade</label>
+            <select name="grade" id="grade" required>
+                <option value="">-- Choisir un grade --</option>
+                <option value="cadre" <%= "cadre".equals(gradeValue) ? "selected" : "" %>>Cadre</option>
+                <option value="stagiaire" <%= "stagiaire".equals(gradeValue) ? "selected" : "" %>>Stagiaire</option>
+            </select>
+        </p>
+
+        <p>
+            <label for="post">Poste</label>
+            <input type="text" id="post" name="post" value="<%= employee.getPost() != null ? employee.getPost() : "" %>">
+        </p>
+
+        <p>
+            <label for="salary">Salaire</label>
+            <input type="number" step="0.01" id="salary" name="salary" value="<%= employee.getSalary() != null ? employee.getSalary() : "" %>">
+        </p>
+
+        <p>
+            <label for="department">Département</label>
+            <% if (departments == null || departments.isEmpty()) { %>
+                <select id="department" name="departmentId" disabled>
+                    <option value="">Aucun département disponible</option>
                 </select>
-            </p>
-            <p>
-                <label for="post">Poste</label>
-                <input type="number" id="post" name="post" max="50000">
-            </p>
-            <p>
-                <label for="salary">Salaire</label>
-                <input type="text" id="salary" name="salary">
-            </p>
-            <p>
-                <label for="department">Département :</label>
+                <small>Veuillez créer un département avant d'ajouter un employé.</small>
+            <% } else { %>
                 <select name="departmentId" id="department" required>
                     <option value="">-- Choisir un département --</option>
-                    <%-- TODO Mettre les bonnes options de départements --%>
-                    <%--
-                    <c:forEach var="dep" items="${departments}">
-                        <option value="${dep.id}">${dep.name}</option>
-                    </c:forEach>
-                    --%>
-                    <option value="informatique">Informatique</option>
+                    <% for (Department dep : departments) {
+                        boolean selected = employee.getDepartment() != null && employee.getDepartment().getId() == dep.getId();
+                    %>
+                        <option value="<%= dep.getId() %>" <%= selected ? "selected" : "" %>>
+                            <%= dep.getDepartmentName() %>
+                        </option>
+                    <% } %>
                 </select>
-            </p>
+            <% } %>
+        </p>
 
-            <input type="submit" value="Enregistrer">
-        </form>
-    </div>
+        <input type="submit" value="Enregistrer">
+    </form>
+</div>
 </body>
 </html>

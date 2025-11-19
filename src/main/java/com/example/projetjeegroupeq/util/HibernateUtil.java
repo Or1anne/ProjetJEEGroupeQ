@@ -4,10 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
@@ -17,10 +15,13 @@ public class HibernateUtil {
 
     static {
         Properties props = new Properties();
-        try {
-            props.load(new FileInputStream("src/main/resources/local-config.properties"));
+        try (InputStream in = HibernateUtil.class.getClassLoader().getResourceAsStream("local-config.properties")) {
+            if (in == null) {
+                throw new RuntimeException("Erreur lors du chargement de local-config.properties : fichier introuvable dans le classpath.");
+            }
+            props.load(in);
         } catch (IOException e) {
-            throw new RuntimeException("Erreur lors du chargement du de local-config.properties", e);
+            throw new RuntimeException("Erreur lors du chargement de local-config.properties", e);
         }
 
         // Convertis en Map<String, Object>

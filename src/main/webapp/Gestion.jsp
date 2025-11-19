@@ -16,8 +16,8 @@
         <div class="card">
             <h2>Employés</h2>
             <ul>
-                <li><a href="ListEmployee.jsp">Liste des employés</a></li>
-                <li><a href="FormEmployee.jsp">Ajouter un employé</a></li>
+                <li><a href="${pageContext.request.contextPath}/employee">Liste des employés</a></li>
+                <li><a href="${pageContext.request.contextPath}/employee?action=add">Ajouter un employé</a></li>
             </ul>
         </div>
 

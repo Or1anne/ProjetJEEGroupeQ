@@ -1,6 +1,7 @@
 package com.example.projetjeegroupeq.dao.implementation;
 
 import com.example.projetjeegroupeq.dao.interfaces.EmployeeDAOI;
+import com.example.projetjeegroupeq.model.Department;
 import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.sortingType.EmployeeSortingType;
 import jakarta.persistence.EntityManager;
@@ -80,6 +81,17 @@ public class EmployeeDAO implements EmployeeDAOI {
                 System.err.println("Aucun employé trouvé avec l'id : " + id);
                 em.getTransaction().rollback();
                 return;
+            }
+
+            employeeFound.setDepartment(null);
+
+            List<Department> deps = em.createQuery(
+                            "SELECT d FROM Department d WHERE d.chefDepartment.id = :id", Department.class)
+                    .setParameter("id", id)
+                    .getResultList();
+
+            for (Department d : deps) {
+                d.setChefDepartment(null); // casser la FK pour éviter TransientObjectException
             }
 
             em.remove(employeeFound);
