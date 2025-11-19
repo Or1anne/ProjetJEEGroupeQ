@@ -21,6 +21,22 @@
     </script>
 </head>
 <body>
+<div class="hero-head">
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-start">
+                <a href="index.jsp" class="navbar-item">Accueil</a>
+                <a href="Search.jsp" class="navbar-item">Recherche</a>
+                <a href="Gestion.jsp" class="navbar-item">Gestion</a>
+            </div>
+
+            <div class="navbar-end">
+                <a href="Profile.jsp" class="navbar-item">Profil</a>
+                <a href="FormConnection.jsp" class="navbar-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+</div>
 <section class="hero-body">
 
     <p class="success">${message}</p>
@@ -39,7 +55,7 @@
         <label for="confirmPassword">Confirmer le nouveau mot de passe</label>
         <input id="confirmPassword" name="confirmPassword" type="password" minlength="6" required />
 
-        <div class="form-actions">
+        <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <input type="submit" value="Enregistrer">
             <a href="Profile.jsp" class="button">Cancel</a>
         </div>

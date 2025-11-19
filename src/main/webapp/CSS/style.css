@@ -135,6 +135,26 @@ form input[type="submit"]:hover {
     background-color: #278088;
 }
 
+.form-action a {
+    display: inline-block;
+    width: 100%;
+    font-size: 20px;
+    box-sizing: border-box;
+    text-decoration: none;
+    background-color: #3abfcb;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-content: center;
+}
+
+.form-action a:hover {
+    background-color: #278088;
+    border-radius: 5px;
+
+}
 
 /* Liens sous le titre */
 .hero-body nav {
@@ -210,7 +230,26 @@ form input[type="submit"]:hover {
     margin: 3rem auto auto;
 }
 
+.hero-body > main.container {
+    align-self: stretch !important;
+    width: 100%;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.dashboard-grid .card {
+    align-self: start !important;
+    justify-self: stretch !important;
+    text-align: left;
+}
+
 .card {
+    align-items: start !important;
     background-color: #ffffff;
     border-radius: 12px;
     padding: 1.5rem;
@@ -241,7 +280,7 @@ form input[type="submit"]:hover {
     text-align: center;
 }
 
-.card a, .form-action a {
+.card a {
     display: inline-block;
     width: 100%;
     box-sizing: border-box;

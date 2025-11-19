@@ -6,6 +6,23 @@
 </head>
 
 <body>
+<div class="hero-head">
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-start">
+                <a href="index.jsp" class="navbar-item">Accueil</a>
+                <a href="Search.jsp" class="navbar-item">Recherche</a>
+                <a href="Gestion.jsp" class="navbar-item">Gestion</a>
+            </div>
+
+            <div class="navbar-end">
+                <a href="Profile.jsp" class="navbar-item">Profil</a>
+                <a href="FormConnection.jsp" class="navbar-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="hero-body">
     <div class="form-container">
         <form action="AddProject" method="post" class="employee-form"> <!-- TODO Ou mettre ProjectServelt ? -->
             <h2>Créer un projet</h2>
@@ -35,6 +52,7 @@
             <input type="submit" value="Enregistrer">
         </form>
     </div>
+</div>
 </body>
 
 </html>
