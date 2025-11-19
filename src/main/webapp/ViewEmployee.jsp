@@ -25,10 +25,9 @@
 </div>
 
 <section class="hero-body">
-    <h2>Employee Details</h2>
 
     <div class="card">
-        <h3>Informations Personnels</h3>
+        <h2>Informations Personnels</h2>
         <ul>
             <li><strong>Nom :</strong> {{firstName}} {{lastName}}</li>
             <li><strong>Grade :</strong> {{grade}}</li>

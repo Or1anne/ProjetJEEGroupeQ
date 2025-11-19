@@ -22,25 +22,20 @@
     </nav>
 </div>
 <div class="hero-body">
-    <header>
-        <h2>Détails du Projet</h2>
-    </header>
 
-    <main class="container">
-        <section class="project-details">
-            <h3>Nom du Projet: Projet Exemple</h3>
-            <p>Description: Ceci est une description détaillée du projet exemple.</p>
-            <p>Date de début: 01/01/2024</p>
-            <p>Date de fin: 31/12/2024</p>
-            <p>Statut: En cours</p>
-            <h4>Membres de l'équipe:</h4>
-            <ul>
-                <li>Employé 1</li>
-                <li>Employé 2</li>
-                <li>Employé 3</li>
-            </ul>
-        </section>
-    </main>
+    <div class="card">
+        <h2>Détails du "Projet"</h2> <!-- TODO Remplacer par le nom réel du projet -->
+        <p><strong>Chef de projet :</strong> Jacky Smith</p> <!-- TODO Remplacer par le nom réel du chef de projet -->
+        <p><strong>Description : </strong>Ceci est une description détaillée du projet exemple.</p> <!-- TODO Remplacer par la description réelle du projet -->
+        <p><strong>Statut :</strong> En cours</p> <!-- TODO Remplacer par le statut réel du projet -->
+        <h4>Membres de l'équipe : </h4>
+        <ul>
+            <li>Employé 1</li>  <!-- TODO Remplacer par les noms réels des employés -->
+            <li>Employé 2</li>
+            <li>Employé 3</li>
+        </ul>
+    </div>
+
 </div>
 </body>
 </html>
