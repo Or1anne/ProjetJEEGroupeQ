@@ -1,6 +1,7 @@
 package com.example.projetjeegroupeq.model;
 
-
+import java.util.Set;
+import java.util.HashSet;
 import jakarta.persistence.*;
 
 // TODO mettre à jour à l'aide du fichier sql pour que ça corresponds
@@ -25,6 +26,21 @@ public class Employee {
     @JoinColumn(name = "idDepartment")
     private Department department;
 
+    @ManyToMany
+    @JoinTable(
+            name = "employeeProject",
+            joinColumns = @JoinColumn(name = "idEmployee"),
+            inverseJoinColumns = @JoinColumn(name = "idProject")
+    )
+    private Set<Project> projects = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "employeeRole",                         // NOM EXACT de ta table
+            joinColumns = @JoinColumn(name = "idEmployee"),
+            inverseJoinColumns = @JoinColumn(name = "idRole")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     // Constructeur par défaut, obligatoire pour Hibernate
     public Employee() {}
