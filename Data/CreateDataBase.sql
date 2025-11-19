@@ -63,7 +63,6 @@ CREATE TABLE employee (
     idDepartment INT NULL,
     FOREIGN KEY (idDepartment) REFERENCES department(idDepartment) ON DELETE SET NULL
 )ENGINE=InnoDB;
-*
 
 -- ===========================
 --   Ajout des clés étrangères pour chef de projet / département
