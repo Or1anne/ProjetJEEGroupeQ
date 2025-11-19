@@ -32,7 +32,7 @@
         <div class="card">
             <h2>Projets</h2>
             <ul>
-                <li><a href="ListProject.jsp">Liste des projets</a></li>
+                <li><a href="listProjects">Liste des projets</a></li>
                 <li><a href="FormProject.jsp">Créer un projet</a></li>
             </ul>
         </div>
