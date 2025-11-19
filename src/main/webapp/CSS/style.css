@@ -214,7 +214,6 @@ form input[type="submit"]:hover {
     background-color: #ffffff;
     border-radius: 12px;
     padding: 1.5rem;
-    height: 250px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -242,7 +241,7 @@ form input[type="submit"]:hover {
     text-align: center;
 }
 
-.card a {
+.card a, .form-action a {
     display: inline-block;
     width: 100%;
     box-sizing: border-box;
@@ -253,6 +252,7 @@ form input[type="submit"]:hover {
     border-radius: 6px;
     font-weight: bold;
     transition: background-color 0.2s;
+    align-content: center;
 }
 
 .card a:hover {
@@ -262,12 +262,3 @@ form input[type="submit"]:hover {
 
 }
 
-
-
-
-
-.form-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}

@@ -7,7 +7,7 @@
 </head>
 <body>
 <section class="hero-body">
-
+    <!-- Mettre les bonnes valeurs dans les champs du formulaire -->
     <p class="success">${message}</p>
     <p class="error">${error}</p>
 
@@ -24,7 +24,7 @@
         <label for="role">Role</label>
         <input id="role" name="role" type="text" value="${user.role}" readonly />
 
-        <div class="form-actions">
+        <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <input type="submit" value="Enregistrer">
             <a href="Profile.jsp" class="button">Cancel</a>
         </div>

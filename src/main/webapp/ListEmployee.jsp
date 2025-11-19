@@ -28,7 +28,7 @@
         <tbody>
         <!-- Exemple statique -->
         <!-- TODO Mettre les employés en dynamique -->
-        <tr>
+        <tr onclick="window.location.href='ViewEmployee.jsp?id=1'">
             <td>Durand</td>
             <td>Claire</td>
             <td>Cadre</td>
