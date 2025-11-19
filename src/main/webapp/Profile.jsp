@@ -32,9 +32,9 @@
         <div class="card">
             <h2>Personal Information</h2>
             <ul>
-                <li>Name: ${user.name}</li>
-                <li>Email: ${user.email}</li>
-                <li>Role: ${user.role}</li>
+                <li>Name: </li>
+                <li>Email: </li>
+                <li>Role: </li>
             </ul>
         </div>
     </div>

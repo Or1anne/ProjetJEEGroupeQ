@@ -54,9 +54,9 @@
         </ul>
 
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
-            <a class="button" href="editProfile.html?id={{idEmployee}}">Modifier</a>
-            <a class="button" href="employeesList.html">Retour</a>
-            <a class="button" href="payHistory.html?id={{idEmployee}}">Histoirique des paies</a>
+            <a class="button" href="FormModifyEmployee.jsp">Modifier</a> <!-- TODO Add idEmployee as query parameter -->
+            <a class="button" href="ListEmployee.jsp">Retour</a>
+            <a class="button" href="">Historique des paies</a>
         </div>
     </div>
 </section>
