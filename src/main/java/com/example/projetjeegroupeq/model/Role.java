@@ -1,6 +1,5 @@
 package com.example.projetjeegroupeq.model;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -15,12 +14,8 @@ public class Role {
     @Column(name = "roleName", unique = true)
     private String roleName;
 
-    @ManyToOne
-    @JoinColumn(name = "idEmployee")
-    private Project project;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<Employee> employees = new HashSet<>();
+    @OneToMany(mappedBy = "role")
+    private List<EmployeeRole> employeeRoles;
 
     public Role() {}
     public Role(String roleName) {
@@ -30,7 +25,6 @@ public class Role {
     public int getIdRole() {
         return idRole;
     }
-    public void setIdRole(Integer idRole) {}
 
     public String getRoleName() {
         return roleName;
@@ -39,4 +33,11 @@ public class Role {
         this.roleName = roleName;
     }
 
+    public List<EmployeeRole> getEmployeeRoles() {
+        return employeeRoles;
+    }
+
+    public void setEmployeeRoles(List<EmployeeRole> employeeRoles) {
+        this.employeeRoles = employeeRoles;
+    }
 }

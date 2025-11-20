@@ -1,6 +1,6 @@
 package com.example.projetjeegroupeq.model;
 
-import java.util.Set;
+import java.util.List;
 import java.util.HashSet;
 import jakarta.persistence.*;
 
@@ -26,21 +26,11 @@ public class Employee {
     @JoinColumn(name = "idDepartment")
     private Department department;
 
-    @ManyToMany
-    @JoinTable(
-            name = "employeeProject",
-            joinColumns = @JoinColumn(name = "idEmployee"),
-            inverseJoinColumns = @JoinColumn(name = "idProject")
-    )
-    private Set<Project> projects = new HashSet<>();
+    @OneToMany(mappedBy = "employee")
+    private List<EmployeeProject> projects;
 
-    @ManyToMany
-    @JoinTable(
-            name = "employeeRole",                         // NOM EXACT de ta table
-            joinColumns = @JoinColumn(name = "idEmployee"),
-            inverseJoinColumns = @JoinColumn(name = "idRole")
-    )
-    private Set<Role> roles = new HashSet<>();
+    @OneToMany(mappedBy = "employee")
+    private List<EmployeeRole> roles;
 
     // Constructeur par défaut, obligatoire pour Hibernate
     public Employee() {}
@@ -116,5 +106,21 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public void setEmployeeRoles(List<EmployeeRole> roles) {
+        this.roles = roles;
+    }
+
+    public List<EmployeeRole> getEmployeeRoles() {
+        return roles;
+    }
+
+    public void setProjects(List<EmployeeProject> projects) {
+        this.projects = projects;
+    }
+
+    public List<EmployeeProject> getProjects() {
+        return projects;
     }
 }
