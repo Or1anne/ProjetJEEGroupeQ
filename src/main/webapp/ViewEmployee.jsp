@@ -55,7 +55,7 @@
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <a class="button" href="FormModifyEmployee.jsp">Modifier</a> <!-- TODO Add idEmployee as query parameter -->
             <a class="button" href="ListEmployee.jsp">Retour</a>
-            <a class="button" href="">Historique des paies</a>
+            <a class="button" href="ListPay.jsp">Historique des paies</a> <!-- TODO Faire en sorte de n'afficher que les paies de l'employé courant -->
         </div>
     </div>
 </section>
