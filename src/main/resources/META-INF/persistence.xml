@@ -10,6 +10,9 @@
         <class>com.example.projetjeegroupeq.model.Department</class>
         <class>com.example.projetjeegroupeq.model.Project</class>
         <class>com.example.projetjeegroupeq.model.Pay</class>
+        <class>com.example.projetjeegroupeq.model.Role</class>
+        <class>com.example.projetjeegroupeq.model.EmployeeRole</class>
+        <class>com.example.projetjeegroupeq.model.EmployeeProject</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
