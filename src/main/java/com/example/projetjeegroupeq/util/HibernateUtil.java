@@ -14,24 +14,7 @@ public class HibernateUtil {
     private static EntityManagerFactory emf;
 
     static {
-        Properties props = new Properties();
-        try (InputStream in = HibernateUtil.class.getClassLoader().getResourceAsStream("local-config.properties")) {
-            if (in == null) {
-                throw new RuntimeException("Erreur lors du chargement de local-config.properties : fichier introuvable dans le classpath.");
-            }
-            props.load(in);
-        } catch (IOException e) {
-            throw new RuntimeException("Erreur lors du chargement de local-config.properties", e);
-        }
-
-        // Convertis en Map<String, Object>
-        Map<String, Object> configOverrides = new HashMap<>();
-        for (String name : props.stringPropertyNames()) {
-            configOverrides.put(name, props.getProperty(name));
-        }
-
-        // Initialise l’EntityManagerFactory avec les overrides
-        emf = Persistence.createEntityManagerFactory("HIBERNATE", configOverrides);
+        emf = Persistence.createEntityManagerFactory("HIBERNATE");
     }
 
     public static EntityManager getEntityManager() {

@@ -1,6 +1,7 @@
 package com.example.projetjeegroupeq.model;
 
-
+import java.util.List;
+import java.util.HashSet;
 import jakarta.persistence.*;
 
 // TODO mettre à jour à l'aide du fichier sql pour que ça corresponds
@@ -25,6 +26,11 @@ public class Employee {
     @JoinColumn(name = "idDepartment")
     private Department department;
 
+    @OneToMany(mappedBy = "employee")
+    private List<EmployeeProject> projects;
+
+    @OneToMany(mappedBy = "employee")
+    private List<EmployeeRole> roles;
 
     // Constructeur par défaut, obligatoire pour Hibernate
     public Employee() {}
@@ -100,5 +106,21 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public void setEmployeeRoles(List<EmployeeRole> roles) {
+        this.roles = roles;
+    }
+
+    public List<EmployeeRole> getEmployeeRoles() {
+        return roles;
+    }
+
+    public void setProjects(List<EmployeeProject> projects) {
+        this.projects = projects;
+    }
+
+    public List<EmployeeProject> getProjects() {
+        return projects;
     }
 }

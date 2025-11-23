@@ -2,90 +2,102 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.projetjeegroupeq.model.Department" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
-<!DOCTYPE html>
 <html>
 <head>
-    <title>Gestion des employés</title>
+    <title>Formulaire de création d'un employé</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
 </head>
 <body>
-<div class="form-container">
-    <%
-        Employee employee = (Employee) request.getAttribute("employee");
-        if (employee == null) {
-            employee = new Employee();
-        }
-        List<Department> departments = (List<Department>) request.getAttribute("departments");
-        boolean isEditMode = "edit".equals(request.getAttribute("formMode"));
-        String errorMessage = (String) request.getAttribute("errorMessage");
-        String gradeValue = employee.getGrade() != null ? employee.getGrade().toLowerCase() : "";
-        String contextPath = request.getContextPath();
-    %>
+<div class="hero-head">
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-start">
+                <a href="index.jsp" class="navbar-item">Accueil</a>
+                <a href="Search.jsp" class="navbar-item">Recherche</a>
+                <a href="Gestion.jsp" class="navbar-item">Gestion</a>
+            </div>
 
-    <form action="<%= contextPath %>/employee" method="post" class="employee-form">
-        <h2><%= isEditMode ? "Modifier un employé" : "Ajouter un employé" %></h2>
-
-        <input type="hidden" name="action" value="<%= isEditMode ? "edit" : "add" %>" />
-        <% if (isEditMode) { %>
+            <div class="navbar-end">
+                <a href="Profile.jsp" class="navbar-item">Profil</a>
+                <a href="FormConnection.jsp" class="navbar-item">Logout</a>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="hero-body">
+    <nav>
+        <a href="employee">Liste des employés</a>
+    </nav>
+    <div class="form-container">
+        <%
+            Employee employee = (Employee) request.getAttribute("employee");
+            if (employee == null) {
+                employee = new Employee();
+            }
+            List<Department> departments = (List<Department>) request.getAttribute("departments");
+            boolean isEditMode = "edit".equals(request.getAttribute("formMode"));
+            String errorMessage = (String) request.getAttribute("errorMessage");
+            String gradeValue = employee.getGrade() != null ? employee.getGrade().toLowerCase() : "";
+            String contextPath = request.getContextPath();
+        %>
+        <form action="<%= contextPath %>/employee" method="post" class="employee-form">
+            <h2><%= isEditMode ? "Modifier " + employee.getLastName() + " " + employee.getFirstName() : "Ajouter un employé" %></h2>
+            <input type="hidden" name="action" value="add" />
+            <% if (isEditMode) { %>
             <input type="hidden" name="id" value="<%= employee.getId() %>" />
-        <% } %>
-
-        <% if (errorMessage != null && !errorMessage.isBlank()) { %>
+            <% } %>
+            <% if (errorMessage != null && !errorMessage.isBlank()) { %>
             <div class="error-message"><%= errorMessage %></div>
-        <% } %>
+            <% } %>
 
-        <p>
-            <label for="lastName">Nom</label>
-            <input type="text" id="lastName" name="lastName" value="<%= employee.getLastName() != null ? employee.getLastName() : "" %>" required>
-        </p>
-
-        <p>
-            <label for="firstName">Prénom</label>
-            <input type="text" id="firstName" name="firstName" value="<%= employee.getFirstName() != null ? employee.getFirstName() : "" %>" required>
-        </p>
-
-        <p>
-            <label for="grade">Grade</label>
-            <select name="grade" id="grade" required>
-                <option value="">-- Choisir un grade --</option>
-                <option value="cadre" <%= "cadre".equals(gradeValue) ? "selected" : "" %>>Cadre</option>
-                <option value="stagiaire" <%= "stagiaire".equals(gradeValue) ? "selected" : "" %>>Stagiaire</option>
-            </select>
-        </p>
-
-        <p>
-            <label for="post">Poste</label>
-            <input type="text" id="post" name="post" value="<%= employee.getPost() != null ? employee.getPost() : "" %>">
-        </p>
-
-        <p>
-            <label for="salary">Salaire</label>
-            <input type="number" step="0.01" id="salary" name="salary" value="<%= employee.getSalary() != null ? employee.getSalary() : "" %>">
-        </p>
-
-        <p>
-            <label for="department">Département</label>
-            <% if (departments == null || departments.isEmpty()) { %>
+            <p>
+                <label for="lastname">Nom</label>
+                <input type="text" id="lastname" name="lastname" value="<%= employee.getLastName() != null ? employee.getLastName() : "" %>" required>
+            </p>
+            <p>
+                <label for="firstname">Prénom</label>
+                <input type="text" id="firstname" name="firstname" value="<%= employee.getFirstName() != null ? employee.getFirstName() : "" %>" required>
+            </p>
+            <p>
+                <label for="grade">Grade</label>
+                <select name="grade" id="grade" required>
+                    <option value="">-- Choisir un grade --</option>
+                    <option value="cadre">Cadre</option>
+                    <option value="stagiaire">Stagiaire</option>
+                </select>
+            </p>
+            <p>
+                <label for="post">Poste</label>
+                <input type="text" id="post" name="post" value="<%= employee.getPost() != null ? employee.getPost() : "" %>">
+            </p>
+            <p>
+                <label for="salary">Salaire</label>
+                <input type="number" step="0.01" id="salary" name="salary" value="<%= employee.getSalary() != null ? employee.getSalary() : "" %>">
+            </p>
+            <p>
+                <label for="department">Département</label>
+                <% if (departments == null || departments.isEmpty()) { %>
                 <select id="department" name="departmentId" disabled>
                     <option value="">Aucun département disponible</option>
                 </select>
                 <small>Veuillez créer un département avant d'ajouter un employé.</small>
-            <% } else { %>
+                <% } else { %>
                 <select name="departmentId" id="department" required>
                     <option value="">-- Choisir un département --</option>
                     <% for (Department dep : departments) {
                         boolean selected = employee.getDepartment() != null && employee.getDepartment().getId() == dep.getId();
                     %>
-                        <option value="<%= dep.getId() %>" <%= selected ? "selected" : "" %>>
-                            <%= dep.getDepartmentName() %>
-                        </option>
+                    <option value="<%= dep.getId() %>" <%= selected ? "selected" : "" %>>
+                        <%= dep.getDepartmentName() %>
+                    </option>
                     <% } %>
                 </select>
-            <% } %>
-        </p>
+                <% } %>
+            </p>
 
-        <input type="submit" value="Enregistrer">
-    </form>
+            <input type="submit" value="Enregistrer">
+        </form>
+    </div>
 </div>
 </body>
 </html>
