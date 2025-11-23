@@ -54,30 +54,7 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Exemple statique -->
-        <!-- TODO Mettre les employés en dynamique -->
-        <tr onclick="window.location.href='ViewEmployee.jsp?id=1'">
-            <td>Durand</td>
-            <td>Claire</td>
-            <td>Cadre</td>
-            <td>Développeuse</td>
-            <td>Informatique</td>
-            <td>
-                <a href="FormModifyEmployee.jsp">Modifier</a> |
-                <a href="DeleteEmployee.jsp">Supprimer</a> <!-- TODO mettre un bouton et non un lien hypertexte-->
-            </td>
-        </tr>
-        <tr>
-            <td>Durand</td>
-            <td>Claire</td>
-            <td>Cadre</td>
-            <td>Développeuse</td>
-            <td>Informatique</td>
-            <td>
-                <a href="FormModifyEmployee.jsp">Modifier</a> |
-                <a href="DeleteEmployee.jsp">Supprimer</a> <!-- TODO mettre un bouton et non un lien hypertexte-->
-            </td>
-        </tr>
+        <!-- Si aucun employé dans la table une ligne qui le dit, sinon on affiche chacun ligne par ligne -->
         <% if (employees.isEmpty()) { %>
             <tr>
                 <td colspan="6">Aucun employé enregistré.</td>
@@ -86,7 +63,7 @@
                for (Employee employee : employees) {
                    Department department = employee.getDepartment();
         %>
-            <tr>
+            <tr style="cursor:pointer" onclick="window.location.href='<%= request.getContextPath() %>/employee?action=view&id=<%= employee.getId() %>'">
                 <td><%= employee.getLastName() != null ? employee.getLastName() : "" %></td>
                 <td><%= employee.getFirstName() != null ? employee.getFirstName() : "" %></td>
                 <td><%= employee.getGrade() != null ? employee.getGrade() : "" %></td>

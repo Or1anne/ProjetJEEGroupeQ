@@ -36,6 +36,7 @@ public class EmployeeServlet extends HttpServlet {
             case "add" -> showEmployeeForm(req, resp, null, false);
             case "edit" -> handleEdit(req, resp);
             case "delete" -> handleDelete(req, resp);
+            case "view" -> handleView(req, resp);
             default -> resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
         }
     }
@@ -105,6 +106,17 @@ public class EmployeeServlet extends HttpServlet {
         int id = parseId(req.getParameter("id"), "Identifiant employé manquant pour la suppression");
         employeeDAO.deleteEmployee(id);
         resp.sendRedirect(req.getContextPath() + "/employee");
+    }
+
+    private void handleView(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = parseId(req.getParameter("id"), "Identifiant employé manquant pour la visualisation");
+        Employee employee = employeeDAO.searchEmployeeById(id);
+        if (employee == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Employé introuvable");
+            return;
+        }
+        req.setAttribute("employee", employee);
+        req.getRequestDispatcher("/ViewEmployee.jsp").forward(req, resp);
     }
 
     private void showEmployeeForm(HttpServletRequest req, HttpServletResponse resp, Employee employee, boolean editMode) throws ServletException, IOException {
