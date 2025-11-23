@@ -29,7 +29,7 @@
             <input type="hidden" name="action" value="add" />
 
             <p>
-                <label for="lastname">Nom</label>
+                <label for="lastName">Nom</label>
                 <input type="text" id="lastname" name="lastname" required>
             </p>
             <p>

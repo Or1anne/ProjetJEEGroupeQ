@@ -27,64 +27,42 @@
 <section class="hero-body">
 
     <div class="card">
-        <h2>Informations Personnels</h2>
+        <h2>Informations Personnelles</h2>
         <ul>
-            <li><strong>Nom :</strong> {{firstName}} {{lastName}}</li>
-            <li><strong>Grade :</strong> {{grade}}</li>
-            <li><strong>Poste :</strong> {{post}}</li>
-            <li><strong>Salaire :</strong> {{salary}}</li>
-            <li><strong>Nom d'utilisateur :</strong> {{username}}</li>
+            <li><strong>Nom :</strong> ${employee.lastName}</li>
+            <li><strong>Prénom :</strong> ${employee.firstName}</li>
+            <li><strong>Grade :</strong> ${employee.grade}</li>
+            <li><strong>Poste :</strong> ${employee.post}</li>
+            <li><strong>Salaire :</strong> ${employee.salary}€</li>
+            <li><strong>Nom d'utilisateur :</strong> ${employee.username}</li>
         </ul>
 
         <h3>Département :</h3>
         <p>
-            {{departmentName or "Not assigned"}}
+            ${employee.department != null ? employee.department.departmentName : "Non assigné"}
         </p>
 
         <h3>Rôle</h3>
+        <!-- TODO Mettre en dynamique -->
         <p>
             Role
         </p>
-
+<!-- TODO Mettre en dynamique -->
         <h3>Projets</h3>
         <ul id="projects-list">
             <li>Project A <small>(Active)</small></li>
             <li>Project B <small>(Completed)</small></li>
         </ul>
 
+        <!-- TODO Historique des paies -->
+
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
-            <a class="button" href="FormModifyEmployee.jsp">Modifier</a> <!-- TODO Add idEmployee as query parameter -->
-            <a class="button" href="ListEmployee.jsp">Retour</a>
-            <a class="button" href="">Historique des paies</a>
+            <a class="button" href="employee?action=edit&id=${employee.id}">Modifier</a> <!-- TODO Add idEmployee as query parameter -->
+            <a class="button" href="employee">Retour</a>
+            <a class="button" href="ListPay.jsp">Historique des paies</a>
         </div>
     </div>
 </section>
 
-<!-- Optional: small script to demonstrate how to replace placeholders on client side -->
-<script>
-    const employee = {
-        firstName: 'John',
-        lastName: 'Doe',
-        grade: 'A',
-        post: 'Developer',
-        salary: '4000',
-        username: 'jdoe',
-        departmentName: 'Engineering',
-        idEmployee: 123,
-        roles: ['Developer', 'Team Lead'],
-        projects: [{name:'Project A', status:'Active'}]
-    };
-
-    // Replace simple placeholders in the static HTML
-    document.body.innerHTML = document.body.innerHTML
-        .replace('{{firstName}}', employee.firstName)
-        .replace('{{lastName}}', employee.lastName)
-        .replace('{{grade}}', employee.grade)
-        .replace('{{post}}', employee.post)
-        .replace('{{salary}}', employee.salary)
-        .replace('{{username}}', employee.username)
-        .replace('{{departmentName or "Not assigned"}}', employee.departmentName || 'Not assigned')
-        .replace(/{{idEmployee}}/g, employee.idEmployee);
-</script>
 </body>
 </html>

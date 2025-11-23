@@ -110,7 +110,7 @@ form label {
     font-weight: bold;
 }
 
-form input[type="text"], form input[type="email"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea {
+form input[type="text"], form input[type="email"], form input[type="month"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea, form input[type="month"] {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
@@ -135,7 +135,7 @@ form input[type="submit"]:hover {
     background-color: #278088;
 }
 
-.form-action a {
+.form-action a, form button[type="button"] {
     display: inline-block;
     width: 100%;
     font-size: 20px;
@@ -148,9 +148,12 @@ form input[type="submit"]:hover {
     cursor: pointer;
     transition: background-color 0.3s ease;
     align-content: center;
+    border: none;
+    margin-top: 14px;
+    padding: 10px;
 }
 
-.form-action a:hover {
+.form-action a:hover, form button[type="button"]:hover {
     background-color: #278088;
     border-radius: 5px;
 

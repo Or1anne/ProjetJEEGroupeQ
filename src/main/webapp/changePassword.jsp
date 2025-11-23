@@ -43,7 +43,7 @@
     <p class="error">${error}</p>
 
     <form action="ChangePasswordServlet" method="post" onsubmit="return validatePasswords()">
-        <h2>Change Password</h2>
+        <h2>Changer le mot de passe</h2>
         <input type="hidden" name="id" value="${user.id}" />
 
         <label for="currentPassword">Mot de passe actuel</label>
@@ -57,7 +57,7 @@
 
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <input type="submit" value="Enregistrer">
-            <a href="Profile.jsp" class="button">Cancel</a>
+            <a href="Profile.jsp" class="button">Annuler</a>
         </div>
     </form>
 </section>
