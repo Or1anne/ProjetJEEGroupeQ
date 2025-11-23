@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Liste des départements</title>
+    <title>Liste des fiches de paie</title>
     <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
@@ -23,32 +23,33 @@
         </div>
     </nav>
 </div>
-
 <div class="hero-body">
-    <h2>Liste des départements</h2>
+    <h2>Liste des fiches de paie</h2>
     <nav>
-        <a href="FormDepartment.jsp">Ajouter un département</a>
+        <a href="FormPay.jsp">Créer une fiche de paie</a>
     </nav>
 
     <table class="table">
         <thead>
         <tr>
             <th>ID</th>
-            <th>Nom</th>
-            <th>Description</th>
-            <th>Action</th>
+            <th>Employé</th>
+            <th>Mois</th>
+            <th>Net à payer (€)</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <!-- Exemple -->
-        <!-- TODO Mettre les départements en dynamique -->
-        <tr onclick="window.location.href='ViewDepartment.jsp?id=1'"> <!-- TODO Mettre le bon id en dynamique -->
-            <td>1</td>
-            <td>Informatique</td>
-            <td>Développement et maintenance des systèmes</td>
+        <!-- TODO Mettre les fiches de paie en dynamique lié à un unique employé-->
+        <tr onclick="window.location.href='ViewPay.jsp?id=1'">
+            <td>PS001</td>
+            <td>Claire Durand</td>
+            <td>2025-09</td>
+            <td>2850.00</td>
             <td>
-                <a href="FormModifyDepartment.jsp">Modifier</a> |
-                <a href="">Supprimer</a> <!-- TODO mettre un bouton et non un lien hypertexte-->
+                <a href="">Imprimer</a> | <!-- TODO Lien vers génération PDF -->
+                <a href="">Supprimer</a>
             </td>
         </tr>
         </tbody>

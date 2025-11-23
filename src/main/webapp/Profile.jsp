@@ -28,7 +28,6 @@
         <a href="editProfile.jsp">Edit Profile</a>
         <a href="changePassword.jsp">Change Password</a>
     </nav>
-    <div class="dashboard-grid">
         <div class="card">
             <h2>Personal Information</h2>
             <ul>
@@ -37,7 +36,6 @@
                 <li>Role: </li>
             </ul>
         </div>
-    </div>
 </section>
 </body>
 </html>

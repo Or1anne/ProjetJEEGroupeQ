@@ -59,7 +59,7 @@
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <a class="button" href="employee?action=edit&id=${employee.id}">Modifier</a> <!-- TODO Add idEmployee as query parameter -->
             <a class="button" href="employee">Retour</a>
-            <a class="button" href="">Historique des paies</a>
+            <a class="button" href="ListPay.jsp">Historique des paies</a>
         </div>
     </div>
 </section>
