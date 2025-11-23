@@ -1,8 +1,9 @@
 package com.example.projetjeegroupeq.dao.interfaces;
 
+import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.model.Pay;
 
-import com.example.projetjeegroupeq.sortingType.PaySortingType;
+import com.example.projetjeegroupeq.dao.sortingType.PaySortingType;
 
 import java.util.Date;
 import java.util.List;
@@ -10,16 +11,17 @@ import java.util.List;
 //TODO voir comment chercher par dates
 
 public interface PayDAOI {
-    public void addPay(Pay pay);
-    public void updatePay(int id, Pay pay);
-    public void deletePay(int id);
+    public void add(Pay pay);
+    public void update(Pay original, Pay update);
+    public void delete(Pay pay);
 
-    public Pay searchPayById(int id);
+    public Pay searchById(int id);
     public List<Pay> searchByBonus(double minBonus, double maxBonus);
     public List<Pay> searchByDeduction(double minDeduction, double maxDeduction);
     public List<Pay> searchByNet(double minNet, double maxNet);
     public List<Pay> searchByDate(Date minDate, Date maxDate);
+    public List<Pay> searchByEmployee(Employee employee);
 
-    public List<Pay> getAllPay();
-    public List<Pay> getAllPaySorted(PaySortingType sortingType);
+    public List<Pay> getAll();
+    public List<Pay> getAllSorted(PaySortingType sortingType);
 }

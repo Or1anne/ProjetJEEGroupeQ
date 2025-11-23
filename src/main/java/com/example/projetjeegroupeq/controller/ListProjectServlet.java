@@ -2,7 +2,7 @@ package com.example.projetjeegroupeq.controller;
 
 import java.io.*;
 
-import com.example.projetjeegroupeq.sortingType.ProjectSortingType;
+import com.example.projetjeegroupeq.dao.sortingType.ProjectSortingType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -17,7 +17,7 @@ public class ListProjectServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         ProjectDAO daoProject = new ProjectDAO();
 
-        request.setAttribute("projectsList", daoProject.getAllProject());
+        request.setAttribute("projectsList", daoProject.getAll());
 
         request.getRequestDispatcher("/ListProject.jsp").forward(request, response);
     }
@@ -29,12 +29,12 @@ public class ListProjectServlet extends HttpServlet {
         ProjectSortingType sortingType = (ProjectSortingType) request.getAttribute("sortingType");
 
         if (sortingType == null) {
-            request.setAttribute("projectsList", daoProject.getAllProject());
+            request.setAttribute("projectsList", daoProject.getAll());
 
             request.getRequestDispatcher("/ListProject.jsp").forward(request, response);
             return;
         }
 
-        request.setAttribute("projectsList", daoProject.getAllProjectSorted(sortingType));
+        request.setAttribute("projectsList", daoProject.getAllSorted(sortingType));
     }
 }
