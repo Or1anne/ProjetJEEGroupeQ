@@ -55,7 +55,7 @@
 
         <input type="submit" value="Enregistrer">
     </form>
-</dic>
+</div>
 
 <script>
     function calculateNet() {

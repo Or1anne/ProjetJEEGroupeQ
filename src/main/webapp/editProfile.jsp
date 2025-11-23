@@ -23,26 +23,38 @@
     </nav>
 </div>
 <section class="hero-body">
-    <!-- Mettre les bonnes valeurs dans les champs du formulaire -->
+    <!-- TODO Mettre les bonnes valeurs dans les champs du formulaire -->
     <p class="success">${message}</p>
     <p class="error">${error}</p>
 
     <form action="UpdateProfileServlet" method="post">
-        <h2>Edit Profile</h2>
+        <h2>Modification du profil</h2>
         <input type="hidden" name="id" value="${user.id}" />
 
-        <label for="name">Name</label>
+        <label for="name">Nom</label>
         <input id="name" name="name" type="text" value="${user.name}" required />
 
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" value="${user.email}" required />
+        <label for="firstname">Prénom</label>
+        <input id="firstname" name="firstname" type="text" value="${user.firstname}" required />
 
-        <label for="role">Role</label>
-        <input id="role" name="role" type="text" value="${user.role}" readonly />
+        <label for="grade">Grade</label>
+        <input id="grade" name="grade" type="text" value="${user.grade}" readonly />
+
+        <label for="post">Poste</label>
+        <input id="post" name="post" type="text" value="${user.post}" readonly />
+
+        <label for="salary">Salaire</label>
+        <input id="salary" name="salary" type="number" value="${user.salary}" readonly />
+
+        <label for="department">Département</label>
+        <input id="department" name="department" type="text" value="${user.department}" readonly /> <!-- TODO Mettre liste déroulante dynamique -->
+
+        <label for="project">Projet(s)</label>
+        <input id="project" name="project" type="text" value="${user.project}" readonly />  <!-- TODO Mettre liste déroulante dynamique -->
 
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <input type="submit" value="Enregistrer">
-            <a href="Profile.jsp" class="button">Cancel</a>
+            <a href="Profile.jsp" class="button">Annuler</a>
         </div>
     </form>
 </section>

@@ -25,15 +25,24 @@
 
 <section class="hero-body">
     <nav>
-        <a href="editProfile.jsp">Edit Profile</a>
-        <a href="changePassword.jsp">Change Password</a>
+        <a href="editProfile.jsp">Modifier le profil</a>
+        <a href="changePassword.jsp">Changer le mot de passe</a>
     </nav>
         <div class="card">
-            <h2>Personal Information</h2>
+            <h2>Informations Personnelles</h2>
             <ul>
-                <li>Name: </li>
-                <li>Email: </li>
-                <li>Role: </li>
+                <li>Nom: </li>
+                <li>Prénom: </li>
+                <li>Grade: </li>
+                <li>Poste: </li>
+                <li>Salaire:</li>
+                <li>Département: </li>
+                <li>Projet(s):</li>
+            </ul>
+            <h2>Informations du compte</h2>
+            <ul>
+                <li>Nom d'utilisateur: </li>
+                <li>Rôle: </li>
             </ul>
         </div>
 </section>

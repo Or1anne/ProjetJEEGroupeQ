@@ -110,7 +110,7 @@ form label {
     font-weight: bold;
 }
 
-form input[type="text"], form input[type="email"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea, form input[type="month"] {
+form input[type="text"], form input[type="email"], form input[type="month"], input[type="submit"], form select, form input[type="number"], form input[type="password"], form textarea, form input[type="month"] {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
