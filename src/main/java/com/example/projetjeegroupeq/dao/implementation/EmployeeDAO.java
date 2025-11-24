@@ -3,27 +3,45 @@ package com.example.projetjeegroupeq.dao.implementation;
 import com.example.projetjeegroupeq.dao.interfaces.EmployeeDAOI;
 import com.example.projetjeegroupeq.model.Department;
 import com.example.projetjeegroupeq.model.Employee;
-import com.example.projetjeegroupeq.sortingType.EmployeeSortingType;
+import com.example.projetjeegroupeq.model.Project;
+import com.example.projetjeegroupeq.dao.sortingType.EmployeeSortingType;
 import jakarta.persistence.EntityManager;
 
 import com.example.projetjeegroupeq.util.HibernateUtil;
 
 import java.util.List;
 
+/**
+ * DAO pour l'entité Employee — interface d'accès aux données (CRUD et recherches).
+ *
+ * Remarques d'utilisation :
+ * - Les méthodes peuvent retourner null (pour les recherches unitaires) ou une liste (potentiellement vide).
+ * - En cas d'erreur technique, une RuntimeException est lancée.
+ */
 public class EmployeeDAO implements EmployeeDAOI {
 
+    /**
+     * Constructeur par défaut.
+     */
     public EmployeeDAO() {}
 
+    /**
+     * Ajoute un employé en base.
+     *
+     * @param employee entité Employee à persister
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public void addEmployee(Employee employee) {
+    public void add(Employee employee) {
         EntityManager em = null;
+
         try {
-            em = HibernateUtil.getEntityManager();
             em = HibernateUtil.getEntityManager();
 
             em.getTransaction().begin();
 
             em.persist(employee);
+
             em.getTransaction().commit();
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de l'ajout d'un employée : " +  e.getMessage());
@@ -34,26 +52,45 @@ public class EmployeeDAO implements EmployeeDAOI {
         }
     }
 
+    /**
+     * Met à jour l'employé identifié par original.getId() avec les valeurs de update.
+     *
+     * Comportement observable :
+     * - Si l'employé n'existe pas, la méthode fait un rollback et retourne sans exception.
+     *
+     * @param original instance contenant l'id de l'employé à mettre à jour
+     * @param update instance contenant les nouvelles valeurs
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public void updateEmployee(int id, Employee employee) {
+    public void update(Employee original, Employee update) {
         EntityManager em = null;
+
         try {
             em = HibernateUtil.getEntityManager();
 
             em.getTransaction().begin();
 
-            Employee employeeFound = em.find(Employee.class, id);
+            Employee employeeFound = em.find(Employee.class, original.getId());
 
             if (employeeFound == null) {
-                System.err.println("Aucun employé trouvé avec l'id : " + id);
+                System.err.println("Aucun employé trouvé dans la bdd avec l'employé possédant les paramètres suivants :\n" +
+                "\tid : " + original.getId() +
+                "\n\tprénom : " + original.getFirstName() +
+                "\n\tnom : " + original.getLastName());
+
                 em.getTransaction().rollback();
                 return;
             }
 
-            employeeFound.setFirstName(employee.getFirstName());
-            employeeFound.setLastName(employee.getLastName());
-            employeeFound.setGrade(employee.getGrade());
-            employeeFound.setPost(employee.getPost());
+            employeeFound.setFirstName(update.getFirstName());
+            employeeFound.setLastName(update.getLastName());
+            employeeFound.setGrade(update.getGrade());
+            employeeFound.setPost(update.getPost());
+            employeeFound.setSalary(update.getSalary());
+            employeeFound.setPassword(update.getPassword());
+            employeeFound.setUsername(update.getUsername());
+            employeeFound.setEmployeeRoles(update.getEmployeeRoles());
 
             em.merge(employeeFound);
 
@@ -67,18 +104,29 @@ public class EmployeeDAO implements EmployeeDAOI {
         }
     }
 
+    /**
+     * Supprime l'employé identifié par employee.getId().
+     *
+     * @param employee instance Employee dont l'id est utilisé pour la suppression
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public void deleteEmployee(int id) {
+    public void delete(Employee employee) {
         EntityManager em = null;
+
         try {
             em = HibernateUtil.getEntityManager();
 
             em.getTransaction().begin();
 
-            Employee employeeFound = em.find(Employee.class, id);
+            Employee employeeFound = em.find(Employee.class, employee.getId());
 
             if (employeeFound == null) {
-                System.err.println("Aucun employé trouvé avec l'id : " + id);
+                System.err.println("Aucun employé trouvé dans la bdd avec l'employé possédant les paramètres suivants :" +
+                "\n\tid : " + employee.getId() +
+                "\n\tprénom : " + employee.getFirstName() +
+                "\n\tnom : " + employee.getLastName());
+
                 em.getTransaction().rollback();
                 return;
             }
@@ -105,9 +153,17 @@ public class EmployeeDAO implements EmployeeDAOI {
         }
     }
 
+    /**
+     * Recherche un employé par son identifiant.
+     *
+     * @param id identifiant recherché
+     * @return Employee correspondant, ou null si non trouvé
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public Employee searchEmployeeById(int id) {
+    public Employee searchById(int id) {
         EntityManager em = null;
+
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -130,14 +186,28 @@ public class EmployeeDAO implements EmployeeDAOI {
         }
     }
 
+    /**
+     * Retourne tous les employés triés par défaut (par prénom).
+     *
+     * @return liste d'Employee triée ; peut être vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public List<Employee> getAllEmployees() {
-        return this.getAllEmployeesSorted(EmployeeSortingType.BY_FIRSTNAME);
+    public List<Employee> getAll() {
+        return this.getAllSorted(EmployeeSortingType.BY_FIRSTNAME);
     }
 
+    /**
+     * Retourne tous les employés triés selon le critère fourni.
+     *
+     * @param sortingType critère de tri (EmployeeSortingType)
+     * @return liste d'Employee triée ; peut être vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public List<Employee> getAllEmployeesSorted(EmployeeSortingType sortingType) {
+    public List<Employee> getAllSorted(EmployeeSortingType sortingType) {
         EntityManager em = null;
+
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -182,9 +252,17 @@ public class EmployeeDAO implements EmployeeDAOI {
         }
     }
 
+    /**
+     * Recherche les employés correspondant exactement à un grade donné.
+     *
+     * @param gradeName nom exact du grade
+     * @return liste d'Employee correspondant ; peut être vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public List<Employee> searchEmployeesByGrade(String gradeName) {
+    public List<Employee> searchByGrade(String gradeName) {
         EntityManager em = null;
+
          try {
              em = HibernateUtil.getEntityManager();
 
@@ -192,7 +270,7 @@ public class EmployeeDAO implements EmployeeDAOI {
 
              String query = "SELECT e FROM Employee e WHERE e.grade = '" + gradeName + "'";
 
-             em.createQuery(query, Employee.class).getResultList();
+             employees = em.createQuery(query, Employee.class).getResultList();
 
              return employees;
         } catch (Exception e) {
@@ -204,9 +282,17 @@ public class EmployeeDAO implements EmployeeDAOI {
         }
     }
 
+    /**
+     * Recherche les employés pour un poste donné (comparaison exacte).
+     *
+     * @param postName nom du poste
+     * @return liste d'Employee correspondant ; peut être vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public List<Employee> searchEmployeesByPost(String postName) {
+    public List<Employee> searchByPost(String postName) {
         EntityManager em = null;
+
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -214,7 +300,7 @@ public class EmployeeDAO implements EmployeeDAOI {
 
             String query = "SELECT e FROM Employee e WHERE e.post = '" + postName + "'";
 
-            em.createQuery(query, Employee.class).getResultList();
+            employees = em.createQuery(query, Employee.class).getResultList();
 
             return employees;
         } catch (Exception e) {
@@ -226,21 +312,59 @@ public class EmployeeDAO implements EmployeeDAOI {
         }
     }
 
+    /**
+     * Recherche les employés appartenant au département fourni.
+     *
+     * @param departement instance Department utilisée comme critère
+     * @return liste d'Employee du département ; peut être vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public List<Employee> searchEmployeesByDepartmentId(int departmentId) {
+    public List<Employee> searchByDepartmentId(Department departement) {
         EntityManager em = null;
+
         try {
             em = HibernateUtil.getEntityManager();
 
             List<Employee> employees = List.of();
 
-            String query = "SELECT e FROM Employee e WHERE e.department.id = '" + departmentId + "'";
+            String query = "SELECT e FROM Employee e WHERE e.department = :department";
 
-            em.createQuery(query, Employee.class).getResultList();
+            employees = em.createQuery(query, Employee.class).setParameter("department", departement).getResultList();
 
             return employees;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un employé par departement : " + e.getMessage());
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
+    /**
+     * Recherche les employés associés à la liste de projets fournie.
+     *
+     * @param projects liste de Project utilisée comme critère
+     * @return liste d'Employee correspondant ; peut être vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
+    @Override
+    public List<Employee> searchByProjects(List<Project> projects) {
+        EntityManager em = null;
+
+        try {
+            em = HibernateUtil.getEntityManager();
+
+            String query = "SELECT e FROM Employee e JOIN e.projects pe WHERE pe.project IN :projects HAVING COUNT(DISTINCT pe.project) = :size";
+
+            List<Employee> employees = List.of();
+
+            projects = em.createQuery(query, Project.class).setParameter("projects", projects).setParameter("size", (long) projects.size()).getResultList();
+
+            return employees;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche d'un projet par chef de projet : " + e.getMessage());
         } finally {
             if (em != null) {
                 em.close();

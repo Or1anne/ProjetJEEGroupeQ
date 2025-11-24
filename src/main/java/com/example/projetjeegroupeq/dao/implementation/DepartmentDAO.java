@@ -3,19 +3,35 @@ package com.example.projetjeegroupeq.dao.implementation;
 import com.example.projetjeegroupeq.dao.interfaces.DepartmentDAOI;
 import com.example.projetjeegroupeq.model.Department;
 import com.example.projetjeegroupeq.model.Employee;
-import com.example.projetjeegroupeq.sortingType.DepartmentSortingType;
+import com.example.projetjeegroupeq.dao.sortingType.DepartmentSortingType;
 import jakarta.persistence.EntityManager;
 
 import com.example.projetjeegroupeq.util.HibernateUtil;
 
 import java.util.List;
 
+/**
+ * DAO pour l'entité Department - interface d'accès aux données.
+ *
+ * Usage :
+ * - Instancier et appeler les méthodes publiques pour effectuer des opérations CRUD et des recherches.
+ * - Les méthodes de recherche retournent soit une entité (ou null) soit une List (potentiellement vide).
+ *
+ * Remarques :
+ * - Les erreurs techniques sont repropagées sous forme de RuntimeException.
+ */
 public class DepartmentDAO implements DepartmentDAOI {
 
     public DepartmentDAO() {};
 
+    /**
+     * Persiste un nouveau département en base.
+     *
+     * @param department département à ajouter (doit être initialisé)
+     * @throws RuntimeException en cas d'erreur d'accès aux données
+     */
     @Override
-    public void addDepartment(Department department) {
+    public void add(Department department) {
         EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
@@ -32,24 +48,34 @@ public class DepartmentDAO implements DepartmentDAOI {
         }
     }
 
+    /**
+     * Met à jour le département désigné par original.getId() avec les valeurs de update.
+     *
+     * Comportement observable :
+     * - Si l'entité n'existe pas, la méthode effectue un rollback et retourne sans exception.
+     *
+     * @param original instance contenant au minimum l'id du département à modifier
+     * @param update instance contenant les nouvelles valeurs
+     * @throws RuntimeException en cas d'erreur d'accès aux données
+     */
     @Override
-    public void updateDepartment(int id, Department department) {
+    public void update(Department original, Department update) {
         EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
             em.getTransaction().begin();
 
-            Department departmentFound = em.find(Department.class, id);
+            Department departmentFound = em.find(Department.class, original.getId());
 
             if (departmentFound == null) {
-                System.err.println("Aucun département trouvé avec l'id : " + id);
+                System.err.println("Aucun département trouvé avec l'id : " + original.getId());
                 em.getTransaction().rollback();
                 return;
             }
 
-            departmentFound.setDepartmentName(department.getDepartmentName());
-            departmentFound.setChefDepartment(department.getChefDepartment());
+            departmentFound.setDepartmentName(update.getDepartmentName());
+            departmentFound.setChefDepartment(update.getChefDepartment());
 
             em.merge(departmentFound);
 
@@ -63,18 +89,27 @@ public class DepartmentDAO implements DepartmentDAOI {
         }
     }
 
+    /**
+     * Supprime le département identifié par department.getId().
+     *
+     * Comportement observable :
+     * - Si l'entité n'existe pas, la méthode effectue un rollback et retourne sans exception.
+     *
+     * @param department instance Department dont l'id est utilisé pour la suppression
+     * @throws RuntimeException en cas d'erreur d'accès aux données
+     */
     @Override
-    public void deleteDepartment(int id) {
+    public void delete(Department department) {
         EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
 
             em.getTransaction().begin();
 
-            Department departmentFound = em.find(Department.class, id);
+            Department departmentFound = em.find(Department.class, department.getId());
 
             if (departmentFound == null) {
-                System.err.println("Aucun département trouvé avec l'id : " + id);
+                System.err.println("Aucun département trouvé avec l'id : " + department.getId());
                 em.getTransaction().rollback();
                 return;
             }
@@ -91,8 +126,15 @@ public class DepartmentDAO implements DepartmentDAOI {
         }
     }
 
+    /**
+     * Recherche un département par son identifiant.
+     *
+     * @param id identifiant recherché
+     * @return Department correspondant, ou null si aucun résultat
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public Department searchDepartmentById(int id) {
+    public Department searchById(int id) {
         EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
@@ -115,6 +157,13 @@ public class DepartmentDAO implements DepartmentDAOI {
         }
     }
 
+    /**
+     * Recherche un département par son nom exact.
+     *
+     * @param name nom du département (comparaison exacte)
+     * @return Department correspondant, ou null si aucun résultat
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
     public Department searchByName(String name) {
         EntityManager em = null;
@@ -141,6 +190,13 @@ public class DepartmentDAO implements DepartmentDAOI {
         }
     }
 
+    /**
+     * Recherche les départements dont le chef est l'employé fourni.
+     *
+     * @param chef instance Employee utilisée comme critère (au minimum id)
+     * @return Liste de Department correspondant ; liste potentiellement vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
     public List<Department> searchByChef(Employee chef) {
         EntityManager em = null;
@@ -163,9 +219,47 @@ public class DepartmentDAO implements DepartmentDAOI {
         }
     }
 
+    /**
+     * Recherche les départements contenant au moins un des membres fournis.
+     *
+     * @param employees liste d'Employee utilisée comme critère
+     * @return Liste de Department correspondant ; liste potentiellement vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public List<Department> getAllDepartmentSorted(DepartmentSortingType sortingType) {
+    public List<Department> searchByMembers(List<Employee> employees) {
         EntityManager em = null;
+
+        try {
+            em = HibernateUtil.getEntityManager();
+
+            String query = "SELECT DISTINCT e.department FROM Employee e WHERE e IN :employees";
+
+            List<Department> departments = List.of();
+
+            departments = em.createQuery(query, Department.class).setParameter("employees", employees).getResultList();
+
+            return departments;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche de départements par membres : " + e.getMessage());
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
+    /**
+     * Retourne tous les départements triés selon le critère fourni.
+     *
+     * @param sortingType critère de tri (voir DepartmentSortingType)
+     * @return liste triée de Department ; peut être vide
+     * @throws RuntimeException en cas d'erreur technique
+     */
+    @Override
+    public List<Department> getAllSorted(DepartmentSortingType sortingType) {
+        EntityManager em = null;
+
         try {
             em = HibernateUtil.getEntityManager();
 
@@ -175,7 +269,7 @@ public class DepartmentDAO implements DepartmentDAOI {
 
             switch (sortingType) {
                 case BY_CHEF:
-                    query = "SELECT d FROM Department d ORDER BY d.chefDepartment.id";
+                    query = "SELECT d FROM Department d ORDER BY d.chefDepartment.firstName";
                     break;
                 default:
                     query = "SELECT d FROM Department d ORDER BY d.departmentName";
@@ -194,8 +288,14 @@ public class DepartmentDAO implements DepartmentDAOI {
         }
     }
 
+    /**
+     * Retourne tous les départements triés par nom (ordre par défaut).
+     *
+     * @return liste de Department triée
+     * @throws RuntimeException en cas d'erreur technique
+     */
     @Override
-    public List<Department> getAllDepartment() {
-        return this.getAllDepartmentSorted(DepartmentSortingType.BY_NAME);
+    public List<Department> getAll() {
+        return this.getAllSorted(DepartmentSortingType.BY_NAME);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.projetjeegroupeq.sortingType;
+package com.example.projetjeegroupeq.dao.sortingType;
 
 public enum PaySortingType {
     BY_EMPLOYEE,
