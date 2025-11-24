@@ -15,7 +15,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Affiche la page de login
-        req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+        req.getRequestDispatcher("/FormConnection.jsp").forward(req, resp);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class LoginServlet extends HttpServlet {
         String u = req.getParameter("username");
         String p = req.getParameter("password");
 
-        Employee emp = employeeDAO.findByUsername(u);
+        Employee emp = employeeDAO.searchByUsername(u);
 
         // Vérification (Remplacer p.equals par BCrypt.checkpw(p, emp.getPassword()) en prod)
         if (emp != null && emp.getPassword().equals(p)) {
@@ -41,6 +41,7 @@ public class LoginServlet extends HttpServlet {
             //} else {
             //    resp.sendRedirect(req.getContextPath() + "/home");
             //}
+            resp.sendRedirect(req.getContextPath() + "/");
 
         } else {
             // Echec
