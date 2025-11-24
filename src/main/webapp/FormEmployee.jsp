@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.projetjeegroupeq.model.Department" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.model.Grade" %>
 <html>
 <head>
     <title>Formulaire de création d'un employé</title>
@@ -37,12 +38,12 @@
             List<Department> departments = (List<Department>) request.getAttribute("departments");
             boolean isEditMode = "edit".equals(request.getAttribute("formMode"));
             String errorMessage = (String) request.getAttribute("errorMessage");
-            String gradeValue = employee.getGrade() != null ? employee.getGrade().toLowerCase() : "";
+            Grade[] grades = (Grade[]) request.getAttribute("grades");
             String contextPath = request.getContextPath();
         %>
         <form action="<%= contextPath %>/employee" method="post" class="employee-form">
             <h2><%= isEditMode ? "Modifier " + employee.getLastName() + " " + employee.getFirstName() : "Ajouter un employé" %></h2>
-            <input type="hidden" name="action" value="add" />
+            <input type="hidden" name="action" value="<%= isEditMode ? "edit" : "add" %>" />
             <% if (isEditMode) { %>
             <input type="hidden" name="id" value="<%= employee.getId() %>" />
             <% } %>
@@ -62,8 +63,23 @@
                 <label for="grade">Grade</label>
                 <select name="grade" id="grade" required>
                     <option value="">-- Choisir un grade --</option>
-                    <option value="cadre">Cadre</option>
-                    <option value="stagiaire">Stagiaire</option>
+                    <%
+                        // Récupération du grade actuel de l'employé (peut être null si nouvel ajout)
+                        String currentGrade = employee.getGrade();
+
+                        if (grades != null) {
+                            for (Grade g : grades) {
+                                // On vérifie si l'employé a un grade ET si ce grade correspond à l'option en cours
+                                boolean isSelected = (currentGrade != null && currentGrade.equals(g.getDbValue()));
+                    %>
+                    <%-- Ajout conditionnel de l'attribut 'selected' --%>
+                    <option value="<%= g.getDbValue() %>" <%= isSelected ? "selected" : "" %>>
+                        <%= g.getLabel() %>
+                    </option>
+                    <%
+                            }
+                        }
+                    %>
                 </select>
             </p>
             <p>
