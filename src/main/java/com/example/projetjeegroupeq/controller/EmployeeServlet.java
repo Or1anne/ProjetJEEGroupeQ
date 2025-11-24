@@ -4,6 +4,7 @@ import com.example.projetjeegroupeq.dao.implementation.DepartmentDAO;
 import com.example.projetjeegroupeq.dao.implementation.EmployeeDAO;
 import com.example.projetjeegroupeq.model.Department;
 import com.example.projetjeegroupeq.model.Employee;
+import com.example.projetjeegroupeq.model.Grade;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -50,11 +51,14 @@ public class EmployeeServlet extends HttpServlet {
             return;
         }
 
+        // "payload" contient les données du formulaire (Nom, Prénom, Poste, Salaire, Dept)
         Employee payload = new Employee();
         boolean editMode = "edit".equalsIgnoreCase(action);
 
         try {
+            // Remplissage des données de base depuis le formulaire
             populateEmployeeFromRequest(req, payload);
+
             if ("add".equalsIgnoreCase(action)) {
                 String firstName = payload.getFirstName().trim().toLowerCase();
                 String lastName = payload.getLastName().trim().toLowerCase();
@@ -65,14 +69,32 @@ public class EmployeeServlet extends HttpServlet {
                 payload.setUsername(username);
 
                 // Mot de passe : nom du département sans espaces
-                String deptName = payload.getDepartment().getDepartmentName();
-                String password = deptName.replace(" ", "");
+                if (payload.getDepartment() != null) {
+                    String deptName = payload.getDepartment().getDepartmentName();
+                    String password = deptName.replace(" ", "");
+                    payload.setPassword(password);
+                }
 
-                payload.setPassword(password);
-                employeeDAO.addEmployee(payload);
+                employeeDAO.add(payload);
+
             } else if (editMode) {
                 int id = parseId(req.getParameter("id"), "Identifiant employé manquant");
-                employeeDAO.updateEmployee(id, payload);
+                //employeeDAO.update(payload, payload);
+
+                // 1. Récupérer l'employé actuel en base pour ne pas perdre ses infos sensibles (mdp, username)
+                Employee existingEmployee = employeeDAO.searchById(id);
+                if (existingEmployee == null) {
+                    throw new IllegalArgumentException("L'employé à modifier n'existe plus.");
+                }
+
+                // 2. Compléter le payload avec les infos techniques existantes
+                payload.setUsername(existingEmployee.getUsername());
+                payload.setPassword(existingEmployee.getPassword());
+                //payload.setEmployeeRoles(existingEmployee.getEmployeeRoles());
+
+                // 3. Appeler le DAO : update(original, nouvelles_valeurs)
+                employeeDAO.update(existingEmployee, payload);
+
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
                 return;
@@ -85,7 +107,7 @@ public class EmployeeServlet extends HttpServlet {
     }
 
     private void showEmployeeList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Employee> employees = employeeDAO.getAllEmployees();
+        List<Employee> employees = employeeDAO.getAll();
         //System.out.println("[EmployeeServlet] Nombre d'employés remontés : " + employees.size());
         employees.forEach(e -> System.out.println(" - " + e.getId() + " " + e.getLastName()));
         req.setAttribute("employees", employees);
@@ -94,7 +116,7 @@ public class EmployeeServlet extends HttpServlet {
 
     private void handleEdit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = parseId(req.getParameter("id"), "Identifiant employé manquant pour l'édition");
-        Employee employee = employeeDAO.searchEmployeeById(id);
+        Employee employee = employeeDAO.searchById(id);
         if (employee == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Employé introuvable");
             return;
@@ -103,14 +125,26 @@ public class EmployeeServlet extends HttpServlet {
     }
 
     private void handleDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        int id = parseId(req.getParameter("id"), "Identifiant employé manquant pour la suppression");
-        employeeDAO.deleteEmployee(id);
-        resp.sendRedirect(req.getContextPath() + "/employee");
+        try {
+            int id = parseId(req.getParameter("id"), "Identifiant employé manquant pour la suppression");
+
+            // On récupère l'employé réel
+            Employee employeeToDelete = employeeDAO.searchById(id);
+
+            // On supprime seulement s'il existe
+            if (employeeToDelete != null) {
+                employeeDAO.delete(employeeToDelete);
+            }
+
+            resp.sendRedirect(req.getContextPath() + "/employee");
+        } catch (IllegalArgumentException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+        }
     }
 
     private void handleView(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = parseId(req.getParameter("id"), "Identifiant employé manquant pour la visualisation");
-        Employee employee = employeeDAO.searchEmployeeById(id);
+        Employee employee = employeeDAO.searchById(id);
         if (employee == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Employé introuvable");
             return;
@@ -121,7 +155,8 @@ public class EmployeeServlet extends HttpServlet {
 
     private void showEmployeeForm(HttpServletRequest req, HttpServletResponse resp, Employee employee, boolean editMode) throws ServletException, IOException {
         req.setAttribute("employee", employee != null ? employee : new Employee());
-        req.setAttribute("departments", departmentDAO.getAllDepartment());
+        req.setAttribute("grades", Grade.values());
+        req.setAttribute("departments", departmentDAO.getAll());
         req.setAttribute("formMode", editMode ? "edit" : "add");
         req.getRequestDispatcher("/FormEmployee.jsp").forward(req, resp);
     }
@@ -165,7 +200,7 @@ public class EmployeeServlet extends HttpServlet {
 
     private Department resolveDepartment(String departmentParam) {
         int departmentId = parseId(departmentParam, "Veuillez sélectionner un département.");
-        Department department = departmentDAO.searchDepartmentById(departmentId);
+        Department department = departmentDAO.searchById(departmentId);
         if (department == null) {
             throw new IllegalArgumentException("Le département sélectionné est introuvable.");
         }

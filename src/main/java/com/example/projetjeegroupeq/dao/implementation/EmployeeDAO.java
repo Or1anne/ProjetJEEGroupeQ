@@ -90,7 +90,8 @@ public class EmployeeDAO implements EmployeeDAOI {
             employeeFound.setSalary(update.getSalary());
             employeeFound.setPassword(update.getPassword());
             employeeFound.setUsername(update.getUsername());
-            employeeFound.setEmployeeRoles(update.getEmployeeRoles());
+            employeeFound.setDepartment(update.getDepartment());
+            // employeeFound.setEmployeeRoles(update.getEmployeeRoles());
 
             em.merge(employeeFound);
 
@@ -135,7 +136,7 @@ public class EmployeeDAO implements EmployeeDAOI {
 
             List<Department> deps = em.createQuery(
                             "SELECT d FROM Department d WHERE d.chefDepartment.id = :id", Department.class)
-                    .setParameter("id", id)
+                    .setParameter("id", employee.getId()) //TODO A Vérifier
                     .getResultList();
 
             for (Department d : deps) {
@@ -179,6 +180,36 @@ public class EmployeeDAO implements EmployeeDAOI {
             return employeeFound;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche d'un employé : " + e.getMessage());
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
+    /**
+     * Recherche un employé par son nom d'utilisateur (pour le login).
+     * @param username le nom d'utilisateur
+     * @return l'employé correspondant ou null si non trouvé.
+     */
+// N'oublie pas d'ajouter la signature dans l'interface EmployeeDAOI si tu l'utilises !
+    public Employee searchByUsername(String username) {
+        EntityManager em = null;
+        try {
+            em = HibernateUtil.getEntityManager();
+
+            // Requête JPQL simple
+            String jpql = "SELECT e FROM Employee e WHERE e.username = :username";
+
+            List<Employee> results = em.createQuery(jpql, Employee.class)
+                    .setParameter("username", username)
+                    .getResultList();
+
+            // Si la liste est vide, l'utilisateur n'existe pas, on retourne null
+            return results.isEmpty() ? null : results.get(0);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la recherche par username : " + e.getMessage());
         } finally {
             if (em != null) {
                 em.close();
@@ -356,15 +387,21 @@ public class EmployeeDAO implements EmployeeDAOI {
         try {
             em = HibernateUtil.getEntityManager();
 
-            String query = "SELECT e FROM Employee e JOIN e.projects pe WHERE pe.project IN :projects HAVING COUNT(DISTINCT pe.project) = :size";
+            String query = "SELECT e FROM Employee e JOIN e.projects pe WHERE pe IN :projects GROUP BY e.id HAVING COUNT(DISTINCT pe.project) = :size";
 
             List<Employee> employees = List.of();
 
-            projects = em.createQuery(query, Project.class).setParameter("projects", projects).setParameter("size", (long) projects.size()).getResultList();
+            //projects = em.createQuery(query, Project.class).setParameter("projects", projects).setParameter("size", (long) projects.size()).getResultList();
+
+            employees = em.createQuery(query, Employee.class)
+                    .setParameter("projects", projects)
+                    .setParameter("size", (long) projects.size())
+                    .getResultList();
 
             return employees;
+
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la recherche d'un projet par chef de projet : " + e.getMessage());
+            throw new RuntimeException("Erreur lors de la recherche d'un employé par projet : " + e.getMessage());
         } finally {
             if (em != null) {
                 em.close();
