@@ -131,17 +131,6 @@ public class EmployeeDAO implements EmployeeDAOI {
                 return;
             }
 
-            employeeFound.setDepartment(null);
-
-            List<Department> deps = em.createQuery(
-                            "SELECT d FROM Department d WHERE d.chefDepartment.id = :id", Department.class)
-                    .setParameter("id", id)
-                    .getResultList();
-
-            for (Department d : deps) {
-                d.setChefDepartment(null); // casser la FK pour éviter TransientObjectException
-            }
-
             em.remove(employeeFound);
             em.getTransaction().commit();
         } catch (Exception e) {
