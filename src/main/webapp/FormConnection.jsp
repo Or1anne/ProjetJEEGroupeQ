@@ -47,7 +47,17 @@
         <div class="form-container">
             <form action="" method="post">
                 <h2>Connexion</h2>
-                <input type="hidden" name="action" value="add" />
+                <%
+                    String error = (String) request.getAttribute("error");
+                    if (error != null) {
+                %>
+                <div style="color: red; margin-bottom: 15px; text-align: center; font-weight: bold;">
+                    <%= error %>
+                </div>
+                <%
+                    }
+                %>
+                <input type="hidden" name="action" />
                 <p>
                     <label for="username">Nom d'utilisateur</label>
                     <input type="text" id="username" name="username" required>

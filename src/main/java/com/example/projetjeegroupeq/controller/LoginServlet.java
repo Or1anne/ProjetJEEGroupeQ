@@ -46,7 +46,7 @@ public class LoginServlet extends HttpServlet {
         } else {
             // Echec
             req.setAttribute("error", "Identifiants invalides");
-            req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+            req.getRequestDispatcher("/FormConnection.jsp").forward(req, resp);
         }
     }
 }
