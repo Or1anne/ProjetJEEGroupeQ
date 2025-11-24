@@ -131,12 +131,12 @@ INSERT INTO project (name, status)
 
 -- Employé
 INSERT INTO employee (lastName, firstName, grade, post, salary, username, password)
-    VALUES ('NGO', 'Jonathan', 'INTERNS/APPRENTICES', 'Coffee Maker', default, 'Jngo', 'departement'),
-           ('BODIER', 'Fantine', 'SENIOR_MANAGEMENT', 'Financial Director', '15000', 'Fbodier', 'departement');
+    VALUES ('NGO', 'Jonathan', 'INTERNS/APPRENTICES', 'Coffee Maker', default, 'jngo', 'departement'),
+           ('BODIER', 'Fantine', 'SENIOR_MANAGEMENT', 'Financial Director', '15000', 'fbodier', 'departement');
 
 -- Employé administrateur
 INSERT INTO employee (lastName, firstName, grade, post, salary, username, password)
-VALUES ('lastName', 'firstName', 'N/A', 'Admin', 100.0, 'admin', '');
+VALUES ('lastName', 'firstName', 'EMPLOYEES', 'Admin', 100.0, 'admin', '');
 -- TODO : Mettre le hash du mot de passe ici
 
 -- Attribution du rôle ADMIN à l'utilisateur admin
