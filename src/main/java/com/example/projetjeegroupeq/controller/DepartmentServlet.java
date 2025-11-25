@@ -1,4 +1,4 @@
-package com.example.projetjeegroupeq.controller;
+/*package com.example.projetjeegroupeq.controller;
 
 
 import com.example.projetjeegroupeq.dao.implementation.DepartmentDAO;
@@ -40,6 +40,54 @@ public class DepartmentServlet extends HttpServlet {
     }
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -98,3 +146,4 @@ public class DepartmentServlet extends HttpServlet {
 
     }
 
+*/
