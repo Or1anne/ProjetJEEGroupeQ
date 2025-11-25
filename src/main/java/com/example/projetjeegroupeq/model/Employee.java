@@ -26,10 +26,10 @@ public class Employee {
     @JoinColumn(name = "idDepartment")
     private Department department;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     private List<EmployeeProject> projects;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     private List<EmployeeRole> roles;
 
     // Constructeur par défaut, obligatoire pour Hibernate

@@ -1,3 +1,8 @@
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.model.Grade" %>
+<%@ page import="com.example.projetjeegroupeq.model.EmployeeRole" %>
+<%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
@@ -13,7 +18,7 @@
                 <a href="index.jsp" class="navbar-item">Accueil</a>
                 <%
                     // On récupère l’utilisateur connecté
-                    Object user = session.getAttribute("loggedUser");
+                    Employee user = (Employee) session.getAttribute("loggedUser");
 
                     if (user != null) {
                         // Si connecté, on affiche Recherche et Gestion
@@ -54,18 +59,48 @@
         <div class="card">
             <h2>Informations Personnelles</h2>
             <ul>
-                <li>Nom: </li>
-                <li>Prénom: </li>
-                <li>Grade: </li>
-                <li>Poste: </li>
-                <li>Salaire:</li>
-                <li>Département: </li>
-                <li>Projet(s):</li>
+                <li><strong>Nom :</strong> <%= user.getLastName() != null ? user.getLastName() : "" %> </li>
+                <li><strong>Prénom :</strong> <%= user.getFirstName()%> </li>
+                <li><strong>Grade :</strong> <%= Grade.getLabelFromDbValue(user.getGrade())%></li>
+                <li><strong>Poste :</strong> <%= user.getPost()%> </li>
+                <li><strong>Salaire :</strong> <%= user.getSalary()%> €</li>
+                <li><strong>Département :</strong> <%= user.getDepartment() != null ? user.getDepartment().getDepartmentName() : "Aucun" %> </li>
+                <li><strong>Projet(s) :</strong>
+                    <ul>
+                        <%
+                            if (user.getProjects() == null || user.getProjects().isEmpty()) {
+                        %>
+                        <li>Aucun</li>
+                        <%
+                        } else {
+                            for (EmployeeProject ep : user.getProjects()) {
+                        %>
+                        <li><%= ep.getProject().getName_project() %></li>
+                        <%
+                                }
+                            }
+                        %>
+                    </ul>
+                </li>
             </ul>
             <h2>Informations du compte</h2>
             <ul>
-                <li>Nom d'utilisateur: </li>
-                <li>Rôle: </li>
+                <li><strong>Nom d'utilisateur :</strong> <%= user.getUsername() != null ? user.getUsername() : "" %></li>
+                <li><strong>Rôle :</strong>
+                        <%
+                        if (user.getEmployeeRoles() == null || user.getEmployeeRoles().isEmpty()) {
+                        %>
+                        <li>Aucun</li>
+                        <%
+                        } else {
+                            for (EmployeeRole er : user.getEmployeeRoles()) {
+                        %>
+                        <li><%= er.getRole().getRoleName() %></li>
+                        <%
+                                }
+                            }
+                        %>
+                </li>
             </ul>
         </div>
 </section>
