@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.model.EmployeeRole" %>
+<%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,9 +17,9 @@
                 <a href="index.jsp" class="navbar-item">Accueil</a>
                 <%
                     // On récupère l’utilisateur connecté
-                    Object user = session.getAttribute("loggedUser");
+                    Employee employee = (Employee) request.getAttribute("employee");
 
-                    if (user != null) {
+                    if (employee != null) {
                         // Si connecté, on affiche Recherche et Gestion
                 %>
                 <a href="Search.jsp" class="navbar-item">Recherche</a>
@@ -28,7 +31,7 @@
 
             <div class="navbar-end">
                 <%
-                    if (user != null) {
+                    if (employee != null) {
                         // Si connecté
                 %>
                 <a href="Profile.jsp" class="navbar-item">Profil</a>
@@ -65,16 +68,35 @@
             ${employee.department != null ? employee.department.departmentName : "Non assigné"}
         </p>
 
-        <h3>Rôle</h3>
-        <!-- TODO Mettre en dynamique -->
-        <p>
-            Role
-        </p>
-<!-- TODO Mettre en dynamique -->
-        <h3>Projets</h3>
-        <ul id="projects-list">
-            <li>Project A <small>(Active)</small></li>
-            <li>Project B <small>(Completed)</small></li>
+        <h3>Rôle :</h3>
+        <%
+            if (employee.getEmployeeRoles() == null || employee.getEmployeeRoles().isEmpty()) {
+        %>
+        <ul>Aucun</ul>
+        <%
+        } else {
+            for (EmployeeRole er : employee.getEmployeeRoles()) {
+        %>
+        <ul><%= er.getRole().getRoleName() %></ul>
+        <%
+                }
+            }
+        %>
+        <h3>Projets :</h3>
+        <ul>
+            <%
+                if (employee.getProjects() == null || employee.getProjects().isEmpty()) {
+            %>
+            <li>Aucun</li>
+            <%
+            } else {
+                for (EmployeeProject ep : employee.getProjects()) {
+            %>
+            <li><%= ep.getProject().getName_project() %></li>
+            <%
+                    }
+                }
+            %>
         </ul>
 
         <!-- TODO Historique des paies -->
@@ -82,7 +104,7 @@
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <a class="button" href="employee?action=edit&id=${employee.id}">Modifier</a> <!-- TODO Add idEmployee as query parameter -->
             <a class="button" href="employee">Retour</a>
-            <a class="button" href="ListPay.jsp">Historique des paies</a>
+            <a class="button" href="ListPay.jsp?id=${employee.id}">Historique des paies</a>
         </div>
     </div>
 </section>

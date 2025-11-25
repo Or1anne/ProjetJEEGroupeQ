@@ -59,13 +59,13 @@
         <div class="card">
             <h2>Informations Personnelles</h2>
             <ul>
-                <li>Nom: <%= user.getLastName() != null ? user.getLastName() : "" %> </li>
-                <li>Prénom: <%= user.getFirstName()%> </li>
-                <li>Grade: <%= Grade.getLabelFromDbValue(user.getGrade())%></li>
-                <li>Poste: <%= user.getPost()%> </li>
-                <li>Salaire: <%= user.getSalary()%> €</li>
-                <li>Département: <%= user.getDepartment() != null ? user.getDepartment().getDepartmentName() : "Aucun" %> </li>
-                <li>Projet(s) :
+                <li><strong>Nom :</strong> <%= user.getLastName() != null ? user.getLastName() : "" %> </li>
+                <li><strong>Prénom :</strong> <%= user.getFirstName()%> </li>
+                <li><strong>Grade :</strong> <%= Grade.getLabelFromDbValue(user.getGrade())%></li>
+                <li><strong>Poste :</strong> <%= user.getPost()%> </li>
+                <li><strong>Salaire :</strong> <%= user.getSalary()%> €</li>
+                <li><strong>Département :</strong> <%= user.getDepartment() != null ? user.getDepartment().getDepartmentName() : "Aucun" %> </li>
+                <li><strong>Projet(s) :</strong>
                     <ul>
                         <%
                             if (user.getProjects() == null || user.getProjects().isEmpty()) {
@@ -85,8 +85,8 @@
             </ul>
             <h2>Informations du compte</h2>
             <ul>
-                <li>Nom d'utilisateur: <%= user.getUsername() != null ? user.getUsername() : "" %></li>
-                <li>Rôle:
+                <li><strong>Nom d'utilisateur :</strong> <%= user.getUsername() != null ? user.getUsername() : "" %></li>
+                <li><strong>Rôle :</strong>
                         <%
                         if (user.getEmployeeRoles() == null || user.getEmployeeRoles().isEmpty()) {
                         %>
