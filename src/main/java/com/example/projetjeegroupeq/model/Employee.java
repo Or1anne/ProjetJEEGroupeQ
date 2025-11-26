@@ -14,12 +14,25 @@ public class Employee {
     @Column(name = "idEmployee")
     private int id;
 
+    @Column (name = "lastName")
     private String lastName;
+
+    @Column (name = "firstName")
     private String firstName;
+
+    @Enumerated(EnumType.STRING)
     private String grade;
+
+    @Column (name = "post")
     private String post;
+
+    @Column (name = "salary")
     private Double salary;
+
+    @Column (name = "username")
     private String username;
+
+    @Column (name = "password")
     private String password;
 
     @ManyToOne

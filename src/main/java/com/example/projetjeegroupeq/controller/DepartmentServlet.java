@@ -44,7 +44,7 @@ private void showDepartmentList(HttpServletRequest request, HttpServletResponse 
     //System.out.println("[DepartmentServlet] Nombre d'employés remontés : " + employees.size());
     departments.forEach(d -> System.out.println(" - " + d.getId() + " " + d.getLastName()));
     request.setAttribute("departements", departements);
-    request.getRequestDispatcher("/ListDepartment.jsp").forward(request, response);*/
+    request.getRequestDispatcher("/ListDepartment.jsp").forward(request, response);
 }
 private void addDepartementForm(HttpServletRequest request, HttpServletResponse response,Department department, Boolean Editmode) throws ServletException, IOException {
     request.setAttribute("departement", null != null ? (Department) null : new Department());

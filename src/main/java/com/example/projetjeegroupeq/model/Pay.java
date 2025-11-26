@@ -11,11 +11,19 @@ public class Pay {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Gère la génération et l'incrémentation automatiquement
     @Column(name = "idPay")
     private int id;
+
+    @Column (name = "date")
     private Date date;
+
+    @Column (name = "bonus")
     private double bonus;
+
+    @Column (name = "deductions")
     private double deductions;
+
     @Column(name = "net")
     private double salary_net;
+
     @ManyToOne
     @JoinColumn(name = "idEmployee")
     private Employee employee;
