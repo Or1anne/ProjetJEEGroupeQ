@@ -33,8 +33,8 @@
             <div class="card">
                 <h2>Projets</h2>
                 <ul>
-                    <li><a href="listProjects">Liste des projets</a></li>
-                    <li><a href="FormProject.jsp">Créer un projet</a></li>
+                    <li><a href="${pageContext.request.contextPath}/project">Liste des projets</a></li>
+                    <li><a href="${pageContext.request.contextPath}/project?action=add">Créer un projet</a></li>
                 </ul>
             </div>
         </section>

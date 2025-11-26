@@ -1,4 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="com.example.projetjeegroupeq.model.Project" %>
+<%@ page import="com.example.projetjeegroupeq.model.ProjectStatus" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <html>
 <head>
     <title>Créer un projet</title>
@@ -24,21 +28,66 @@
 </div>
 <div class="hero-body">
     <div class="form-container">
-        <form action="AddProject" method="post" class="employee-form"> <!-- TODO Ou mettre ProjectServelt ? -->
-            <h2>Créer un projet</h2>
-            <input type="hidden" name="action" value="add" />
-            <p>
-                <label for="projectName">Nom du projet</label>
-                <input type="text" id="projectName" name="projectName" required>
-            </p>
-            <p>
-                <label for="description">Description</label>
-                <textarea name="description" id="description"></textarea>
-            </p>
+        <%
+            Project project = (Project) request.getAttribute("project");
+
+            if (project == null) project = new Project();
+
+            List<Employee> employees = (List<Employee>) request.getAttribute("employees");
+
+            boolean isEditMode = "edit".equals(request.getAttribute("formMode"));
+            String errorMessage = request.getParameter("errorMessage");
+            String contextePath = request.getContextPath();
+        %>
+        <form action="<%= contextePath %>/project" method="post" class="employee-form">
+            <h2><%= isEditMode ? "Modifier le projet" + project.getName_project() : "Créer un projet"%></h2>
+            <input type="hidden" name="action" value="<%= isEditMode ? "edit" : "add"%>"/>
+
+            <% if (isEditMode) {%>
+                <input type="hidden" name="id" value="<%= project.getId()%>" />
+            <% } %>
+
+            <% if (errorMessage != null && !errorMessage.isBlank()) { %>
+                <div class="error-message"><%= errorMessage %></div>
+            <% } %>
 
             <p>
-                <label for="manager">Chef de projet</label>
-                <input type="text" name="manager" id="manager" required>
+                <label for="projectName">Nom du projet</label>
+                <input type="text" id="projectName" name="projectName" value="<%= project.getName_project() != null ? project.getName_project() : ""%>" required>
+            </p>
+            <p>
+                <label for="projectStatus">Statut du projet</label>
+                <select id="projectStatus" name="projectStatus" required>
+                    <option value="">-- Choisir un statut --</option>
+                    <% for (ProjectStatus p : ProjectStatus.values()) {
+                        boolean selected = (project.getStatus() != null && project.getStatus() == p);
+                    %>
+                        <option value="<%= p.name()%>" <%= selected ? "selected" : ""%>>
+                            <%= p.toString() %>
+                        </option>
+                    <% } %>
+                </select>
+            </p>
+            <p>
+                <label for="managerId">Chef de projet</label>
+                <%if (employees == null || employees.isEmpty()) {%>
+                    <select id="managerId" name="managerId" disabled>
+                        <option value="">Aucun employé disponible</option>
+                    </select>
+                    <small>Veuillez créer des employés avant d'assigner un chef de projet.</small>
+                <% } else {%>
+                    <select id="managerId" name="managerId" required>
+                        <option value="">-- Choisir un chef de projet --</option>
+                        <%
+                            for (Employee e : employees) {
+                                boolean selected = (project.getChefProj() != null && project.getChefProj().getId() == e.getId());
+                        %>
+                        <option value="<%= e.getId()%>" <%= selected ? "selected" : ""%>>
+                            <%= e.getLastName() %> <%= e.getFirstName()%>
+                        </option>
+                        <% } %>
+                    </select>
+                <% } %>
             </p>
 
             <!--

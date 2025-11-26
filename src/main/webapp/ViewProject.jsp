@@ -1,3 +1,6 @@
+<%@ page import="com.example.projetjeegroupeq.model.Project" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -22,17 +25,19 @@
     </nav>
 </div>
 <div class="hero-body">
+    <%
+        Project project = (Project) request.getAttribute("project");
+    %>
 
     <div class="card">
-        <h2>Détails du "Projet"</h2> <!-- TODO Remplacer par le nom réel du projet -->
-        <p><strong>Chef de projet :</strong> Jacky Smith</p> <!-- TODO Remplacer par le nom réel du chef de projet -->
-        <p><strong>Description : </strong>Ceci est une description détaillée du projet exemple.</p> <!-- TODO Remplacer par la description réelle du projet -->
-        <p><strong>Statut :</strong> En cours</p> <!-- TODO Remplacer par le statut réel du projet -->
+        <h2>Détails de <%=project.getName_project()%></h2>
+        <li><strong>Chef de projet :</strong> <%=project.getChefProj().getLastName()%> <%=project.getChefProj().getFirstName()%></li>
+        <li><strong>Statut :</strong> <%=project.getStatus().getTranslation()%>></li>
         <h4>Membres de l'équipe : </h4>
         <ul>
-            <li>Employé 1</li>  <!-- TODO Remplacer par les noms réels des employés -->
-            <li>Employé 2</li>
-            <li>Employé 3</li>
+            <% for (EmployeeProject e : project.getEmployees()) { %>
+            <li><%=e.getEmployee().getLastName()%> <%=e.getEmployee().getFirstName()%></li>
+            <% } %>
         </ul>
     </div>
 
