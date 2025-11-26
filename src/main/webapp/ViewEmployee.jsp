@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.model.Grade" %>
 <%@ page import="com.example.projetjeegroupeq.model.EmployeeRole" %>
 <%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
 <!DOCTYPE html>
@@ -57,7 +58,7 @@
         <ul>
             <li><strong>Nom :</strong> ${employee.lastName}</li>
             <li><strong>Prénom :</strong> ${employee.firstName}</li>
-            <li><strong>Grade :</strong> ${employee.grade}</li>
+            <li><strong>Grade :</strong> <%= Grade.getLabelFromDbValue(employee.getGrade())%></li>
             <li><strong>Poste :</strong> ${employee.post}</li>
             <li><strong>Salaire :</strong> ${employee.salary}€</li>
             <li><strong>Nom d'utilisateur :</strong> ${employee.username}</li>
