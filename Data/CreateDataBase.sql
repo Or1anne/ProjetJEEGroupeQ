@@ -55,7 +55,7 @@ CREATE TABLE employee (
 	idEmployee INT AUTO_INCREMENT PRIMARY KEY,
     lastName VARCHAR(30) NOT NULL,
     firstName VARCHAR(30) NOT NULL,
-    grade ENUM('EXECUTIVE_MANAGEMENT', 'SENIOR_MANAGEMENT', 'MIDDLE_MANAGEMENT', 'SKILLED_EMPLOYEES', 'EMPLOYEES', 'INTERNS/APPRENTICES') NOT NULL,
+    grade ENUM('EXECUTIVE_MANAGEMENT', 'MIDDLE_MANAGEMENT', 'SKILLED_EMPLOYEES', 'EMPLOYEES', 'INTERNS/APPRENTICES') NOT NULL,
     post VARCHAR(50),
     salary DOUBLE NOT NULL DEFAULT 0,
     username VARCHAR(100) NOT NULL UNIQUE,
@@ -118,21 +118,44 @@ CREATE TABLE employeeRole(
 --   Insertion des données de base
 -- ===========================
 -- Rôles
-INSERT INTO role (roleName) VALUES ('ADMIN'), ('EMPLOYEE');
+INSERT INTO role (roleName) VALUES ('ADMIN'), ('RH'), ('EMPLOYE');
 
 -- Départements
-INSERT INTO department (departmentName) VALUES ('EXECUTIVE_MANAGEMENT'), ('HR'), ('ACCOUNTING'), ('OPERATIONS'), ('SALES'), ('MARKETING_&_COMMUNICATIONS'), ('R&D'), ('PRODUCTION'), ('LEGAL_DEPARTMENT'), ('GENERAL_SERVICES'), ('HEALTH_SERVICES'), ('IT'), ('FINANCE');
+INSERT INTO department (departmentName) VALUES
+                                            ('Direction générale'),
+                                            ('Ressources humaines'),
+                                            ('Comptabilité'),
+                                            ('Opérations'),
+                                            ('Ventes'),
+                                            ('Marketing et communication'),
+                                            ('Recherche et développement'),
+                                            ('Production'),
+                                            ('Juridique'),
+                                            ('Services généraux'),
+                                            ('Services de santé'),
+                                            ('Informatique'),
+                                            ('Finances');
 
 -- Projets
 INSERT INTO project (name, status)
     VALUES ('ProjetQ', 'WORKED_ON'),
            ('DevWeb', 'FINISHED'),
-           ('Space Race', 'CANCELLED');
+           ('Cynapse', 'CANCELLED'),
+           ('Tekiens', 'WORKED_ON'),
+           ('X', 'WORKED_ON'),
+           ('Cacook', 'WORKED_ON');
 
 -- Employé
-INSERT INTO employee (lastName, firstName, grade, post, salary, username, password)
-    VALUES ('NGO', 'Jonathan', 'INTERNS/APPRENTICES', 'Coffee Maker', default, 'jngo', 'departement'),
-           ('BODIER', 'Fantine', 'SENIOR_MANAGEMENT', 'Financial Director', '15000', 'fbodier', 'departement');
+INSERT INTO employee (lastName, firstName, grade, post, salary, username, password, idDepartment) VALUES
+                                                                                                      ('NGO', 'Jonathan', 'INTERNS/APPRENTICES', 'Barista', 1200, 'jngo', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Production')),
+                                                                                                      ('BODIER', 'Fantine', 'EXECUTIVE_MANAGEMENT', 'Directeur financier', 15000, 'fbodier', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Finances')),
+                                                                                                      ('Martin', 'Sophie', 'MIDDLE_MANAGEMENT', 'Responsable RH', 6500, 'smartin', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Ressources humaines')),
+                                                                                                      ('Dupont', 'Lucas', 'SKILLED_EMPLOYEES', 'Dévelopeur', 4200, 'ldupont', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Informatique')),
+                                                                                                      ('Keller', 'Anna', 'EMPLOYEES', 'Assistant juridique', 3300, 'akeller', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Juridique')),
+                                                                                                      ('Morel', 'Thomas', 'MIDDLE_MANAGEMENT', 'Responsable R&D', 9800, 'tmorel', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Recherche et développement')),
+                                                                                                      ('Olsen', 'Marie', 'MIDDLE_MANAGEMENT', 'Responsable marketing', 6100, 'molsen', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Marketing et communication')),
+                                                                                                      ('Silva', 'Pedro', 'EMPLOYEES', 'Technicien', 2800, 'psilva', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Production')),
+                                                                                                      ('Roche', 'Elisa', 'EXECUTIVE_MANAGEMENT', 'Directeur des opérations', 18000, 'eroche', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Direction générale'));
 
 -- Employé administrateur
 INSERT INTO employee (lastName, firstName, grade, post, salary, username, password)
@@ -145,3 +168,55 @@ VALUES (
     (SELECT idEmployee FROM employee WHERE username = 'admin' LIMIT 1),
     (SELECT idRole FROM role WHERE roleName = 'ADMIN' LIMIT 1)
 );
+
+-- Chef de département
+UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='tmorel')
+WHERE departmentName='Recherche et développement';
+
+UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='smartin')
+WHERE departmentName='Ressources humaines';
+
+UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='eroche')
+WHERE departmentName='Direction générale';
+
+-- Chef de projet
+UPDATE project SET idChefPro = (SELECT idEmployee FROM employee WHERE username='ldupont') WHERE name='DevWeb';
+UPDATE project SET idChefPro = (SELECT idEmployee FROM employee WHERE username='tmorel') WHERE name='Cynapse';
+UPDATE project SET idChefPro = (SELECT idEmployee FROM employee WHERE username='psilva') WHERE name='Cacook';
+
+-- Rôles employés
+INSERT INTO employeeRole (idEmployee, idRole) VALUES
+                                                  ((SELECT idEmployee FROM employee WHERE username='smartin'), (SELECT idRole FROM role WHERE roleName='EMPLOYE')),
+                                                  ((SELECT idEmployee FROM employee WHERE username='tmorel'), (SELECT idRole FROM role WHERE roleName='RH')),
+                                                  ((SELECT idEmployee FROM employee WHERE username='ldupont'), (SELECT idRole FROM role WHERE roleName='EMPLOYE'));
+
+-- Insertion table de jointure
+INSERT INTO employeeProject VALUES
+                                ((SELECT idEmployee FROM employee WHERE username='ldupont'),
+                                 (SELECT idProject FROM project WHERE name='DevWeb')),
+                                ((SELECT idEmployee FROM employee WHERE username='ldupont'),
+                                 (SELECT idProject FROM project WHERE name='Cynapse')),
+
+                                ((SELECT idEmployee FROM employee WHERE username='tmorel'),
+                                 (SELECT idProject FROM project WHERE name='Cynapse')),
+
+                                ((SELECT idEmployee FROM employee WHERE username='psilva'),
+                                 (SELECT idProject FROM project WHERE name='Cacook')),
+
+                                ((SELECT idEmployee FROM employee WHERE username='akeller'),
+                                 (SELECT idProject FROM project WHERE name='Tekiens')),
+
+                                ((SELECT idEmployee FROM employee WHERE username='molsen'),
+                                 (SELECT idProject FROM project WHERE name='X')),
+
+                                ((SELECT idEmployee FROM employee WHERE username='smartin'),
+                                 (SELECT idProject FROM project WHERE name='ProjetQ'));
+
+-- Insertion fiche de paie
+INSERT INTO pay (date, bonus, deductions, net, idEmployee) VALUES
+                                                               ('2025-01-31', 200, 50, 3100, (SELECT idEmployee FROM employee WHERE username='akeller')),
+                                                               ('2025-01-31', 400, 100, 4000, (SELECT idEmployee FROM employee WHERE username='ldupont')),
+                                                               ('2025-01-31', 800, 250, 5550, (SELECT idEmployee FROM employee WHERE username='smartin')),
+                                                               ('2025-01-31', 0, 0, 18000, (SELECT idEmployee FROM employee WHERE username='eroche')),
+                                                               ('2025-01-31', 600, 150, 6350, (SELECT idEmployee FROM employee WHERE username='molsen')),
+                                                               ('2025-01-31', 100, 50, 2850, (SELECT idEmployee FROM employee WHERE username='psilva'));
