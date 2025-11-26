@@ -42,16 +42,15 @@ public class DepartmentServlet extends  HttpServlet {
 
 
     private void showDepartmentList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Department> departments = DepartmentDAO.getAll();
-        departments.forEach(d -> System.out.println(" - " + d.getId() + " " + d.getLastName()));
-        request.setAttribute("departements", departements);
+        List<Department> departments = departmentDAO.getAll();
+        departments.forEach(d -> System.out.println(" - " + d.getId() + " " + d.getDepartmentName()));
+        request.setAttribute("departements", departments);
         request.getRequestDispatcher("/ListDepartment.jsp").forward(request, response);
     }
 
     private void addDepartementForm(HttpServletRequest request, HttpServletResponse response, Department department, Boolean Editmode) throws ServletException, IOException {
         request.setAttribute("departement", null != null ? (Department) null : new Department());
-        request.setAttribute("", Description.values());
-
+        request.setAttribute("", departmentName.values());
         DepartmentDAO departmentDAO;
         request.setAttribute("departments", departmentDAO.getAll());
         request.setAttribute("formMode", editMode ? "edit" : "add");
