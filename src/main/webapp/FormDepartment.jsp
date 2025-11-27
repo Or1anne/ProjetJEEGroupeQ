@@ -45,11 +45,14 @@
 </div>
 <div class="hero-body">
     <nav>
-        <a href="ListDepartment.jsp">Liste des départements</a>
+        <a href="<%= request.getContextPath() %>/department?action=list">Liste des départements</a>
     </nav>
     <div class="form-container">
-        <form action="AddDepartment" method="post">
+        <form action="<%= request.getContextPath() %>/department" method="post">
             <h2>Ajouter un département</h2>
+
+            <!-- On dit à la servlet quoi faire -->
+            <input type="hidden" name="action" value="add"/>
             <p>
                 <label for="name">Nom du département</label>
                 <input type="text" id="name" name="name" required>
@@ -63,9 +66,6 @@
                 </select>
             </p>
             <p>
-                <label for="description">Description</label>
-                <textarea name="description" id="description"></textarea>
-            </p>
 
             <input type="submit" value="Enregistrer">
         </form>

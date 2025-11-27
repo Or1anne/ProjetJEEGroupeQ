@@ -45,7 +45,10 @@
 </div>
 <div class="hero-body">
     <div class="form-container">
-        <form action="AddDepartment" method="post">
+        <form action="<%= request.getContextPath() %>/department" method="post">
+
+            <!-- action à envoyer au servlet -->
+            <input type="hidden" name="action" value="edit">
             <h2>Ajouter un département</h2>
             <p>
                 <label for="name">Nom du département</label>
@@ -58,10 +61,6 @@
                     <option value="1">Durand Claire</option>
                     <option value="2">Martin Lucas</option>
                 </select>
-            </p>
-            <p>
-                <label for="description">Description</label>
-                <textarea name="description" id="description"></textarea>
             </p>
 
             <input type="submit" value="Enregistrer">

@@ -134,7 +134,7 @@ INSERT INTO project (name, status)
 
 -- Employé
 INSERT INTO employee (lastName, firstName, grade, post, salary, username, password, idDepartment) VALUES
-                                                                                                      ('NGO', 'Jonathan', 'INTERNS/APPRENTICES', 'Barista', 1200, 'jngo', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Production')),
+                                                                                                      ('NGO', 'Jonathan', 'INTERNS_APPRENTICES', 'Barista', 1200, 'jngo', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Production')),
                                                                                                       ('BODIER', 'Fantine', 'EXECUTIVE_MANAGEMENT', 'Directeur financier', 15000, 'fbodier', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Finances')),
                                                                                                       ('Martin', 'Sophie', 'MIDDLE_MANAGEMENT', 'Responsable RH', 6500, 'smartin', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Ressources humaines')),
                                                                                                       ('Dupont', 'Lucas', 'SKILLED_EMPLOYEES', 'Dévelopeur', 4200, 'ldupont', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Informatique')),
