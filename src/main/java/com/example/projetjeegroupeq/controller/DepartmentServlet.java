@@ -21,10 +21,11 @@ public class DepartmentServlet extends  HttpServlet {
     private final DepartmentDAO departmentDAO = new DepartmentDAO();
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
 
-
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        String action = request.getParameter("action");
+        String action = trimToNull(request.getParameter("action"));
+
         if (action == null || action.isBlank()) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action manquante");
             return;
@@ -34,19 +35,18 @@ public class DepartmentServlet extends  HttpServlet {
         try {
             populateDepartmentFromRequest(request, receiver);
             switch (action.toLowerCase()) {
-                case "add" -> addDepartementForm(request, response, null, false);
-                case "edit" -> handleEditDepartment(request, response);
+                case "add" -> addDepartment(request, response, receiver);
+                case "edit" -> handleEditDepartment(request, response,receiver);
                 case "delete" -> handleDeleteDepartement(request, response);
+                default ->response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
             }
         }catch (IllegalArgumentException e) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            addDepartementForm(request, response, receiver, editMode);
             }
 
         }
 
-
-
-    }
 
     private void populateDepartmentFromRequest(HttpServletRequest request, Department receiver) {
         // parse numeric id if present
@@ -55,18 +55,14 @@ public class DepartmentServlet extends  HttpServlet {
             try {
                 receiver.setId(Integer.parseInt(idParam.trim()));
             } catch (NumberFormatException ignored) {
-                // keep unset on parse error
             }
         }
 
-        // set department name (setter expects a String)
         String name = request.getParameter("departmentName");
         if (name != null) {
             receiver.setDepartmentName(name.trim());
         }
 
-        // If your Department#setChefDepartment expects an Employee, you must obtain/create an Employee instance:
-        //
         String chefId = request.getParameter("chefId");
         if (chefId != null && !chefId.isBlank()) {
             try {
@@ -74,8 +70,6 @@ public class DepartmentServlet extends  HttpServlet {
                 Employee chef = employeeDAO.searchById(chefInt);
                 if (chef != null) {
                     receiver.setChefDepartment(chef);
-                } else {
-                    // leave chef null if not found (or throw if you prefer)
                 }
             } catch (NumberFormatException ignored) {
                 // invalid chef id - ignore or handle as needed
@@ -93,15 +87,6 @@ public class DepartmentServlet extends  HttpServlet {
             throw new IllegalArgumentException("Identifiant invalide.");
         }
     }
-
-    private String extractRequiredDepartmentParameter(HttpServletRequest request, String paramName, String errorMessage) {
-        String value = trimToNull(request.getParameter(paramName));
-        if (value == null) {
-            throw new IllegalArgumentException(errorMessage);
-        }
-        return value;
-    }
-
     private String trimToNull(String value) {
         if (value == null) {
             return null;
@@ -110,6 +95,7 @@ public class DepartmentServlet extends  HttpServlet {
         return trimmed.isEmpty() ? null : trimmed;
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             String action = request.getParameter("action");
 
@@ -119,43 +105,52 @@ public class DepartmentServlet extends  HttpServlet {
             }
 
             switch (action.toLowerCase()) {
-                case "add" -> showAddDepartmentForm(request, response, null, false);
+                case "add" -> showAddDepartmentForm(request, response);
                 case "edit" -> showEditDepartment(request, response);
-                case "delete" -> handleDeleteDepartement(request, response);
                 case "view" -> handleViewDepartment(request, response);
+                case"list"-> showDepartmentList(request, response);
                 default -> response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
             }
     }
 
-    private void showEditDepartment(HttpServletRequest request, HttpServletResponse response) {
+    private void showEditDepartment(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            int id = parseId(request.getParameter("id"), "Identifiant département manquant pour l'édition");
+            Department department = departmentDAO.searchById(id);
+            if (department == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Département introuvable");
+                return;
+            }
+            addDepartementForm(request, response, department, true);
+        } catch (IllegalArgumentException | ServletException | IOException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+        }
     }
 
-    private void showAddDepartmentForm(HttpServletRequest request, HttpServletResponse response, Object o, boolean b) {
+    private void showAddDepartmentForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        addDepartementForm(request, response, null, false);
     }
 
 
     private void showDepartmentList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Department> departments = departmentDAO.getAll();
         departments.forEach(d -> System.out.println(" - " + d.getId() + " " + d.getDepartmentName()));
-        request.setAttribute("departements", departments);
+        request.setAttribute("departments", departments);
         request.getRequestDispatcher("/ListDepartment.jsp").forward(request, response);
     }
 
-    private void addDepartementForm(HttpServletRequest request, HttpServletResponse response, Department department, Boolean Editmode) throws ServletException, IOException {
-        request.setAttribute("departement", null != null ? (Department) null : new Department());
-        request.setAttribute("", departmentName.values());
-        DepartmentDAO departmentDAO;
+    private void addDepartementForm(HttpServletRequest request, HttpServletResponse response, Department department, boolean editMode) throws ServletException, IOException {
+        request.setAttribute("department", department != null ? department : new Department());
         request.setAttribute("departments", departmentDAO.getAll());
         request.setAttribute("formMode", editMode ? "edit" : "add");
         request.getRequestDispatcher("/FormDepartment.jsp").forward(request, response);
     }
 
-        private void handleViewDepartment (HttpServletRequest request, HttpServletResponse response) throws
-        ServletException, IOException {
-            int id = parseId(request.getParameter("id"), "Identifiant employé manquant pour la visualisation");
+    private void handleViewDepartment (HttpServletRequest request, HttpServletResponse response) throws  ServletException, IOException {
+            int id = parseId(request.getParameter("id"), "Identifiant department manquant pour la visualisation");
             Department department = departmentDAO.searchById(id);
             if (department == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Employé introuvable");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Department introuvable");
                 return;
             }
             request.setAttribute("department", department);
@@ -166,7 +161,7 @@ public class DepartmentServlet extends  HttpServlet {
         private void handleDeleteDepartement (HttpServletRequest request, HttpServletResponse response) throws
         ServletException, IOException {
             try {
-                int id = parseId(request.getParameter("id"), "Identifiant employé manquant pour la suppression");
+                int id = parseId(request.getParameter("id"), "Identifiant department manquant pour la suppression");
 
                 // On récupère l'employé réel
                 Department departmentToDelete = departmentDAO.searchById(id);
@@ -181,16 +176,26 @@ public class DepartmentServlet extends  HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             }
         }
-        private void handleEditDepartment (HttpServletRequest request, HttpServletResponse response) throws
+        private void handleEditDepartment (HttpServletRequest request, HttpServletResponse response, Department receiver) throws
         ServletException, IOException {
             int id = parseId(request.getParameter("id"), "Identifiant département manquant pour l'édition");
-            Department department = departmentDAO.searchById(id);
-            if (department == null) {
+            Department existing = departmentDAO.searchById(id);
+            if (existing == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Employé introuvable");
                 return;
             }
-            showDepartmentList(request, response, department, true);
+            // On met à jour uniquement les champs modifiables
+            existing.setDepartmentName(receiver.getDepartmentName());
+            existing.setChefDepartment(receiver.getChefDepartment());
+
+            departmentDAO.update(existing, existing); // ou (existing, payload) selon ta signature
+            response.sendRedirect(request.getContextPath() + "/department?action=list");
+            showDepartmentList(request, response);
         }
 
-    }
+        private void addDepartment(HttpServletRequest request, HttpServletResponse response, Department receiver) throws IOException {
+            departmentDAO.add(receiver);
+            response.sendRedirect(request.getContextPath() + "/department?action=list");
+        }
+
 }
