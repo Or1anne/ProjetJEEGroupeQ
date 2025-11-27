@@ -14,7 +14,7 @@ public class TestDAO {
 
         employee.setFirstName("TestFirst1");
         employee.setLastName("TestLast1");
-        employee.setGrade("TestGrade1");
+        employee.setGrade(Grade.valueOf("TestGrade1"));
         employee.setPost("TestPost1");
         employee.setUsername("TestUsername1");
         employee.setPassword("TestPassowrd1");
@@ -23,7 +23,7 @@ public class TestDAO {
         Employee employee2 = new Employee();
         employee2.setFirstName("TestFirst2");
         employee2.setLastName("TestLast2");
-        employee2.setGrade("TestGrade2");
+        employee2.setGrade(Grade.valueOf("TestGrade2"));
         employee2.setPost("TestPost2");
         employee2.setUsername("TestUsername2");
         employee2.setPassword("TestPassowrd2");
