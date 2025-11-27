@@ -22,8 +22,8 @@ DROP TABLE IF EXISTS role;
 --   Table des rôles
 -- ===========================
 CREATE TABLE role(
-                     idRole INT AUTO_INCREMENT PRIMARY KEY,
-                     roleName VARCHAR(255) NOT NULL UNIQUE
+    idRole INT AUTO_INCREMENT PRIMARY KEY,
+    roleName VARCHAR(255) NOT NULL UNIQUE
 )ENGINE=InnoDB;
 
 
@@ -31,9 +31,9 @@ CREATE TABLE role(
 --   Table des départements
 -- ===========================
 CREATE TABLE department(
-                           idDepartment INT AUTO_INCREMENT PRIMARY KEY,
-                           departmentName VARCHAR(255) NOT NULL UNIQUE,
-                           idChefDep INT NULL
+    idDepartment INT AUTO_INCREMENT PRIMARY KEY,
+    departmentName VARCHAR(255) NOT NULL UNIQUE,
+    idChefDep INT NULL
 )ENGINE=InnoDB;
 
 
@@ -41,10 +41,10 @@ CREATE TABLE department(
 --   Table des projets
 -- ===========================
 CREATE TABLE project(
-                        idProject INT AUTO_INCREMENT PRIMARY KEY,
-                        name VARCHAR(100) NOT NULL,
-                        status ENUM('WORKED_ON','FINISHED','CANCELLED') NOT NULL DEFAULT 'WORKED_ON',
-                        idChefPro INT NULL
+    idProject INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    status ENUM('WORKED_ON','FINISHED','CANCELLED') NOT NULL DEFAULT 'WORKED_ON',
+    idChefPro INT NULL
 )ENGINE=InnoDB;
 
 
@@ -52,42 +52,42 @@ CREATE TABLE project(
 --   Table des employés
 -- ===========================
 CREATE TABLE employee (
-                          idEmployee INT AUTO_INCREMENT PRIMARY KEY,
-                          lastName VARCHAR(30) NOT NULL,
-                          firstName VARCHAR(30) NOT NULL,
-                          grade ENUM('EXECUTIVE_MANAGEMENT', 'MIDDLE_MANAGEMENT', 'SKILLED_EMPLOYEES', 'EMPLOYEES', 'INTERNS/APPRENTICES') NOT NULL,
-                          post VARCHAR(50),
-                          salary DOUBLE NOT NULL DEFAULT 0,
-                          username VARCHAR(100) NOT NULL UNIQUE,
-                          password VARCHAR(255) NOT NULL,
-                          idDepartment INT NULL,
-                          FOREIGN KEY (idDepartment) REFERENCES department(idDepartment) ON DELETE SET NULL
+	idEmployee INT AUTO_INCREMENT PRIMARY KEY,
+    lastName VARCHAR(30) NOT NULL,
+    firstName VARCHAR(30) NOT NULL,
+    grade ENUM('EXECUTIVE_MANAGEMENT', 'MIDDLE_MANAGEMENT', 'SKILLED_EMPLOYEES', 'EMPLOYEES', 'INTERNS/APPRENTICES') NOT NULL,
+    post VARCHAR(50),
+    salary DOUBLE NOT NULL DEFAULT 0,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    idDepartment INT NULL,
+    FOREIGN KEY (idDepartment) REFERENCES department(idDepartment) ON DELETE SET NULL
 )ENGINE=InnoDB;
 
 -- ===========================
 --   Ajout des clés étrangères pour chef de projet / département
 -- ===========================
-ALTER TABLE department
-    ADD CONSTRAINT fk_department_chef
-        FOREIGN KEY (idChefDep) REFERENCES employee(idEmployee) ON DELETE SET NULL ;
+ALTER TABLE department 
+	ADD CONSTRAINT fk_department_chef
+	FOREIGN KEY (idChefDep) REFERENCES employee(idEmployee) ON DELETE SET NULL ;
 
-ALTER TABLE project
-    ADD CONSTRAINT fk_project_chef
-        FOREIGN KEY (idChefPro) REFERENCES employee(idEmployee) ON DELETE SET NULL ;
+ALTER TABLE project 
+	ADD CONSTRAINT fk_project_chef
+	FOREIGN KEY (idChefPro) REFERENCES employee(idEmployee) ON DELETE SET NULL ;
 
 
 -- ===========================
 --   Table des fiches de paie
 -- ===========================
 CREATE TABLE pay (
-                     idPay INT AUTO_INCREMENT PRIMARY KEY,
-                     date DATE NOT NULL,
-                     bonus DOUBLE DEFAULT 0.0,
-                     deductions DOUBLE DEFAULT 0.0,
-                     net DOUBLE NOT NULL,
-                     idEmployee INT NOT NULL ,
-                     FOREIGN KEY (idEmployee) REFERENCES employee(idEmployee) ON DELETE CASCADE,
-                     CONSTRAINT uc_pay_employee_period UNIQUE (idEmployee, date)
+    idPay INT AUTO_INCREMENT PRIMARY KEY,
+    date DATE NOT NULL,
+    bonus DOUBLE DEFAULT 0.0,
+    deductions DOUBLE DEFAULT 0.0,
+    net DOUBLE NOT NULL,
+    idEmployee INT NOT NULL ,
+    FOREIGN KEY (idEmployee) REFERENCES employee(idEmployee) ON DELETE CASCADE,
+    CONSTRAINT uc_pay_employee_period UNIQUE (idEmployee, date)
 )ENGINE=InnoDB;
 
 
@@ -95,11 +95,11 @@ CREATE TABLE pay (
 --   Table de liaison Employé <==> Projet (Many-to-Many)
 -- ===========================
 CREATE TABLE employeeProject(
-                                idEmployee INT,
-                                idProject INT,
-                                PRIMARY KEY (idEmployee,idProject),
-                                FOREIGN KEY (idEmployee) REFERENCES employee(idEmployee) ON DELETE CASCADE,
-                                FOREIGN KEY (idProject) REFERENCES project(idProject) ON DELETE CASCADE
+    idEmployee INT,
+    idProject INT,
+    PRIMARY KEY (idEmployee,idProject),
+    FOREIGN KEY (idEmployee) REFERENCES employee(idEmployee) ON DELETE CASCADE,
+    FOREIGN KEY (idProject) REFERENCES project(idProject) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 
@@ -107,43 +107,30 @@ CREATE TABLE employeeProject(
 --   Table de liaison Employé <==> Rôle (Many-to-Many)
 -- ===========================
 CREATE TABLE employeeRole(
-                             idEmployee INT,
-                             idRole INT,
-                             PRIMARY KEY (idEmployee,idRole),
-                             FOREIGN KEY (idEmployee) REFERENCES employee(idEmployee) ON DELETE CASCADE ,
-                             FOREIGN KEY (idRole) REFERENCES role(idRole) ON DELETE CASCADE
+    idEmployee INT,
+    idRole INT,
+    PRIMARY KEY (idEmployee,idRole),
+    FOREIGN KEY (idEmployee) REFERENCES employee(idEmployee) ON DELETE CASCADE ,
+    FOREIGN KEY (idRole) REFERENCES role(idRole) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
--- ===========================
+ -- ===========================
 --   Insertion des données de base
 -- ===========================
 -- Rôles
-INSERT INTO role (roleName) VALUES ('ADMIN'), ('RH'), ('EMPLOYE');
+INSERT INTO role (roleName) VALUES ('ADMIN'), ('EMPLOYEE');
 
 -- Départements
-INSERT INTO department (departmentName) VALUES
-                                            ('Direction générale'),
-                                            ('Ressources humaines'),
-                                            ('Comptabilité'),
-                                            ('Opérations'),
-                                            ('Ventes'),
-                                            ('Marketing et communication'),
-                                            ('Recherche et développement'),
-                                            ('Production'),
-                                            ('Juridique'),
-                                            ('Services généraux'),
-                                            ('Services de santé'),
-                                            ('Informatique'),
-                                            ('Finances');
+INSERT INTO department (departmentName) VALUES ('EXECUTIVE_MANAGEMENT'), ('HR'), ('ACCOUNTING'), ('OPERATIONS'), ('SALES'), ('MARKETING_&_COMMUNICATIONS'), ('R&D'), ('PRODUCTION'), ('LEGAL_DEPARTMENT'), ('GENERAL_SERVICES'), ('HEALTH_SERVICES'), ('IT'), ('FINANCE');
 
 -- Projets
 INSERT INTO project (name, status)
-VALUES ('ProjetQ', 'WORKED_ON'),
-       ('DevWeb', 'FINISHED'),
-       ('Cynapse', 'CANCELLED'),
-       ('Tekiens', 'WORKED_ON'),
-       ('X', 'WORKED_ON'),
-       ('Cacook', 'WORKED_ON');
+    VALUES ('ProjetQ', 'WORKED_ON'),
+           ('DevWeb', 'FINISHED'),
+           ('Cynapse', 'CANCELLED'),
+           ('Tekiens', 'WORKED_ON'),
+           ('X', 'WORKED_ON'),
+           ('Cacook', 'WORKED_ON');
 
 -- Employé
 INSERT INTO employee (lastName, firstName, grade, post, salary, username, password, idDepartment) VALUES
@@ -165,9 +152,9 @@ VALUES ('lastName', 'firstName', 'EMPLOYEES', 'Admin', 100.0, 'admin', 'admin');
 -- Attribution du rôle ADMIN à l'utilisateur admin
 INSERT INTO employeeRole (idEmployee, idRole)
 VALUES (
-           (SELECT idEmployee FROM employee WHERE username = 'admin' LIMIT 1),
-           (SELECT idRole FROM role WHERE roleName = 'ADMIN' LIMIT 1)
-       );
+    (SELECT idEmployee FROM employee WHERE username = 'admin' LIMIT 1),
+    (SELECT idRole FROM role WHERE roleName = 'ADMIN' LIMIT 1)
+);
 
 -- Chef de département
 UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='tmorel')
@@ -219,4 +206,4 @@ INSERT INTO pay (date, bonus, deductions, net, idEmployee) VALUES
                                                                ('2025-01-31', 800, 250, 5550, (SELECT idEmployee FROM employee WHERE username='smartin')),
                                                                ('2025-01-31', 0, 0, 18000, (SELECT idEmployee FROM employee WHERE username='eroche')),
                                                                ('2025-01-31', 600, 150, 6350, (SELECT idEmployee FROM employee WHERE username='molsen')),
-                                                               ('2025-01-31', 100, 50, 2850, (SELECT idEmployee FROM employee WHERE username='psilva'));;
+                                                               ('2025-01-31', 100, 50, 2850, (SELECT idEmployee FROM employee WHERE username='psilva'));

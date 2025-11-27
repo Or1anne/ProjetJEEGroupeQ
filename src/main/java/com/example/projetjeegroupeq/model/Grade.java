@@ -1,12 +1,11 @@
 package com.example.projetjeegroupeq.model;
 
 public enum Grade {
-    EXECUTIVE_MANAGEMENT("EXECUTIVE_MANAGEMENT", "Direction Exécutive"),
-    SENIOR_MANAGEMENT("SENIOR_MANAGEMENT", "Direction Senior"),
-    MIDDLE_MANAGEMENT("MIDDLE_MANAGEMENT", "Management Intermédiaire"),
-    SKILLED_EMPLOYEES("SKILLED_EMPLOYEES", "Employés Qualifiés"),
-    EMPLOYEES("EMPLOYEES", "Employés"),
-    INTERNS_APPRENTICES("INTERNS/APPRENTICES", "Stagiaires / Apprentis");
+    EXECUTIVE_MANAGEMENT("EXECUTIVE_MANAGEMENT", "Direction générale"),
+    MIDDLE_MANAGEMENT("MIDDLE_MANAGEMENT", "Manager intermédiaire"),
+    SKILLED_EMPLOYEES("SKILLED_EMPLOYEES", "Employé qualifié"),
+    EMPLOYEES("EMPLOYEES", "Employé"),
+    INTERNS_APPRENTICES("INTERNS/APPRENTICES", "Stagiaire / Apprenti");
 
     private final String dbValue; // La valeur exacte pour la BDD
     private final String label;   // La valeur jolie pour l'affichage (optionnel)
