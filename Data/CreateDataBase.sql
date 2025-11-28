@@ -118,7 +118,7 @@ CREATE TABLE employeeRole(
 --   Insertion des données de base
 -- ===========================
 -- Rôles
-INSERT INTO role (roleName) VALUES ('ADMIN'), ('EMPLOYEE');
+INSERT INTO role (roleName) VALUES ('ADMIN'), ('RH'),('EMPLOYE');
 
 -- Départements
 INSERT INTO department (departmentName) VALUES ('EXECUTIVE_MANAGEMENT'), ('HR'), ('ACCOUNTING'), ('OPERATIONS'), ('SALES'), ('MARKETING_&_COMMUNICATIONS'), ('R&D'), ('PRODUCTION'), ('LEGAL_DEPARTMENT'), ('GENERAL_SERVICES'), ('HEALTH_SERVICES'), ('IT'), ('FINANCE');

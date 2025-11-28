@@ -67,7 +67,7 @@
             <tr style="cursor:pointer" onclick="window.location.href='<%= request.getContextPath() %>/employee?action=view&id=<%= employee.getId() %>'">
                 <td><%= employee.getLastName() != null ? employee.getLastName() : "" %></td>
                 <td><%= employee.getFirstName() != null ? employee.getFirstName() : "" %></td>
-                <td><%= employee.getGrade() != null ? Grade.getLabelFromDbValue(employee.getGrade()) : "" %></td>
+                <td><%= employee.getGrade() != null ? employee.getGrade().getLabel() : "" %></td>
                 <td><%= employee.getPost() != null ? employee.getPost() : "" %></td>
                 <td><%= department != null ? department.getDepartmentName() : "-" %></td>
                 <td>

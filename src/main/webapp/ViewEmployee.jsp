@@ -58,7 +58,7 @@
         <ul>
             <li><strong>Nom :</strong> ${employee.lastName}</li>
             <li><strong>Prénom :</strong> ${employee.firstName}</li>
-            <li><strong>Grade :</strong> <%= Grade.getLabelFromDbValue(employee.getGrade())%></li>
+            <li><strong>Grade :</strong> ${employee.grade.label}</li>
             <li><strong>Poste :</strong> ${employee.post}</li>
             <li><strong>Salaire :</strong> ${employee.salary}€</li>
             <li><strong>Nom d'utilisateur :</strong> ${employee.username}</li>
