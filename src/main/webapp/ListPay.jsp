@@ -1,4 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="com.example.projetjeegroupeq.model.Pay" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+
+<%
+    // Récupération de la liste envoyée par le Servlet
+    List<Pay> pays = (List<Pay>) request.getAttribute("pays");
+    // Récupération de l'employé filtré (peut être null si on affiche tout le monde)
+    Employee currentEmployee = (Employee) request.getAttribute("currentEmployee");
+%>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,34 +59,79 @@
     </nav>
 </div>
 <div class="hero-body">
-    <h2>Liste des fiches de paie</h2>
+    <h2><% if (currentEmployee != null) { %>
+        Historique des paies de <%= currentEmployee.getFirstName() %> <%= currentEmployee.getLastName() %>
+        <% } else { %>
+        Liste globale des fiches de paie
+        <% } %></h2>
     <nav>
-        <a href="FormPay.jsp">Créer une fiche de paie</a>
+        <% if (currentEmployee != null) { %>
+        <a href="<%= request.getContextPath() %>/pay?action=add&employeeId=<%= currentEmployee.getId() %>">
+            Créer une fiche de paie
+        </a>
+        <% } else { %>
+        <a href="<%= request.getContextPath() %>/pay?action=add">Créer une fiche de paie</a>
+        <% } %>
     </nav>
 
     <table class="table">
         <thead>
+        <!--<tr>
+            <th>ID</th>
+            <th>Primes</th>
+            <th>Déductions</th>
+            <th>Net à payer (€)</th>
+            <th>Actions</th>
+        </tr>-->
         <tr>
             <th>ID</th>
-            <th>Employé</th>
-            <th>Mois</th>
+            <% if (currentEmployee == null) { %>
+            <th>Employé</th> <!-- On affiche la colonne Employé seulement en vue globale -->
+            <% } %>
+            <th>Date</th>
             <th>Net à payer (€)</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <!-- Exemple -->
-        <!-- TODO Mettre les fiches de paie en dynamique lié à un unique employé-->
-        <tr onclick="window.location.href='ViewPay.jsp?id=1'">
-            <td>PS001</td>
-            <td>Claire Durand</td>
-            <td>2025-09</td>
-            <td>2850.00</td>
+        <%
+            if (pays == null || pays.isEmpty()) {
+        %>
+        <tr>
+            <td colspan="6" style="text-align:center;">Aucune fiche de paie trouvée.</td>
+        </tr>
+        <%
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            for (Pay p : pays) {
+        %>
+        <tr style="cursor:pointer" onclick="window.location.href='<%= request.getContextPath() %>/pay?action=view&payId=<%= p.getId() %>'">
+            <td><%= p.getId() %></td>
+            <% if (currentEmployee == null) { %>
             <td>
-                <a href="">Imprimer</a> | <!-- TODO Lien vers génération PDF -->
-                <a href="">Supprimer</a>
+                <% if (p.getEmployee() != null) { %>
+                <%= p.getEmployee().getFirstName() %> <%= p.getEmployee().getLastName() %>
+                <% } else { %>
+                -
+                <% } %>
+            </td>
+            <% } %>
+            <td><%= p.getDate() != null ? sdf.format(p.getDate()) : "-" %></td>
+
+
+            <!--<td style="color: green;">+ <%= String.format("%.2f", p.getBonus()) %> €</td>
+            <td style="color: red;">- <%= String.format("%.2f", p.getDeductions()) %> €</td> -->
+            <td><strong><%= String.format("%.2f", p.getSalary_net()) %> €</strong></td>
+            <td>
+                <a href="#">Imprimer</a> |
+                <a href="<%= request.getContextPath() %>/pay?action=delete&payId=<%= p.getId() %>"
+                   onclick="return confirm('Supprimer cette fiche ?');">Supprimer</a>
             </td>
         </tr>
+        <%
+                }
+            }
+        %>
         </tbody>
     </table>
 </div>
