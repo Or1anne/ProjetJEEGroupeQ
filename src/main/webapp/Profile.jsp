@@ -60,7 +60,7 @@
             <ul>
                 <li><strong>Nom :</strong> <%= user.getLastName() != null ? user.getLastName() : "" %> </li>
                 <li><strong>Prénom :</strong> <%= user.getFirstName()%> </li>
-                <li><strong>Grade :</strong> ${user.grade.label}</li>
+                <li><strong>Grade :</strong>  <%= user.getGrade() != null ? user.getGrade().getLabel() : "" %>
                 <li><strong>Poste :</strong> <%= user.getPost()%> </li>
                 <li><strong>Salaire :</strong> <%= user.getSalary()%> €</li>
                 <li><strong>Département :</strong> <%= user.getDepartment() != null ? user.getDepartment().getDepartmentName() : "Aucun" %> </li>
