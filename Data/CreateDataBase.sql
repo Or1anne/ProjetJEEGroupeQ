@@ -214,9 +214,9 @@ INSERT INTO employeeProject VALUES
 
 -- Insertion fiche de paie
 INSERT INTO pay (date, bonus, deductions, net, idEmployee) VALUES
-                                                               ('2025-01-31', 200, 50, 3100, (SELECT idEmployee FROM employee WHERE username='akeller')),
-                                                               ('2025-01-31', 400, 100, 4000, (SELECT idEmployee FROM employee WHERE username='ldupont')),
-                                                               ('2025-01-31', 800, 250, 5550, (SELECT idEmployee FROM employee WHERE username='smartin')),
-                                                               ('2025-01-31', 0, 0, 18000, (SELECT idEmployee FROM employee WHERE username='eroche')),
-                                                               ('2025-01-31', 600, 150, 6350, (SELECT idEmployee FROM employee WHERE username='molsen')),
+                                                               ('2025-01-31', 200, 50, 3450, (SELECT idEmployee FROM employee WHERE username='akeller')),
+                                                               ('2025-01-31', 400, 100, 4300, (SELECT idEmployee FROM employee WHERE username='ldupont')),
+                                                               ('2025-01-31', 800, 250, 7050, (SELECT idEmployee FROM employee WHERE username='smartin')),
+                                                               ('2025-01-31', 100, 500, 17600, (SELECT idEmployee FROM employee WHERE username='eroche')),
+                                                               ('2025-01-31', 600, 150, 6550, (SELECT idEmployee FROM employee WHERE username='molsen')),
                                                                ('2025-01-31', 100, 50, 2850, (SELECT idEmployee FROM employee WHERE username='psilva'));
