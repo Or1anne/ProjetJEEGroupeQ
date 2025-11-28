@@ -153,7 +153,12 @@ public class DepartmentServlet extends  HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Department introuvable");
                 return;
             }
-            request.setAttribute("department", department);
+
+        // Récupérer les employés du département
+        List<Employee> members = employeeDAO.searchByDepartmentId(department);
+
+        request.setAttribute("department", department);
+        request.setAttribute("employees", members);
             request.getRequestDispatcher("/ViewDepartment.jsp").forward(request, response);
         }
 
@@ -190,7 +195,7 @@ public class DepartmentServlet extends  HttpServlet {
 
             departmentDAO.update(existing, existing); // ou (existing, payload) selon ta signature
             response.sendRedirect(request.getContextPath() + "/department?action=list");
-            showDepartmentList(request, response);
+
         }
 
         private void addDepartment(HttpServletRequest request, HttpServletResponse response, Department receiver) throws IOException {

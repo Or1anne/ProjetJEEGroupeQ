@@ -57,8 +57,8 @@
             <div class="card">
                 <h2>Départements</h2>
                 <ul>
-                    <li><a href="ListDepartment.jsp">Liste des départements</a></li>
-                    <li><a href="FormDepartment.jsp">Créer un département</a></li>
+                    <li><a href="${pageContext.request.contextPath}/department">Liste des départements</a></li>
+                    <li><a href=${pageContext.request.contextPath}/department?action=add">Créer un département</a></li>
                 </ul>
             </div>
 

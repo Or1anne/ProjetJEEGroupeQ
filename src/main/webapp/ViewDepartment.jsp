@@ -1,4 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><!DOCTYPE html>
+<%@ page import="java.util.List" %>
+<%@ page import="com.example.projetjeegroupeq.model.Department" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -46,10 +49,30 @@
 </div>
 
 
+<%
+    Department department = (Department) request.getAttribute("department");
+    List<Employee> employees = (List<Employee>) request.getAttribute("employees");
+    if (employees == null) {
+        employees = java.util.Collections.emptyList();
+    }
+    String contextPath = request.getContextPath();
+%>
+
 <div class="hero-body">
-    <h2>Membres du département : "NOM DEPARTEMENT"</h2> <!-- TODO Récupérer le nom du département dynamiquement -->
+
+    <div class="card">
+        <strong>Chef du département :</strong>
+        <% if (department.getChefDepartment() != null) { %>
+        <a href="<%= contextPath %>/employee?action=view&id=<%= department.getChefDepartment().getId() %>">
+            <%= department.getChefDepartment().getFirstName() %> <%= department.getChefDepartment().getLastName() %>
+        </a>
+        <% } else { %>
+        Aucun chef
+        <% } %>
+    </div>
+    <h2>Membres du département : "<%= department != null ? department.getDepartmentName() : "" %>"</h2> <!-- TODO Récupérer le nom du département dynamiquement -->
     <nav>
-        <a href="ListDepartment.jsp">Retour</a>
+        <a href="<%= contextPath %>/department">Retour</a>
     </nav>
     <table class="table">
         <thead>
@@ -61,19 +84,21 @@
         </tr>
         </thead>
         <tbody>
+            <% if (employees.isEmpty()) { %>
         <tr>
-            <td>Durand</td>
-            <td>Claire</td>
-            <td>Cadre</td>
-            <td>Développeuse</td>
+            <td colspan="4">Aucun employé pour ce département.</td>
         </tr>
+            <% } else {
+           for (Employee e : employees) {
+    %>
         <tr>
-            <td>Martin</td>
-            <td>Lucas</td>
-            <td>Cadre</td>
-            <td>Chef de projet</td>
+            <td><%= e.getLastName() %></td>
+            <td><%= e.getFirstName() %></td>
+            <td><%= e.getGrade() != null ? e.getGrade().getLabel() : "" %></td>
+            <td><%= e.getPost() != null ? e.getPost() : "" %></td>
         </tr>
-        </tbody>
+            <%     }
+       } %>
     </table>
 </div>
 </body>
