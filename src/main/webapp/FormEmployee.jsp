@@ -64,22 +64,20 @@
                 <select name="grade" id="grade" required>
                     <option value="">-- Choisir un grade --</option>
                     <%
-                        // Récupération du grade actuel de l'employé (peut être null si nouvel ajout)
-                        String currentGrade = employee.getGrade();
+                        Grade currentGrade = employee.getGrade();
 
                         if (grades != null) {
                             for (Grade g : grades) {
-                                // On vérifie si l'employé a un grade ET si ce grade correspond à l'option en cours
-                                boolean isSelected = (currentGrade != null && currentGrade.equals(g.getDbValue()));
+                                boolean isSelected = (currentGrade != null && currentGrade == g);
                     %>
-                    <%-- Ajout conditionnel de l'attribut 'selected' --%>
-                    <option value="<%= g.getDbValue() %>" <%= isSelected ? "selected" : "" %>>
+                    <option value="<%= g.name() %>" <%= isSelected ? "selected" : "" %>>
                         <%= g.getLabel() %>
                     </option>
                     <%
                             }
                         }
                     %>
+                </select>
                 </select>
             </p>
             <p>
