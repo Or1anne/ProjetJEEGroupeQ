@@ -142,6 +142,7 @@ public class DepartmentServlet extends  HttpServlet {
     private void addDepartementForm(HttpServletRequest request, HttpServletResponse response, Department department, boolean editMode) throws ServletException, IOException {
         request.setAttribute("department", department != null ? department : new Department());
         request.setAttribute("departments", departmentDAO.getAll());
+        request.setAttribute("employees", employeeDAO.getAll());
         request.setAttribute("formMode", editMode ? "edit" : "add");
         request.getRequestDispatcher("/FormDepartment.jsp").forward(request, response);
     }

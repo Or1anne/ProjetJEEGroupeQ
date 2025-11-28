@@ -58,7 +58,7 @@
                 <h2>Départements</h2>
                 <ul>
                     <li><a href="${pageContext.request.contextPath}/department">Liste des départements</a></li>
-                    <li><a href=${pageContext.request.contextPath}/department?action=add">Créer un département</a></li>
+                    <li><a href="${pageContext.request.contextPath}/department?action=add">Créer un département</a></li>
                 </ul>
             </div>
 
