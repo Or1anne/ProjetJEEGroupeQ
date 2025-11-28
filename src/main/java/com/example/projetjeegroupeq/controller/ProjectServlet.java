@@ -141,6 +141,7 @@ public class ProjectServlet extends HttpServlet {
 
     private void populateProjectFromRequest(HttpServletRequest req, Project target) {
         target.setName_project(extractRequiredParameter(req, "projectName", "Le nom est obligatoire"));
+        target.setChefProj((Employee) extractRequiredParameter(req, "managerId", "Le chef de projet est obligatoire"));
     }
 
     private int parseId(String id, String errorMessage) {
