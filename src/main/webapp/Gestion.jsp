@@ -70,14 +70,15 @@
                 </ul>
             </div>
 
-            <div class="card">
-                <h2>Rapports / Statistiques</h2>
-                <ul>
-                    <li><a href="${pageContext.request.contextPath}/reports">Voir les rapports</a></li>
-                </ul>
-            </div>
+
 
         </section>
+        <div class="card">
+            <h2>Rapports / Statistiques</h2>
+            <ul>
+                <li><a href="${pageContext.request.contextPath}/report">Voir les rapports</a></li>
+            </ul>
+        </div>
     </main>
 </div>
 </body>
