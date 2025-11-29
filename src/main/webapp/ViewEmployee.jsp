@@ -93,7 +93,9 @@
             } else {
                 for (EmployeeProject ep : employee.getProjects()) {
             %>
-            <li><%= ep.getProject().getName_project() %></li>
+            <li><%= ep.getProject().getName_project() %>
+            <small>(<%= ep.getProject().getStatus().getTranslation() %>)</small>
+            </li>
             <%
                     }
                 }
