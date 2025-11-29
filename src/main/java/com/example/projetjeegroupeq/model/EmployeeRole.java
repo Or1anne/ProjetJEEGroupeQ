@@ -25,6 +25,10 @@ public class EmployeeRole {
         return id;
     }
 
+    public void setId(EmployeeRoleId id) {
+        this.id = id;
+    }
+
     public Employee getEmployee() {
         return employee;
     }

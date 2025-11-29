@@ -3,6 +3,7 @@
 <%@ page import="com.example.projetjeegroupeq.model.Department" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <%@ page import="com.example.projetjeegroupeq.model.Grade" %>
+<%@ page import="com.example.projetjeegroupeq.model.Role" %>
 <html>
 <head>
     <title>Formulaire de création d'un employé</title>
@@ -36,6 +37,7 @@
                 employee = new Employee();
             }
             List<Department> departments = (List<Department>) request.getAttribute("departments");
+            List<Role> roles = (List<Role>) request.getAttribute("roles");
             boolean isEditMode = "edit".equals(request.getAttribute("formMode"));
             String errorMessage = (String) request.getAttribute("errorMessage");
             Grade[] grades = (Grade[]) request.getAttribute("grades");
@@ -78,7 +80,31 @@
                         }
                     %>
                 </select>
+            </p>
+            <p>
+                <label for="role">Rôle</label>
+                <% if (roles == null || roles.isEmpty()) { %>
+                <select id="role" name="roleId" disabled>
+                    <option value="">Aucun rôle disponible</option>
                 </select>
+                <small>Veuillez créer un rôle avant d'ajouter un employé.</small>
+                <% } else { %>
+                <select name="roleId" id="role" required>
+                    <option value="">-- Choisir un rôle --</option>
+                    <%
+                        int currentRoleId = -1;
+                        if (employee.getEmployeeRoles() != null && !employee.getEmployeeRoles().isEmpty()) {
+                            currentRoleId = employee.getEmployeeRoles().get(0).getRole().getIdRole();
+                        }
+                        for (Role role : roles) {
+                            boolean selected = currentRoleId == role.getIdRole();
+                    %>
+                    <option value="<%= role.getIdRole() %>" <%= selected ? "selected" : "" %>>
+                        <%= role.getRoleName() %>
+                    </option>
+                    <% } %>
+                </select>
+                <% } %>
             </p>
             <p>
                 <label for="post">Poste</label>
