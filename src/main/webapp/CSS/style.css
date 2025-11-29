@@ -319,24 +319,23 @@ form input[type="submit"]:hover {
     color: #ffffff;
 }
 
-.stats-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
 
 /* Une "carte" par bloc de stats */
 .stats-card {
     background-color: #ffffff;
     border-radius: 14px;
-    padding: 20px;
+    padding: 1.2rem 1.4rem;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
 }
+
 
 
 /* Tableaux de stats */
 .stats-table-wrapper {
     overflow-x: auto;
+    flex: 1;
 }
 
 .stats-table {
@@ -400,17 +399,7 @@ form input[type="submit"]:hover {
 }
 /* Graphiques */
 /* Graphiques dans les rapports */
-.chart-container {
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-}
 
-.stats-chart {
-    width: 100% !important;
-    max-width: 420px;          /* largeur maxi du graphe */
-    height: 240px !important;  /* hauteur fixe et raisonnable */
-}
 
 
 
@@ -421,4 +410,43 @@ form input[type="submit"]:hover {
     font-size: 1.4rem;
 }
 
+
+/* Layout type dashboard pour la page de stats */
+.stats-dashboard {
+    width: 100%;
+    margin-top: 2rem;
+    min-height: 500px;
+}
+
+/* Sur grands écrans : 2 colonnes (tableau / graphe) */
+@media (min-width: 900px) {
+    .stats-dashboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stats-card-fullwidth {
+        grid-column: 1 / -1; /* la carte grades occupe toute la largeur */
+    }
+}
+
+/* On affine un peu les cartes de stats pour un look dashboard */
+.stats-card {
+    padding: 1.2rem 1.4rem;
+    min-height: 500px;
+
+}
+
+/* Graphiques */
+.chart-container {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+.stats-chart {
+    width: 100% !important;
+    max-width: 420px;
+    height: 240px !important;
+}
 

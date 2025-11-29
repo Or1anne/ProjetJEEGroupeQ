@@ -59,9 +59,7 @@
     </nav>
 </div>
 
-<div class="report-page">
 
-    <h1 class="report-title">Statistiques</h1>
 
 <%
     Map<Department, Long> employeesByDept =
@@ -71,9 +69,14 @@
     Map<Grade, Long> employeesByGrade =
             (Map<Grade, Long>) request.getAttribute("employeesByGrade");
 %>
-    <div class="stats-cards">
+<div class="report-page">
+
+    <h1 class="hero-body">Statistiques</h1>
+
+    <!-- Grille type dashboard -->
+    <div class="dashboard-grid stats-dashboard">
         <!-- 1. Nb d’employés par département -->
-        <section class="stats-card">
+        <section class="card stats-card">
             <h2 class="stats-card-title">Nombre d’employés par département</h2>
             <div class="stats-table-wrapper">
                 <table class="stats-table">
@@ -85,7 +88,7 @@
                     </thead>
                     <tbody>
                         <%
-                        if (employeesByDept != null) {
+                        if (employeesByDept != null && !employeesByDept.isEmpty()) {
                             for (Map.Entry<Department, Long> entry : employeesByDept.entrySet()) {
                         %>
     <tr>
@@ -102,17 +105,23 @@
         <%
                         }
                     %>
+                    </tbody>
                 </table>
             </div>
 
-            <div class="chart-container">
-                <canvas id="deptChart"></canvas>
-            </div>
+            <!-- Graphe 1 : Départements -->
+            <section class="card stats-card stats-card-chart">
+                <h2 class="stats-card-title">Vue graphique</h2>
+                <div class="chart-container">
+                    <canvas id="deptChart" class="stats-chart"></canvas>
+                </div>
+            </section>
+
         </section>
 
 
 <!-- 2. Nb d’employés par projet -->
-        <section class="card">
+        <section class="card stats-card">
             <h2 class="stats-card-title">Nombre d’employés par projet</h2>
             <div class="stats-table-wrapper">
                 <table class="stats-table">
@@ -123,10 +132,10 @@
                     </tr>
                     </thead>
                     <tbody>
-    <%
-        if (employeesByProject != null) {
-            for (Map.Entry<Project, Long> entry : employeesByProject.entrySet()) {
-    %>
+                    <%
+                        if (employeesByProject != null && !employeesByProject.isEmpty()) {
+                            for (Map.Entry<Project, Long> entry : employeesByProject.entrySet()) {
+                    %>
     <tr>
         <td><%= entry.getKey().getName_project() %></td>
         <td class="stats-value"><%= entry.getValue() %></td>
@@ -144,15 +153,18 @@
                     </tbody>
                 </table>
             </div>
+
+        <!-- Graphe 2 : Projets -->
+        <section class="card stats-card stats-card-chart">
+            <h2 class="stats-card-title">Vue graphique</h2>
             <div class="chart-container">
-                <canvas id="projectChart"></canvas>
+                <canvas id="projectChart" class="stats-chart"></canvas>
             </div>
         </section>
-
-
+        </section>
 
         <!-- 3. Nb d’employés par grade -->
-        <section class="stats-card">
+        <section class="card stats-card stats-card-fullwidth">
             <h2 class="stats-card-title">Nombre d’employés par grade</h2>
             <div class="stats-table-wrapper">
                 <table class="stats-table">
@@ -187,10 +199,48 @@
                 <canvas id="gradeChart"></canvas>
             </div>
         </section>
+
+
+    <!-- Carte : Suivi des projets -->
+    <section class="card stats-card stats-card-fullwidth">
+        <h2 class="stats-card-title">Suivi des projets</h2>
+
+        <div class="stats-table-wrapper">
+            <table class="stats-table">
+                <thead>
+                <tr>
+                    <th>Projet</th>
+                    <th>Statut</th>
+                    <th>Nombre d’employés</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    if (employeesByProject != null && !employeesByProject.isEmpty()) {
+                        for (Map.Entry<Project, Long> entry : employeesByProject.entrySet()) {
+                            Project p = entry.getKey();
+                            Long nb = entry.getValue();
+                %>
+                <tr>
+                    <td><%= p.getName_project() %></td>
+                    <td><%= p.getStatus() %></td>  <!-- enum ProjectStatus -->
+                    <td class="stats-value"><%= nb %></td>
+                </tr>
+                <%
+                    }
+                } else {
+                %>
+                <tr>
+                    <td colspan="3" class="stats-empty">Aucun projet à afficher</td>
+                </tr>
+                <%
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
+    </section>
     </div>
-
-
-
 
     <div class="report-footer">
         <a href="${pageContext.request.contextPath}/Gestion.jsp" class="btn-secondary">
