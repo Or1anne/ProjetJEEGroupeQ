@@ -1,7 +1,7 @@
 package com.example.projetjeegroupeq.model;
 
 import java.util.List;
-import java.util.HashSet;
+
 import jakarta.persistence.*;
 
 // TODO mettre à jour à l'aide du fichier sql pour que ça corresponds
@@ -14,12 +14,25 @@ public class Employee {
     @Column(name = "idEmployee")
     private int id;
 
+    @Column (name = "lastName")
     private String lastName;
+
+    @Column (name = "firstName")
     private String firstName;
-    private String grade;
+
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
+
+    @Column (name = "post")
     private String post;
+
+    @Column (name = "salary")
     private Double salary;
+
+    @Column (name = "username")
     private String username;
+
+    @Column (name = "password")
     private String password;
 
     @ManyToOne
@@ -36,7 +49,7 @@ public class Employee {
     public Employee() {}
 
     // Constructeur pour ajouter des employees
-    public  Employee(String lastName, String firstName, String grade, String post) {
+    public  Employee(String lastName, String firstName, Grade grade, String post) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.grade = grade;
@@ -64,11 +77,11 @@ public class Employee {
         this.firstName = firstName;
     }
 
-    public String getGrade() {
+    public Grade getGrade() {
         return grade;
     }
 
-    public void setGrade(String grade) {
+    public void setGrade(Grade grade) {
         this.grade = grade;
     }
 

@@ -71,6 +71,19 @@
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
             <version>3.0.1</version>
         </dependency>
+        <!-- Flying Saucer (Moteur de rendu PDF via HTML) -->
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf-itext5</artifactId>
+            <version>9.1.22</version>
+        </dependency>
+        <!-- Jsoup (Pour nettoyer le HTML et le rendre compatible XML/XHTML) -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.16.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -5,7 +5,7 @@ public enum Grade {
     MIDDLE_MANAGEMENT("MIDDLE_MANAGEMENT", "Manager intermédiaire"),
     SKILLED_EMPLOYEES("SKILLED_EMPLOYEES", "Employé qualifié"),
     EMPLOYEES("EMPLOYEES", "Employé"),
-    INTERNS_APPRENTICES("INTERNS/APPRENTICES", "Stagiaire / Apprenti");
+    INTERNS_APPRENTICES("INTERNS_APPRENTICES", "Stagiaire ou Apprenti");
 
     private final String dbValue; // La valeur exacte pour la BDD
     private final String label;   // La valeur jolie pour l'affichage (optionnel)

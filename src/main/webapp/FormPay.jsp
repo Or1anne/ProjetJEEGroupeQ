@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="java.util.List" %>
+
 <html>
 <head>
     <title>Créer une fiche de paie</title>
@@ -43,25 +46,47 @@
         </div>
     </nav>
 </div>
+<%
+    Employee prefill = (Employee) request.getAttribute("prefillEmployee");
+%>
 <div class="hero-body">
     <nav>
         <a href="ListPay.jsp">Liste des fiches de paie</a>
     </nav>
 <div class="form-container">
-    <form action="AddPayslip" method="post" class="form">
+    <form action="<%= request.getContextPath() %>/pay" method="post" class="form">
     <h2>Créer une fiche de paie</h2>
         <label>Employé </label>
-        <select name="employee">
-            <option>-- Sélectionner un employé --</option>
-            <option>Claire Durand</option>
-            <option>Lucas Martin</option>
+        <% if (prefill != null) { %>
+
+        <!-- Cas : employé déjà connu -->
+        <input type="hidden" name="employeeId" value="<%= prefill.getId() %>">
+        <input type="text" value="<%= prefill.getFirstName() + " " + prefill.getLastName() %>" disabled>
+
+        <% } else { %>
+
+        <!-- Cas global : choix manuel -->
+        <select name="employeeId" required>
+            <option value="">-- Sélectionner un employé --</option>
+            <%
+                List<Employee> employees = new com.example.projetjeegroupeq.dao.implementation.EmployeeDAO().getAll();
+                for (Employee e : employees) {
+            %>
+            <option value="<%= e.getId() %>"><%= e.getFirstName() %> <%= e.getLastName() %></option>
+            <% } %>
         </select>
+
+        <% } %>
 
         <label>Mois concerné </label>
         <input type="month" name="month" required>
 
         <label>Salaire de base (€) </label>
+        <% if (prefill != null) { %>
+        <input type="number" name="baseSalary" value="<%= prefill.getSalary() %>" readonly>
+        <% } else { %>
         <input type="number" name="baseSalary" step="0.01" required>
+        <% } %>
 
         <label>Primes (€)</label>
         <input type="number" name="bonus" step="0.01">

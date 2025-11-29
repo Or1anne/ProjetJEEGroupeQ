@@ -58,7 +58,7 @@
         <ul>
             <li><strong>Nom :</strong> ${employee.lastName}</li>
             <li><strong>Prénom :</strong> ${employee.firstName}</li>
-            <li><strong>Grade :</strong> <%= Grade.getLabelFromDbValue(employee.getGrade())%></li>
+            <li><strong>Grade :</strong> ${employee.grade.label}</li>
             <li><strong>Poste :</strong> ${employee.post}</li>
             <li><strong>Salaire :</strong> ${employee.salary}€</li>
             <li><strong>Nom d'utilisateur :</strong> ${employee.username}</li>
@@ -100,12 +100,10 @@
             %>
         </ul>
 
-        <!-- TODO Historique des paies -->
-
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
-            <a class="button" href="employee?action=edit&id=${employee.id}">Modifier</a> <!-- TODO Add idEmployee as query parameter -->
+            <a class="button" href="employee?action=edit&id=${employee.id}">Modifier</a>
             <a class="button" href="employee">Retour</a>
-            <a class="button" href="ListPay.jsp?id=${employee.id}">Historique des paies</a>
+            <a class="button" href="<%= request.getContextPath() %>/pay?action=list&employeeId=${employee.id}">Historique des paies</a>
         </div>
     </div>
 </section>
