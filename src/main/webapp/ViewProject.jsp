@@ -1,6 +1,7 @@
 <%@ page import="com.example.projetjeegroupeq.model.Project" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -50,20 +51,54 @@
 <div class="hero-body">
     <%
         Project project = (Project) request.getAttribute("project");
+        List<EmployeeProject> members = project != null ? project.getEmployees() : null;
     %>
 
     <div class="card">
-        <h2>Détails de <%=project.getName_project()%></h2>
-        <li><strong>Chef de projet :</strong> <%=project.getChefProj().getLastName()%> <%=project.getChefProj().getFirstName()%></li>
-        <li><strong>Statut :</strong> <%=project.getStatus().getTranslation()%>></li>
-        <h4>Membres de l'équipe : </h4>
-        <ul>
-            <% for (EmployeeProject e : project.getEmployees()) { %>
-            <li><%=e.getEmployee().getLastName()%> <%=e.getEmployee().getFirstName()%></li>
-            <% } %>
-        </ul>
-    </div>
+        <header>
+            <h2>Détails de <%= project.getName_project() %></h2>
+        </header>
 
+        <section>
+            <h3>Informations générales</h3>
+            <ul>
+                <li>
+                    <strong>Chef de projet :</strong>
+                    <%= project.getChefProj() != null
+                            ? project.getChefProj().getLastName() + " " + project.getChefProj().getFirstName()
+                            : "Non défini" %>
+                </li>
+                <li>
+                    <strong>Statut :</strong>
+                    <%= project.getStatus() != null
+                            ? project.getStatus().getTranslation()
+                            : "Non défini" %>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Membres de l'équipe</h3>
+            <%
+                if (members != null && !members.isEmpty()) {
+            %>
+            <ul>
+                <% for (EmployeeProject ep : members) { %>
+                <li>
+                    <%= ep.getEmployee().getLastName() %>
+                    <%= ep.getEmployee().getFirstName() %>
+                </li>
+                <% } %>
+            </ul>
+            <%
+            } else {
+            %>
+            <p>Aucun employé n’est actuellement affecté à ce projet.</p>
+            <%
+                }
+            %>
+        </section>
+    </div>
 </div>
 </body>
 </html>

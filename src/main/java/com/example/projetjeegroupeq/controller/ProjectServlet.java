@@ -2,6 +2,7 @@ package com.example.projetjeegroupeq.controller;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.projetjeegroupeq.dao.implementation.EmployeeDAO;
@@ -33,6 +34,8 @@ public class ProjectServlet extends HttpServlet {
             case "edit" -> handleEdit(req, resp);
             case "delete" -> handleDelete(req, resp);
             case "view" -> handleView(req, resp);
+            case "track" -> handleTrack(req, resp);
+            case "addemployees" -> showAddEmployeesForm(req, resp);
             default -> resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
         }
     }
@@ -52,7 +55,10 @@ public class ProjectServlet extends HttpServlet {
         ProjectDAO projectDAO = new ProjectDAO();
 
         try {
-            populateProjectFromRequest(req, payload);
+
+            if (action.equalsIgnoreCase("add") | action.equalsIgnoreCase("edit")) {
+                populateProjectFromRequest(req, payload);
+            }
 
             if ("add".equalsIgnoreCase(action)) {
                 projectDAO.add(payload);
@@ -64,6 +70,11 @@ public class ProjectServlet extends HttpServlet {
                 if (original == null) throw new IllegalArgumentException("Le projet à modifier n'existe plus");
 
                 projectDAO.update(original, payload);
+            } else if ("addEmployees".equalsIgnoreCase(action)) {
+                int id = parseId(req.getParameter("id"), "Identifiant projet manquant");
+
+               handleAddEmployees(req, resp);
+               return;
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
                 return;
@@ -71,7 +82,12 @@ public class ProjectServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/project?action=list");
         } catch (IllegalArgumentException ex) {
             req.setAttribute("errorMessage", ex.getMessage());
-            showProjectForm(req, resp, payload, "edit".equalsIgnoreCase(action));
+
+            if ("addEmployees".equalsIgnoreCase(action)) {
+                showAddEmployeesForm(req, resp);
+                return;
+            }
+            else showProjectForm(req, resp, payload, "edit".equalsIgnoreCase(action));
         }
 
     }
@@ -89,6 +105,23 @@ public class ProjectServlet extends HttpServlet {
         req.setAttribute("employees", employeeDAO.getAll());
         req.setAttribute("formMode", editMode ? "edit" : "add");
         req.getRequestDispatcher("/FormProject.jsp").forward(req, resp);
+    }
+
+    private void showAddEmployeesForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = parseId(req.getParameter("id"), "Identifiant projet manquant pour l'ajout d'employés");
+
+        Project project = projectDAO.searchById(id);
+        if (project == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Projet introuvable");
+            return;
+        }
+
+        // On prépare les données pour la JSP
+        req.setAttribute("project", project);
+        req.setAttribute("employees", employeeDAO.getAll());
+
+        // Nom de ta JSP d'affectation (celle qu’on a écrite ensemble)
+        req.getRequestDispatcher("/FormProjectEmployees.jsp").forward(req, resp);
     }
 
     private void handleEdit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -123,6 +156,35 @@ public class ProjectServlet extends HttpServlet {
 
         req.setAttribute("project", original);
         req.getRequestDispatcher("ViewProject.jsp").forward(req, resp);
+    }
+    private void handleTrack(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = parseId(req.getParameter("id"), "Identifiant manquant pour le suivis projet");
+
+        Project original = projectDAO.searchById(id);
+
+        if (original == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Projet non trouvable");
+            return;
+        }
+
+        req.setAttribute("project", original);
+        req.getRequestDispatcher("TrackProject.jsp").forward(req, resp);
+    }
+
+    private void handleAddEmployees(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int projectId = parseId(req.getParameter("id"), "Identifiant manquant pour l'ajout d'employées au projet");
+
+        String[] selectedIds = req.getParameterValues("employeeIds");
+
+        List<Integer> employeeIds = new ArrayList<>();
+        if (selectedIds != null) {
+            for (String s : selectedIds) {
+                employeeIds.add(Integer.parseInt(s));
+            }
+        }
+
+        projectDAO.updateEmployees(projectId, employeeIds);
+        resp.sendRedirect(req.getContextPath() + "/project?action=list");
     }
 
     private String trimToNull(String value) {

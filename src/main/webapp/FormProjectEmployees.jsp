@@ -120,6 +120,8 @@
                                     }
                                 }
                             }
+
+                            if (e.getId() != project.getChefProj().getId()) {
                     %>
                     <li>
                         <label>
@@ -127,7 +129,7 @@
                             <%= e.getLastName() %> <%= e.getFirstName() %>
                         </label>
                     </li>
-                    <% } %>
+                    <% }} %>
                 </ul>
                 <% } %>
             </fieldset>

@@ -12,6 +12,7 @@ import java.util.List;
 public interface ProjectDAOI {
     public void add(Project project);
     public void update(Project original, Project update);
+    public void updateEmployees(int projectId, List<Integer> employeeIds);
     public void delete(Project project);
 
     public Project searchById(int id);

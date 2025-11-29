@@ -2,6 +2,7 @@ package com.example.projetjeegroupeq.dao.implementation;
 
 import com.example.projetjeegroupeq.dao.interfaces.ProjectDAOI;
 import com.example.projetjeegroupeq.model.Project;
+import com.example.projetjeegroupeq.model.EmployeeProject;
 import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.model.ProjectStatus;
 import com.example.projetjeegroupeq.dao.sortingType.ProjectSortingType;
@@ -74,12 +75,14 @@ public class ProjectDAO implements ProjectDAOI {
             projectFound.setName_project(update.getName_project());
             projectFound.setStatus(update.getStatus());
             projectFound.setChefProj(update.getChefProj());
-            projectFound.getEmployees().clear();
-            if (update.getEmployees() != null) {
-                projectFound.getEmployees().addAll(update.getEmployees());
-            }
 
-            em.merge(projectFound);
+            if (update.getEmployees() != null && !update.getEmployees().isEmpty()) {
+                java.util.List<Integer> employeeIds = new java.util.ArrayList<>();
+                for (EmployeeProject ep : update.getEmployees()) {
+                    employeeIds.add(ep.getEmployee().getId());
+                }
+                applyEmployees(em, projectFound, employeeIds);
+            }
 
             em.getTransaction().commit();
         } catch (Exception e) {
@@ -88,6 +91,65 @@ public class ProjectDAO implements ProjectDAOI {
             if (em != null) {
                 em.close();
             }
+        }
+    }
+
+    private void applyEmployees(EntityManager em, Project project, List<Integer> employeeIds) {
+        // On vide la liste actuelle
+        project.getEmployees().clear();
+
+        if (employeeIds != null) {
+            for (Integer empId : employeeIds) {
+                if (empId == null) continue;
+                Employee employee = em.getReference(Employee.class, empId);
+
+                EmployeeProject ep = new EmployeeProject();
+                ep.setProject(project);
+                ep.setEmployee(employee);
+
+                project.getEmployees().add(ep);
+            }
+        }
+    }
+
+    @Override
+    public void updateEmployees(int projectId, List<Integer> employeeIds) {
+        EntityManager em = null;
+
+        try {
+            em = HibernateUtil.getEntityManager();
+            em.getTransaction().begin();
+
+            Project projectRef = em.getReference(Project.class, projectId);
+            if (projectRef == null) {
+                throw new IllegalArgumentException("Projet introuvable pour id=" + projectId);
+            }
+
+            // Supprime les anciennes liaisons
+            em.createQuery("DELETE FROM EmployeeProject ep WHERE ep.project.id = :pid").setParameter("pid", projectId).executeUpdate();
+
+            if (employeeIds != null) {
+                for (Integer empId : employeeIds) {
+                    if (empId == null) continue;
+
+                    Employee employee = em.getReference(Employee.class, empId);
+
+                    EmployeeProject ep = new EmployeeProject();
+                    ep.setProject(projectRef);
+                    ep.setEmployee(employee);
+
+                    em.persist(ep);
+                }
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Erreur lors de la mise à jour des employés du projet : " + e.getMessage(), e);
+        } finally {
+            if (em != null) em.close();
         }
     }
 
@@ -145,6 +207,10 @@ public class ProjectDAO implements ProjectDAOI {
             if (projectFound == null) {
                 System.err.println("Aucun projet trouvé avec l'id : " + id);
                 return null;
+            }
+
+            if (projectFound.getEmployees() != null) {
+                projectFound.getEmployees().size();  // force le chargement en mémoire
             }
 
             return projectFound;
