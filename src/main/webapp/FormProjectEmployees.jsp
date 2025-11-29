@@ -121,7 +121,8 @@
                                 }
                             }
 
-                            if (e.getId() != project.getChefProj().getId()) {
+                            if (project.getChefProj() != null) {
+                                if (e.getId() != project.getChefProj().getId()) {
                     %>
                     <li>
                         <label>
@@ -129,7 +130,14 @@
                             <%= e.getLastName() %> <%= e.getFirstName() %>
                         </label>
                     </li>
-                    <% }} %>
+                    <% }} else { %>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="employeeIds" value="<%= e.getId() %>" <%= alreadyMember ? "checked" : "" %> />
+                            <%= e.getLastName() %> <%= e.getFirstName() %>
+                        </label>
+                    </li>
+                    <% } } %>
                 </ul>
                 <% } %>
             </fieldset>

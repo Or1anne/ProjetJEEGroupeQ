@@ -3,6 +3,7 @@
 <%@ page import="com.example.projetjeegroupeq.model.Project" %>
 <%@ page import="com.example.projetjeegroupeq.model.ProjectStatus" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
 <html>
 <head>
     <title>Créer un projet</title>
@@ -103,6 +104,21 @@
                         <%
                             for (Employee e : employees) {
                                 boolean selected = (project.getChefProj() != null && project.getChefProj().getId() == e.getId());
+
+                                boolean same = false;
+                                if (project.getEmployees() != null) {
+                                    for (EmployeeProject ee : project.getEmployees()) {
+                                        if (ee.getEmployee() != null && ee.getEmployee().getId() == e.getId()) {
+                                            same = true;
+                                            break; // on peut sortir dès qu'on a trouvé
+                                        }
+                                    }
+                                }
+
+                                // Si l'employé est déjà membre du projet, on NE l'affiche PAS comme chef possible
+                                if (same) {
+                                    continue;
+                                }
                         %>
                         <option value="<%= e.getId()%>" <%= selected ? "selected" : ""%>>
                             <%= e.getLastName() %> <%= e.getFirstName()%>
