@@ -90,7 +90,6 @@
                 <td>
                     <a href="<%= contextPath %>/project?action=addEmployees&id=<%= p.getId() %>">Affecter employés</a> |
                     <a href="<%= contextPath %>/project?action=edit&id=<%= p.getId() %>">Modifier</a> |
-                    <a href="<%=contextPath%>/project?action=track&id=<%=p.getId()%>">Suivre</a> |
                     <a href="<%= contextPath %>/project?action=delete&id=<%= p.getId() %>"
                        onclick="return confirm('Supprimer ce projet ?');">Supprimer</a>
                 </td>

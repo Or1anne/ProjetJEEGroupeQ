@@ -135,8 +135,22 @@ public class ProjectDAO implements ProjectDAOI {
                     Employee employee = em.getReference(Employee.class, empId);
 
                     EmployeeProject ep = new EmployeeProject();
+
                     ep.setProject(projectRef);
                     ep.setEmployee(employee);
+
+                    if (projectRef.getEmployees() == null) {
+                        projectRef.setEmployees(new java.util.ArrayList<>()); // ajoute un setter si besoin
+                    }
+
+                    projectRef.getEmployees().add(ep);
+
+// Côté employé
+                    if (employee.getProjects() == null) {
+                        employee.setProjects(new java.util.ArrayList<>());
+                    }
+                    employee.getProjects().add(ep);
+
 
                     em.persist(ep);
                 }
