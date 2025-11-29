@@ -74,7 +74,10 @@ public class ProjectDAO implements ProjectDAOI {
             projectFound.setName_project(update.getName_project());
             projectFound.setStatus(update.getStatus());
             projectFound.setChefProj(update.getChefProj());
-            projectFound.setEmployees(update.getEmployees());
+            projectFound.getEmployees().clear();
+            if (update.getEmployees() != null) {
+                projectFound.getEmployees().addAll(update.getEmployees());
+            }
 
             em.merge(projectFound);
 
@@ -141,7 +144,6 @@ public class ProjectDAO implements ProjectDAOI {
 
             if (projectFound == null) {
                 System.err.println("Aucun projet trouvé avec l'id : " + id);
-                em.getTransaction().rollback();
                 return null;
             }
 

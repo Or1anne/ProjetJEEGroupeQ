@@ -54,19 +54,21 @@ public class ProjectServlet extends HttpServlet {
         try {
             populateProjectFromRequest(req, payload);
 
-            if ("add".equalsIgnoreCase(action)) projectDAO.add(payload);
-
-            if ("edit".equalsIgnoreCase(action)) {
+            if ("add".equalsIgnoreCase(action)) {
+                projectDAO.add(payload);
+            } else if ("edit".equalsIgnoreCase(action)) {
                 int id = parseId(req.getParameter("id"), "Identifiant projet manquant");
 
                 Project original = projectDAO.searchById(id);
+
+                if (original == null) throw new IllegalArgumentException("Le projet à modifier n'existe plus");
 
                 projectDAO.update(original, payload);
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
                 return;
             }
-            resp.sendRedirect(req.getContextPath() + "project?action=list");
+            resp.sendRedirect(req.getContextPath() + "/project?action=list");
         } catch (IllegalArgumentException ex) {
             req.setAttribute("errorMessage", ex.getMessage());
             showProjectForm(req, resp, payload, "edit".equalsIgnoreCase(action));
@@ -141,7 +143,29 @@ public class ProjectServlet extends HttpServlet {
 
     private void populateProjectFromRequest(HttpServletRequest req, Project target) {
         target.setName_project(extractRequiredParameter(req, "projectName", "Le nom est obligatoire"));
-        target.setChefProj((Employee) extractRequiredParameter(req, "managerId", "Le chef de projet est obligatoire"));
+        target.setChefProj(resolveChef(req.getParameter("managerId")));
+        target.setStatus(resolveStatus(req.getParameter("projectStatus")));
+    }
+
+    private Employee resolveChef(String id) {
+        int idChef = parseId(id, "Veuillez sélectionner un chef de département");
+        Employee chef = employeeDAO.searchById(idChef);
+        if (chef == null) throw new IllegalArgumentException("Le chef sélectionné est introuvable");
+        return chef;
+    }
+
+    private ProjectStatus resolveStatus(String name) {
+        String cleanValue = trimToNull(name);
+
+        if (cleanValue == null) {
+            throw new IllegalArgumentException("Le statut du projet est obligatoire");
+        }
+
+        try {
+            return ProjectStatus.valueOf(cleanValue);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Statut de projet invalide : " + cleanValue);
+        }
     }
 
     private int parseId(String id, String errorMessage) {

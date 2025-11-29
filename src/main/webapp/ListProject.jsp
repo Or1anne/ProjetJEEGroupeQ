@@ -85,7 +85,7 @@
         %>
             <tr style="cursor:pointer" onclick="window.location.href='<%= request.getContextPath() %>/project?action=view&id=<%= p.getId() %>">
                 <td><%= p.getName_project() != null ? p.getName_project() : "-"%></td>
-                <td><%= p.getChefProj() != null ? p.getClass().getName() : "-"%></td>
+                <td><%= p.getChefProj() != null ? p.getChefProj().getLastName() + " " + p.getChefProj().getFirstName() : "-"%></td>
                 <td><%= p.getStatus() != null ? p.getStatus().getTranslation() : "-"%></td>
                 <td>
                     <a href="<%= contextPath %>/project?action=addEmployees&id=<%= p.getId() %>">Affecter employés</a> |

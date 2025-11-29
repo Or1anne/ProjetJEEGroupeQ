@@ -85,7 +85,7 @@
                         boolean selected = (project.getStatus() != null && project.getStatus() == p);
                     %>
                         <option value="<%= p.name()%>" <%= selected ? "selected" : ""%>>
-                            <%= p.toString() %>
+                            <%= p.getTranslation() %>
                         </option>
                     <% } %>
                 </select>
