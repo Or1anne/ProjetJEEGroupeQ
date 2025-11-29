@@ -69,6 +69,14 @@
                     <li><a href="FormProject.jsp">Créer un projet</a></li>
                 </ul>
             </div>
+
+            <div class="card">
+                <h2>Rapports / Statistiques</h2>
+                <ul>
+                    <li><a href="${pageContext.request.contextPath}/reports">Voir les rapports</a></li>
+                </ul>
+            </div>
+
         </section>
     </main>
 </div>
