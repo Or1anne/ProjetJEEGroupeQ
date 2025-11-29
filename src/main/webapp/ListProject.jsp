@@ -92,26 +92,32 @@
             <option value="manager" <%= "manager".equals(filterField) ? "selected" : "" %>>Chef de projet</option>
         </select>
 
-        <!-- Valeur du filtre (nom, statut ou chef) -->
+        <!-- Valeur du filtre: texte pour le nom, select pour statut/chef -->
         <% if ("name".equals(filterField)) { %>
-            <input type="text" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>" placeholder="Nom du projet contient..." />
-        <% } else { %>
+            <input type="text" name="filterValue"
+                   value="<%= filterValue != null ? filterValue : "" %>"
+                   placeholder="Nom du projet contient..." />
+        <% } else if ("status".equals(filterField)) { %>
             <select name="filterValue">
-                <option value="">-- Valeur --</option>
-                <% if ("status".equals(filterField)) { %>
-                    <% for (ProjectStatus s : projectStatuses) { %>
-                        <option value="<%= s.name() %>" <%= s.name().equals(filterValue) ? "selected" : "" %>>
-                            <%= s.getTranslation() %>
-                        </option>
-                    <% } %>
-                <% } else if ("manager".equals(filterField)) { %>
-                    <% for (Employee e : allEmployees) { %>
-                        <option value="<%= e.getId() %>" <%= String.valueOf(e.getId()).equals(filterValue) ? "selected" : "" %>>
-                            <%= e.getLastName() %> <%= e.getFirstName() %>
-                        </option>
-                    <% } %>
+                <option value="">-- Statut --</option>
+                <% for (ProjectStatus s : projectStatuses) { %>
+                    <option value="<%= s.name() %>" <%= s.name().equals(filterValue) ? "selected" : "" %>>
+                        <%= s.getTranslation() %>
+                    </option>
                 <% } %>
             </select>
+        <% } else if ("manager".equals(filterField)) { %>
+            <select name="filterValue">
+                <option value="">-- Chef de projet --</option>
+                <% for (Employee e : allEmployees) { %>
+                    <option value="<%= e.getId() %>" <%= String.valueOf(e.getId()).equals(filterValue) ? "selected" : "" %>>
+                        <%= e.getLastName() %> <%= e.getFirstName() %>
+                    </option>
+                <% } %>
+            </select>
+        <% } else { %>
+            <!-- Aucun filtre spécifique sélectionné : valeur vide -->
+            <input type="text" name="filterValue" value="" placeholder="Valeur" />
         <% } %>
 
         <label>Trier par :</label>
