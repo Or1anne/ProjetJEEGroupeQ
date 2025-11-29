@@ -14,6 +14,8 @@
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat sdf_long = new SimpleDateFormat("dd MMMM yyyy", new java.util.Locale("fr", "FR"));
+
 
     // Récupération de l'employé filtré (peut être null si on affiche tout le monde)
     Employee currentEmployee = pay.getEmployee();
@@ -28,8 +30,6 @@
         // Sinon retour à la liste globale
         retourUrl = "pay?action=list";
     }
-
-    String contextPath = request.getContextPath();
 %>
 <!DOCTYPE html>
 <html>
@@ -90,13 +90,13 @@
         </table>
 
         <section class="signature">
-            <p>Fait à Paris, le 30 septembre 2025</p>
+            <p>Fait à Cergy, le <%= sdf_long.format(pay.getDate()) %></p>
             <p><em>Signature de l’employé</em> : _______________________</p>
         </section>
 
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
             <a href="<%= retourUrl %>">Retour</a>
-            <button type="button" onclick="window.print()">Imprimer</button> <!-- TODO Lien vers génération PDF actuellement il fait juste ctrl+p -->
+            <a href="<%= request.getContextPath() %>/pay?action=pdf&payId=<%= pay.getId() %>">Imprimer</a>
         </div>
     </div>
 

@@ -4,15 +4,16 @@ import com.example.projetjeegroupeq.dao.implementation.EmployeeDAO;
 import com.example.projetjeegroupeq.dao.implementation.PayDAO;
 import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.model.Pay;
+import com.example.projetjeegroupeq.util.PayPdfGenerator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 @WebServlet("/pay")
@@ -39,7 +40,7 @@ public class PayServlet extends HttpServlet {
             case "add" -> handleAdd(req,resp);
             case "view" -> handleView(req, resp);
             case "delete" -> handleDelete(req, resp);
-            //case "pdf" -> generatePdf(req, resp);
+            case "pdf" -> generatePdf(req, resp);
             default -> listPay(req, resp);
         }
     }
@@ -237,7 +238,6 @@ public class PayServlet extends HttpServlet {
     }
 
 
-/*
     private void generatePdf(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             int payId = Integer.parseInt(req.getParameter("payId"));
@@ -248,44 +248,22 @@ public class PayServlet extends HttpServlet {
                 return;
             }
 
+            // Configurer la réponse PDF
             resp.setContentType("application/pdf");
             resp.setHeader("Content-Disposition", "attachment; filename=fiche_paie_" + payId + ".pdf");
 
-            Document document = new Document();
-            PdfWriter.getInstance(document, resp.getOutputStream());
+            // Déléguer la génération à PayPdfGenerator
+            OutputStream out = resp.getOutputStream();
+            PayPdfGenerator.generatePayPdf(pay, out);
+            out.close();
 
-            document.open();
-
-            document.add(new Paragraph("FICHE DE PAIE\n\n"));
-            document.add(new Paragraph("Employé : " + pay.getEmployee().getFirstName() + " " + pay.getEmployee().getLastName()));
-            document.add(new Paragraph("Date : " + pay.getDate().toString()));
-            document.add(new Paragraph("\n"));
-
-            PdfPTable table = new PdfPTable(2);
-            table.addCell("Salaire de base");
-            table.addCell(String.format("%.2f €", pay.getEmployee().getSalary()));
-
-            table.addCell("Primes");
-            table.addCell(String.format("%.2f €", pay.getBonus()));
-
-            table.addCell("Déductions");
-            table.addCell(String.format("%.2f €", pay.getDeductions()));
-
-            table.addCell("Net à payer");
-            table.addCell(String.format("%.2f €", pay.getSalary_net()));
-
-            document.add(table);
-
-            document.add(new Paragraph("\n\nSignature : _________________________"));
-
-            document.close();
-
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Identifiant de paie invalide");
         } catch (Exception e) {
             e.printStackTrace();
-            resp.sendError(500, "Erreur PDF");
+            resp.sendError(500, "Erreur lors de la génération du PDF : " + e.getMessage());
         }
-    }*/
-
+    }
 
 
 }

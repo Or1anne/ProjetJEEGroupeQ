@@ -123,7 +123,7 @@
             <td style="color: red;">- <%= String.format("%.2f", p.getDeductions()) %> €</td> -->
             <td><strong><%= String.format("%.2f", p.getSalary_net()) %> €</strong></td>
             <td>
-                <a href="#">Imprimer</a> |
+                <a href="<%= request.getContextPath() %>/pay?action=pdf&payId=<%= p.getId() %>">Imprimer</a> |
                 <a href="<%= request.getContextPath() %>/pay?action=delete&payId=<%= p.getId() %>"
                    onclick="return confirm('Supprimer cette fiche ?');">Supprimer</a>
             </td>
