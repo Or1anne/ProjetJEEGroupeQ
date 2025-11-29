@@ -11,6 +11,11 @@ public class EmployeeRoleId implements Serializable {
 
     public EmployeeRoleId() {}
 
+    public EmployeeRoleId(Integer idEmployee, Integer idRole) {
+        this.idEmployee = idEmployee;
+        this.idRole = idRole;
+    }
+
     public Integer getIdEmployee() {
         return idEmployee;
     }

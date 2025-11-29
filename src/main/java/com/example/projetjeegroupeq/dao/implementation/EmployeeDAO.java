@@ -4,11 +4,14 @@ import com.example.projetjeegroupeq.dao.interfaces.EmployeeDAOI;
 import com.example.projetjeegroupeq.model.Department;
 import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.model.Project;
+import com.example.projetjeegroupeq.model.EmployeeRole;
+import com.example.projetjeegroupeq.model.EmployeeProject;
 import com.example.projetjeegroupeq.dao.sortingType.EmployeeSortingType;
 import jakarta.persistence.EntityManager;
 
 import com.example.projetjeegroupeq.util.HibernateUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -132,20 +135,58 @@ public class EmployeeDAO implements EmployeeDAOI {
                 return;
             }
 
-            employeeFound.setDepartment(null);
-
-            List<Department> deps = em.createQuery(
-                            "SELECT d FROM Department d WHERE d.chefDepartment.id = :id", Department.class)
-                    .setParameter("id", employee.getId()) //TODO A Vérifier
-                    .getResultList();
-
-            for (Department d : deps) {
-                d.setChefDepartment(null); // casser la FK pour éviter TransientObjectException
+            // Supprimer les rôles (EmployeeRole) via l'EntityManager
+            // On fait une copie de la liste pour éviter les erreurs d'itération
+            if (employeeFound.getEmployeeRoles() != null) {
+                List<EmployeeRole> rolesToDelete = new ArrayList<>(employeeFound.getEmployeeRoles());
+                for (EmployeeRole role : rolesToDelete) {
+                    em.remove(role); // Supprime proprement l'entité du contexte et de la BDD
+                }
+                employeeFound.getEmployeeRoles().clear(); // Vide la liste côté Java
             }
 
+            // Supprimer les projets (EmployeeProject) via l'EntityManager
+            if (employeeFound.getProjects() != null) {
+                List<EmployeeProject> projectsToDelete = new ArrayList<>(employeeFound.getProjects());
+                for (EmployeeProject ep : projectsToDelete) {
+                    em.remove(ep);
+                }
+                employeeFound.getProjects().clear();
+            }
+
+            // Désassocier le département
+            employeeFound.setDepartment(null);
+
+            // Supprimer les rôles de chef de département
+            List<Department> depsAsChef = em.createQuery(
+                            "SELECT d FROM Department d WHERE d.chefDepartment.id = :id", Department.class)
+                    .setParameter("id", employeeFound.getId())
+                    .getResultList();
+
+            for (Department d : depsAsChef) {
+                d.setChefDepartment(null);
+                em.merge(d); // s'assurer que le changement est pris en compte
+            }
+
+            // Supprimer les rôles de chef de projet
+            List<Project> projectsAsChef = em.createQuery(
+                            "SELECT p FROM Project p WHERE p.ChefProj.id = :id", Project.class)
+                    .setParameter("id", employeeFound.getId())
+                    .getResultList();
+
+            for (Project p : projectsAsChef) {
+                p.setChefProj(null);
+                em.merge(p);
+            }
+
+            // Supprimer l'employé
             em.remove(employeeFound);
+
             em.getTransaction().commit();
         } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new RuntimeException("Erreur lors de la suppression d'un employé : " + e.getMessage());
         } finally {
             if (em != null) {

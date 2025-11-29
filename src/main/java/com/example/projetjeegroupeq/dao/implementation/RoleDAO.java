@@ -3,10 +3,13 @@ package com.example.projetjeegroupeq.dao.implementation;
 import com.example.projetjeegroupeq.dao.interfaces.RoleDAOI;
 import com.example.projetjeegroupeq.dao.sortingType.RoleSortingType;
 import com.example.projetjeegroupeq.model.Employee;
+import com.example.projetjeegroupeq.model.EmployeeRole;
 import com.example.projetjeegroupeq.model.Role;
+import com.example.projetjeegroupeq.model.embededId.EmployeeRoleId;
 import com.example.projetjeegroupeq.util.HibernateUtil;
 import jakarta.persistence.EntityManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -252,7 +255,7 @@ public class RoleDAO implements RoleDAOI {
 
             switch (sortingType) {
                 default:
-                    query = "SELECT R FROM Role r ORDER BY r.roleName";
+                    query = "SELECT r FROM Role r ORDER BY r.roleName";
                     break;
             }
 
@@ -277,5 +280,88 @@ public class RoleDAO implements RoleDAOI {
     @Override
     public List<Role> getAll() {
         return this.getAllSorted(RoleSortingType.BY_NAME);
+    }
+
+    /**
+     * Assigne un rôle à un employé en créant une relation EmployeeRole.
+     * Supprime d'abord tous les rôles existants de l'employé avant d'assigner le nouveau.
+     *
+     * @param employee employé auquel assigner le rôle
+     * @param role rôle à assigner
+     * @throws RuntimeException en cas d'erreur technique
+     */
+    public void assignRoleToEmployee(Employee employee, Role role) {
+        EntityManager em = null;
+
+        try {
+            em = HibernateUtil.getEntityManager();
+            em.getTransaction().begin();
+
+            // Récupérer l'employé et le rôle depuis la BD
+            Employee emp = em.find(Employee.class, employee.getId());
+            Role r = em.find(Role.class, role.getIdRole());
+
+            if (emp == null || r == null) {
+                throw new RuntimeException("Employé ou rôle introuvable en base de données");
+            }
+
+            // 2. Optimisation : Si l'employé a déjà CE rôle unique, on ne fait rien
+            // Cela évite de supprimer/recréer pour rien (et évite des erreurs potentielles)
+            boolean alreadyHasRole = false;
+            if (emp.getEmployeeRoles() != null) {
+                for (EmployeeRole er : emp.getEmployeeRoles()) {
+                    if (er.getRole().getIdRole() == r.getIdRole()) {
+                        alreadyHasRole = true;
+                        break;
+                    }
+                }
+            }
+
+            // Si on veut qu'il n'ait QUE ce rôle, on doit vérifier s'il en a d'autres
+            // Si la logique est "Un employé n'a qu'un seul rôle", on continue le nettoyage
+            // Si "alreadyHasRole" est vrai et qu'il n'a qu'un seul rôle, on arrête tout (gain de perf).
+            if (alreadyHasRole && emp.getEmployeeRoles().size() == 1) {
+                em.getTransaction().commit();
+                return;
+            }
+
+            // 3. Suppression propre des anciens rôles via Hibernate (pas de SQL brut !)
+            if (emp.getEmployeeRoles() != null) {
+                // On copie la liste pour pouvoir itérer et supprimer en même temps
+                List<EmployeeRole> oldRoles = new ArrayList<>(emp.getEmployeeRoles());
+                for (EmployeeRole oldRole : oldRoles) {
+                    em.remove(oldRole); // Supprime de la BDD et du contexte
+                }
+                emp.getEmployeeRoles().clear(); // Vide la liste Java de l'employé
+
+                // Important : on force l'envoi des suppressions à la BDD maintenant
+                // pour laisser la place nette au nouveau rôle
+                em.flush();
+            }
+
+            // 4. Création de la nouvelle relation
+            EmployeeRole newRelation = new EmployeeRole();
+            // Construction de la clé composite
+            EmployeeRoleId id = new EmployeeRoleId(emp.getId(), r.getIdRole());
+
+            newRelation.setId(id);
+            newRelation.setEmployee(emp);
+            newRelation.setRole(r);
+
+            // 5. Persistance
+            em.persist(newRelation);
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Erreur lors de l'assignation du rôle à l'employé : " + e.getMessage());
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 }

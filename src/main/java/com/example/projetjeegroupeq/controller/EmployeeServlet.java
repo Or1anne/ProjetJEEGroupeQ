@@ -2,9 +2,11 @@ package com.example.projetjeegroupeq.controller;
 
 import com.example.projetjeegroupeq.dao.implementation.DepartmentDAO;
 import com.example.projetjeegroupeq.dao.implementation.EmployeeDAO;
+import com.example.projetjeegroupeq.dao.implementation.RoleDAO;
 import com.example.projetjeegroupeq.model.Department;
 import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.model.Grade;
+import com.example.projetjeegroupeq.model.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +21,7 @@ import java.util.List;
 public class EmployeeServlet extends HttpServlet {
     private final EmployeeDAO employeeDAO = new EmployeeDAO();
     private final DepartmentDAO departmentDAO = new DepartmentDAO();
+    private final RoleDAO roleDAO = new RoleDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -78,6 +81,18 @@ public class EmployeeServlet extends HttpServlet {
 
                 employeeDAO.add(payload);
 
+                // Assigner le rôle si fourni
+                String roleIdStr = req.getParameter("roleId");
+                if (roleIdStr != null && !roleIdStr.isBlank()) {
+                    try {
+                        int roleId = Integer.parseInt(roleIdStr);
+                        Role role = roleDAO.searchById(roleId);
+                        if (role != null) {
+                            roleDAO.assignRoleToEmployee(payload, role);
+                        }
+                    } catch (NumberFormatException ignore) {}
+                }
+
             } else if (editMode) {
                 int id = parseId(req.getParameter("id"), "Identifiant employé manquant");
                 //employeeDAO.update(payload, payload);
@@ -95,6 +110,18 @@ public class EmployeeServlet extends HttpServlet {
 
                 // 3. Appeler le DAO : update(original, nouvelles_valeurs)
                 employeeDAO.update(existingEmployee, payload);
+
+                // 4. Assigner le rôle si fourni
+                String roleIdStr = req.getParameter("roleId");
+                if (roleIdStr != null && !roleIdStr.isBlank()) {
+                    try {
+                        int roleId = Integer.parseInt(roleIdStr);
+                        Role role = roleDAO.searchById(roleId);
+                        if (role != null) {
+                            roleDAO.assignRoleToEmployee(existingEmployee, role);
+                        }
+                    } catch (NumberFormatException ignore) {}
+                }
 
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
@@ -236,6 +263,7 @@ public class EmployeeServlet extends HttpServlet {
         req.setAttribute("employee", employee != null ? employee : new Employee());
         req.setAttribute("grades", Grade.values());
         req.setAttribute("departments", departmentDAO.getAll());
+        req.setAttribute("roles", roleDAO.getAll());
         req.setAttribute("formMode", editMode ? "edit" : "add");
         req.getRequestDispatcher("/FormEmployee.jsp").forward(req, resp);
     }
