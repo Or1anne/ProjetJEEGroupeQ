@@ -164,7 +164,15 @@ public class EmployeeServlet extends HttpServlet {
     private void populateEmployeeFromRequest(HttpServletRequest req, Employee target) {
         target.setLastName(extractRequiredParameter(req, "lastname", "Le nom est obligatoire."));
         target.setFirstName(extractRequiredParameter(req, "firstname", "Le prénom est obligatoire."));
-        target.setGrade(extractRequiredParameter(req, "grade", "Le grade est obligatoire."));
+
+        String gradeParam = extractRequiredParameter(req, "grade", "Le grade est obligatoire.");
+        try {
+            Grade gradeEnum = Grade.valueOf(gradeParam); // convertit la String en enum
+            target.setGrade(gradeEnum);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Grade invalide.");
+        }
+
         target.setPost(trimToNull(req.getParameter("post")));
         target.setSalary(parseSalary(req.getParameter("salary")));
         target.setDepartment(resolveDepartment(req.getParameter("departmentId")));

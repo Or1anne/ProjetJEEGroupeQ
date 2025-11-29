@@ -9,6 +9,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idDepartment")
     private int id;
+    @Column(name="departmentName")
     private String departmentName;
 
     // TODO transformer en @JoinColomn clée étrangere

@@ -1,10 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+
+<%@ page import="com.example.projetjeegroupeq.model.Department" %>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Liste des départements</title>
-    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
 </head>
 <body>
 <div class="hero-head">
@@ -46,11 +50,17 @@
     </nav>
 </div>
 
-
+<%
+    List<Department> departments = (List<Department>) request.getAttribute("departments");
+    if (departments == null) {
+        departments = java.util.Collections.emptyList();
+    }
+    String contextPath = request.getContextPath();
+%>
 <div class="hero-body">
     <h2>Liste des départements</h2>
     <nav>
-        <a href="FormDepartment.jsp">Ajouter un département</a>
+        <a class="btn" href="<%= contextPath %>/department?action=add">Ajouter un département</a>
     </nav>
 
     <table class="table">
@@ -63,17 +73,28 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Exemple -->
-        <!-- TODO Mettre les départements en dynamique -->
-        <tr onclick="window.location.href='ViewDepartment.jsp?id=1'"> <!-- TODO Mettre le bon id en dynamique -->
-            <td>1</td>
-            <td>Informatique</td>
-            <td>Développement et maintenance des systèmes</td>
+        <% if (departments.isEmpty()) { %>
+        <tr>
+            <td colspan="4">Aucun département enregistré.</td>
+        </tr>
+        <% } else {
+            for (Department dep : departments) {
+        %>
+        <tr style="cursor:pointer"
+            onclick="window.location.href='<%= contextPath %>/department?action=view&id=<%= dep.getId() %>'">
+            <td><%= dep.getId() %></td>
+            <td><%= dep.getDepartmentName() %></td>
             <td>
-                <a href="FormModifyDepartment.jsp">Modifier</a> |
-                <a href="">Supprimer</a> <!-- TODO mettre un bouton et non un lien hypertexte-->
+
+            </td>
+            <td>
+                <a href="<%= contextPath %>/department?action=edit&id=<%= dep.getId() %>">Modifier</a> |
+                <a href="<%= contextPath %>/department?action=delete&id=<%= dep.getId() %>"
+                   onclick="return confirm('Supprimer ce département ?');">Supprimer</a>
             </td>
         </tr>
+        <%     }
+        } %>
         </tbody>
     </table>
 </div>
