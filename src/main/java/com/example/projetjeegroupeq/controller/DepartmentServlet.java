@@ -11,6 +11,7 @@ import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.dao.implementation.EmployeeDAO;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -134,8 +135,48 @@ public class DepartmentServlet extends  HttpServlet {
 
     private void showDepartmentList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Department> departments = departmentDAO.getAll();
-        departments.forEach(d -> System.out.println(" - " + d.getId() + " " + d.getDepartmentName()));
+
+        String filterField = trimToNull(request.getParameter("filterField"));
+        String filterValue = trimToNull(request.getParameter("filterValue"));
+        String sortField = trimToNull(request.getParameter("sortField"));
+        String sortOrder = trimToNull(request.getParameter("sortOrder"));
+
+        if (filterField != null && filterValue != null) {
+            switch (filterField) {
+                case "name" -> {
+                    String lower = filterValue.toLowerCase();
+                    departments = departments.stream()
+                            .filter(d -> d.getDepartmentName() != null && d.getDepartmentName().toLowerCase().contains(lower))
+                            .toList();
+                }
+                default -> {}
+            }
+        }
+
+        if (sortField != null) {
+            Comparator<Department> comparator = null;
+            switch (sortField) {
+                case "id" -> comparator = Comparator.comparing(Department::getId);
+                case "name" -> comparator = Comparator.comparing(
+                        d -> d.getDepartmentName() != null ? d.getDepartmentName().toLowerCase() : ""
+                );
+                default -> {}
+            }
+
+            if (comparator != null) {
+                if ("desc".equalsIgnoreCase(sortOrder)) {
+                    comparator = comparator.reversed();
+                }
+                departments = departments.stream().sorted(comparator).toList();
+            }
+        }
+
         request.setAttribute("departments", departments);
+        request.setAttribute("filterField", filterField);
+        request.setAttribute("filterValue", filterValue);
+        request.setAttribute("sortField", sortField);
+        request.setAttribute("sortOrder", sortOrder);
+
         request.getRequestDispatcher("/ListDepartment.jsp").forward(request, response);
     }
 

@@ -3,6 +3,7 @@ package com.example.projetjeegroupeq.controller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.example.projetjeegroupeq.dao.implementation.EmployeeDAO;
@@ -95,8 +96,85 @@ public class ProjectServlet extends HttpServlet {
     private void showProjectList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Project> projects = projectDAO.getAll();
 
-        projects.forEach(p -> System.out.println(" - " + p.getId() + " " + p.getName_project()));
+        String filterField = trimToNull(req.getParameter("filterField"));
+        String filterValue = trimToNull(req.getParameter("filterValue"));
+        String sortField = trimToNull(req.getParameter("sortField"));
+        String sortOrder = trimToNull(req.getParameter("sortOrder"));
+
+        // Filtrage simple
+        if (filterField != null && filterValue != null) {
+            switch (filterField) {
+                case "status" -> {
+                    try {
+                        ProjectStatus status = ProjectStatus.valueOf(filterValue);
+                        projects = projects.stream()
+                                .filter(p -> p.getStatus() == status)
+                                .toList();
+                    } catch (IllegalArgumentException ignored) {
+                        // statut inconnu : pas de filtrage
+                    }
+                }
+                case "manager" -> {
+                    try {
+                        int managerId = Integer.parseInt(filterValue);
+                        projects = projects.stream()
+                                .filter(p -> p.getChefProj() != null && p.getChefProj().getId() == managerId)
+                                .toList();
+                    } catch (NumberFormatException ignored) {
+                        // id invalide : pas de filtrage
+                    }
+                }
+                case "name" -> {
+                    String lower = filterValue.toLowerCase();
+                    projects = projects.stream()
+                            .filter(p -> {
+                                String n = p.getName_project() != null ? p.getName_project().toLowerCase() : "";
+                                return n.contains(lower);
+                            })
+                            .toList();
+                }
+                default -> {
+                    // champ non géré : pas de filtrage
+                }
+            }
+        }
+
+        // Tri simple en mémoire
+        if (sortField != null) {
+            Comparator<Project> comparator = null;
+            switch (sortField) {
+                case "name" -> comparator = Comparator.comparing(
+                        p -> p.getName_project() != null ? p.getName_project().toLowerCase() : ""
+                );
+                case "status" -> comparator = Comparator.comparing(
+                        p -> p.getStatus() != null ? p.getStatus().name() : ""
+                );
+                case "manager" -> comparator = Comparator.comparing(
+                        p -> p.getChefProj() != null && p.getChefProj().getLastName() != null
+                                ? p.getChefProj().getLastName().toLowerCase()
+                                : ""
+                );
+                default -> {
+                }
+            }
+
+            if (comparator != null) {
+                if ("desc".equalsIgnoreCase(sortOrder)) {
+                    comparator = comparator.reversed();
+                }
+                projects = projects.stream().sorted(comparator).toList();
+            }
+        }
+
+        // Attributs pour la JSP (liste et état des filtres/tri)
         req.setAttribute("projects", projects);
+        req.setAttribute("filterField", filterField);
+        req.setAttribute("filterValue", filterValue);
+        req.setAttribute("sortField", sortField);
+        req.setAttribute("sortOrder", sortOrder);
+        req.setAttribute("projectStatuses", ProjectStatus.values());
+        req.setAttribute("allEmployees", employeeDAO.getAll());
+
         req.getRequestDispatcher("/ListProject.jsp").forward(req, resp);
     }
 

@@ -14,7 +14,9 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet("/pay")
 public class PayServlet extends HttpServlet {
@@ -84,7 +86,52 @@ public class PayServlet extends HttpServlet {
             pays = payDAO.getAll();
         }
 
+        String filterField = trimToNull(req.getParameter("filterField"));
+        String filterValue = trimToNull(req.getParameter("filterValue"));
+        String sortField = trimToNull(req.getParameter("sortField"));
+        String sortOrder = trimToNull(req.getParameter("sortOrder"));
+
+        // Filtrage
+        if (filterField != null && filterValue != null) {
+            switch (filterField) {
+                case "month" -> {
+                    // filterValue attendu au format YYYY-MM
+                    pays = pays.stream()
+                            .filter(p -> {
+                                if (p.getDate() == null) return false;
+                                String ym = p.getDate().toString().substring(0, 7); // YYYY-MM
+                                return ym.equals(filterValue);
+                            })
+                            .collect(Collectors.toList());
+                }
+                default -> {}
+            }
+        }
+
+        // Tri
+        if (sortField != null) {
+            Comparator<Pay> comparator = null;
+            switch (sortField) {
+                case "date" -> comparator = Comparator.comparing(Pay::getDate, Comparator.nullsLast(Comparator.naturalOrder()));
+                case "net" -> comparator = Comparator.comparing(p -> p.getSalary_net()
+                );
+                default -> {}
+            }
+
+            if (comparator != null) {
+                if ("desc".equalsIgnoreCase(sortOrder)) {
+                    comparator = comparator.reversed();
+                }
+                pays = pays.stream().sorted(comparator).collect(Collectors.toList());
+            }
+        }
+
         req.setAttribute("pays", pays);
+        req.setAttribute("filterField", filterField);
+        req.setAttribute("filterValue", filterValue);
+        req.setAttribute("sortField", sortField);
+        req.setAttribute("sortOrder", sortOrder);
+
         req.getRequestDispatcher("ListPay.jsp").forward(req, resp);
     }
 

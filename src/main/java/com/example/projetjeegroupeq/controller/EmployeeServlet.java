@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.List;
 
 @WebServlet(name = "employeeServlet", value = "/employee")
@@ -108,9 +109,87 @@ public class EmployeeServlet extends HttpServlet {
 
     private void showEmployeeList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Employee> employees = employeeDAO.getAll();
-        //System.out.println("[EmployeeServlet] Nombre d'employés remontés : " + employees.size());
-        employees.forEach(e -> System.out.println(" - " + e.getId() + " " + e.getLastName()));
+
+        String filterField = trimToNull(req.getParameter("filterField"));
+        String filterValue = trimToNull(req.getParameter("filterValue"));
+        String sortField = trimToNull(req.getParameter("sortField"));
+        String sortOrder = trimToNull(req.getParameter("sortOrder"));
+
+        // Filtrage
+        if (filterField != null && filterValue != null) {
+            switch (filterField) {
+                case "grade" -> {
+                    try {
+                        Grade grade = Grade.valueOf(filterValue);
+                        employees = employees.stream()
+                                .filter(e -> e.getGrade() == grade)
+                                .toList();
+                    } catch (IllegalArgumentException ignored) {
+                    }
+                }
+                case "department" -> {
+                    try {
+                        int depId = Integer.parseInt(filterValue);
+                        employees = employees.stream()
+                                .filter(e -> e.getDepartment() != null && e.getDepartment().getId() == depId)
+                                .toList();
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+                case "name" -> {
+                    String lower = filterValue.toLowerCase();
+                    employees = employees.stream()
+                            .filter(e -> {
+                                String ln = e.getLastName() != null ? e.getLastName().toLowerCase() : "";
+                                String fn = e.getFirstName() != null ? e.getFirstName().toLowerCase() : "";
+                                return ln.contains(lower) || fn.contains(lower);
+                            })
+                            .toList();
+                }
+                default -> {}
+            }
+        }
+
+        // Tri
+        if (sortField != null) {
+            Comparator<Employee> comparator = null;
+            switch (sortField) {
+                case "lastName" -> comparator = Comparator.comparing(
+                        e -> e.getLastName() != null ? e.getLastName().toLowerCase() : ""
+                );
+                case "firstName" -> comparator = Comparator.comparing(
+                        e -> e.getFirstName() != null ? e.getFirstName().toLowerCase() : ""
+                );
+                case "salary" -> comparator = Comparator.comparing(
+                        e -> e.getSalary() != null ? e.getSalary() : 0.0
+                );
+                case "grade" -> comparator = Comparator.comparing(
+                        e -> e.getGrade() != null ? e.getGrade().name() : ""
+                );
+                case "department" -> comparator = Comparator.comparing(
+                        e -> e.getDepartment() != null && e.getDepartment().getDepartmentName() != null
+                                ? e.getDepartment().getDepartmentName().toLowerCase()
+                                : ""
+                );
+                default -> {}
+            }
+
+            if (comparator != null) {
+                if ("desc".equalsIgnoreCase(sortOrder)) {
+                    comparator = comparator.reversed();
+                }
+                employees = employees.stream().sorted(comparator).toList();
+            }
+        }
+
         req.setAttribute("employees", employees);
+        req.setAttribute("filterField", filterField);
+        req.setAttribute("filterValue", filterValue);
+        req.setAttribute("sortField", sortField);
+        req.setAttribute("sortOrder", sortOrder);
+        req.setAttribute("grades", Grade.values());
+        req.setAttribute("departments", departmentDAO.getAll());
+
         req.getRequestDispatcher("/ListEmployee.jsp").forward(req, resp);
     }
 

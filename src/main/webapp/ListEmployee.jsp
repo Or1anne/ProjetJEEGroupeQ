@@ -35,6 +35,20 @@
         employees = Collections.emptyList();
     }
     String contextPath = request.getContextPath();
+
+    String filterField = (String) request.getAttribute("filterField");
+    String filterValue = (String) request.getAttribute("filterValue");
+    String sortField = (String) request.getAttribute("sortField");
+    String sortOrder = (String) request.getAttribute("sortOrder");
+
+    Grade[] grades = (Grade[]) request.getAttribute("grades");
+    if (grades == null) {
+        grades = Grade.values();
+    }
+    List<Department> departments = (List<Department>) request.getAttribute("departments");
+    if (departments == null) {
+        departments = java.util.Collections.emptyList();
+    }
 %>
 
 <div class="hero-body">
@@ -42,6 +56,61 @@
     <nav>
         <a class="btn" href="<%= contextPath %>/employee?action=add">Ajouter un employé</a>
     </nav>
+
+    <!-- Formulaire filtre/tri -->
+    <form method="get" action="<%= contextPath %>/employee" style="margin: 1em 0;">
+        <input type="hidden" name="action" value="list"/>
+
+        <label>Filtrer par :</label>
+        <select name="filterField">
+            <option value="">-- Aucun --</option>
+            <option value="grade" <%= "grade".equals(filterField) ? "selected" : "" %>>Grade</option>
+            <option value="department" <%= "department".equals(filterField) ? "selected" : "" %>>Département</option>
+            <option value="name" <%= "name".equals(filterField) ? "selected" : "" %>>Nom/Prénom</option>
+        </select>
+
+        <!-- valeur de filtre -->
+        <% if ("grade".equals(filterField)) { %>
+            <select name="filterValue">
+                <option value="">-- Grade --</option>
+                <% for (Grade g : grades) { %>
+                    <option value="<%= g.name() %>" <%= g.name().equals(filterValue) ? "selected" : "" %>>
+                        <%= g.getLabel() %>
+                    </option>
+                <% } %>
+            </select>
+        <% } else if ("department".equals(filterField)) { %>
+            <select name="filterValue">
+                <option value="">-- Département --</option>
+                <% for (Department d : departments) { %>
+                    <option value="<%= d.getId() %>" <%= String.valueOf(d.getId()).equals(filterValue) ? "selected" : "" %>>
+                        <%= d.getDepartmentName() %>
+                    </option>
+                <% } %>
+            </select>
+        <% } else if ("name".equals(filterField)) { %>
+            <input type="text" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>" placeholder="Rechercher par nom..."/>
+        <% } else { %>
+            <input type="text" name="filterValue" value="" placeholder="Valeur"/>
+        <% } %>
+
+        <label>Trier par :</label>
+        <select name="sortField">
+            <option value="">-- Aucun --</option>
+            <option value="lastName" <%= "lastName".equals(sortField) ? "selected" : "" %>>Nom</option>
+            <option value="firstName" <%= "firstName".equals(sortField) ? "selected" : "" %>>Prénom</option>
+            <option value="grade" <%= "grade".equals(sortField) ? "selected" : "" %>>Grade</option>
+            <option value="salary" <%= "salary".equals(sortField) ? "selected" : "" %>>Salaire</option>
+            <option value="department" <%= "department".equals(sortField) ? "selected" : "" %>>Département</option>
+        </select>
+        <select name="sortOrder">
+            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+        </select>
+
+        <button type="submit">Appliquer</button>
+        <a href="<%= contextPath %>/employee?action=list">Réinitialiser</a>
+    </form>
 
     <table class="table">
         <thead>

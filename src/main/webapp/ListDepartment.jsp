@@ -56,12 +56,39 @@
         departments = java.util.Collections.emptyList();
     }
     String contextPath = request.getContextPath();
+
+    String filterField = (String) request.getAttribute("filterField");
+    String filterValue = (String) request.getAttribute("filterValue");
+    String sortField = (String) request.getAttribute("sortField");
+    String sortOrder = (String) request.getAttribute("sortOrder");
 %>
 <div class="hero-body">
     <h2>Liste des départements</h2>
     <nav>
         <a class="btn" href="<%= contextPath %>/department?action=add">Ajouter un département</a>
     </nav>
+
+    <form method="get" action="<%= contextPath %>/department" style="margin: 1em 0;">
+        <input type="hidden" name="action" value="list"/>
+
+        <label>Filtrer par nom :</label>
+        <input type="hidden" name="filterField" value="name"/>
+        <input type="text" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>" placeholder="Nom contient..."/>
+
+        <label>Trier par :</label>
+        <select name="sortField">
+            <option value="">-- Aucun --</option>
+            <option value="id" <%= "id".equals(sortField) ? "selected" : "" %>>ID</option>
+            <option value="name" <%= "name".equals(sortField) ? "selected" : "" %>>Nom</option>
+        </select>
+        <select name="sortOrder">
+            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+        </select>
+
+        <button type="submit">Appliquer</button>
+        <a href="<%= contextPath %>/department?action=list">Réinitialiser</a>
+    </form>
 
     <table class="table">
         <thead>

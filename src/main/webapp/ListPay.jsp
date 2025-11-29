@@ -5,10 +5,14 @@
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 
 <%
-    // Récupération de la liste envoyée par le Servlet
     List<Pay> pays = (List<Pay>) request.getAttribute("pays");
-    // Récupération de l'employé filtré (peut être null si on affiche tout le monde)
     Employee currentEmployee = (Employee) request.getAttribute("currentEmployee");
+
+    String contextPath = request.getContextPath();
+    String filterField = (String) request.getAttribute("filterField");
+    String filterValue = (String) request.getAttribute("filterValue");
+    String sortField = (String) request.getAttribute("sortField");
+    String sortOrder = (String) request.getAttribute("sortOrder");
 %>
 
 
@@ -73,6 +77,36 @@
         <a href="<%= request.getContextPath() %>/pay?action=add">Créer une fiche de paie</a>
         <% } %>
     </nav>
+
+    <!-- Formulaire filtre/tri, principal cas : filtre par mois -->
+    <form method="get" action="<%= contextPath %>/pay" style="margin: 1em 0;">
+        <input type="hidden" name="action" value="list"/>
+        <% if (currentEmployee != null) { %>
+            <input type="hidden" name="employeeId" value="<%= currentEmployee.getId() %>"/>
+        <% } %>
+
+        <label>Filtrer par mois :</label>
+        <input type="hidden" name="filterField" value="month"/>
+        <input type="month" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>"/>
+
+        <label>Trier par :</label>
+        <select name="sortField">
+            <option value="">-- Aucun --</option>
+            <option value="date" <%= "date".equals(sortField) ? "selected" : "" %>>Date</option>
+            <option value="net" <%= "net".equals(sortField) ? "selected" : "" %>>Net à payer</option>
+        </select>
+        <select name="sortOrder">
+            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+        </select>
+
+        <button type="submit">Appliquer</button>
+        <% if (currentEmployee != null) { %>
+            <a href="<%= contextPath %>/pay?action=list&employeeId=<%= currentEmployee.getId() %>">Réinitialiser</a>
+        <% } else { %>
+            <a href="<%= contextPath %>/pay?action=list">Réinitialiser</a>
+        <% } %>
+    </form>
 
     <table class="table">
         <thead>
