@@ -70,7 +70,7 @@
     </nav>
     <div class="form-container">
         <form action="<%= request.getContextPath() %>/department" method="post">
-            <h2>Ajouter un département</h2>
+
 
             <!-- action à envoyer au servlet -->
             <input type="hidden" name="action" value="<%= isEditMode ? "edit" : "add" %>">
