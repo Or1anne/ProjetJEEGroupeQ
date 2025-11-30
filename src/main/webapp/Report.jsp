@@ -180,7 +180,7 @@
             for (Map.Entry<Grade, Long> entry : employeesByGrade.entrySet()) {
     %>
     <tr>
-        <td><%= entry.getKey() %></td>
+        <td><%= entry.getKey().getLabel() %></td>
         <td class="stats-value"><%= entry.getValue() %></td>
     </tr><%
         }
@@ -223,7 +223,7 @@
                 %>
                 <tr>
                     <td><%= p.getName_project() %></td>
-                    <td><%= p.getStatus() %></td>  <!-- enum ProjectStatus -->
+                    <td><%= p.getStatus().getTranslation() %></td>  <!-- enum ProjectStatus -->
                     <td class="stats-value"><%= nb %></td>
                 </tr>
                 <%
@@ -280,7 +280,7 @@
     <%-- 3) Remplir les données grades --%>
     <% if (employeesByGrade != null) {
            for (Map.Entry<Grade, Long> entry : employeesByGrade.entrySet()) { %>
-    gradeLabels.push("<%= entry.getKey().name() %>");
+    gradeLabels.push("<%= entry.getKey().getLabel() %>");
     gradeData.push(<%= entry.getValue() %>);
     <%   }
        } %>
