@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.dao.implementation.EmployeeDAO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +18,12 @@
                             // On récupère l’utilisateur connecté
                             Employee user = (Employee) session.getAttribute("loggedUser");
 
+                            Employee emp = null;
+
                             if (user != null) {
+                                EmployeeDAO employeeDAO = new EmployeeDAO();
+                                emp = employeeDAO.searchById(user.getId());
+                                session.setAttribute("loggedUser", emp);
                                 // Si connecté, on affiche Recherche et Gestion
                         %>
                         <a href="Search.jsp" class="navbar-item">Recherche</a>
@@ -58,11 +64,11 @@
         %>
         <div class="login-status-message connected-message">
             <p class="welcome-text">
-                Bienvenue <strong><%= user.getFirstName() + " " + user.getLastName() %></strong> !
+                Bienvenue <strong><%= emp.getFirstName() + " " + emp.getLastName() %></strong> !
             </p>
 
             <div class="grade-info">
-                <p>Grade : <span><%= user.getGrade().getLabel() %></span></p>
+                <p>Grade : <span><%= emp.getGrade().getLabel() %></span></p>
             </div>
         </div>
 
