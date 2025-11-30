@@ -89,35 +89,43 @@
         %>
     </nav>
 
-    <!-- Formulaire filtre/tri, principal cas : filtre par mois -->
-    <form method="get" action="<%= contextPath %>/pay" style="margin: 1em 0;">
-        <input type="hidden" name="action" value="list"/>
-        <% if (currentEmployee != null) { %>
-            <input type="hidden" name="employeeId" value="<%= currentEmployee.getId() %>"/>
-        <% } %>
+    <div class="filter-panel">
+        <div class="filter-panel-header">
+            <button type="button" class="filter-toggle-btn" onclick="toggleFilter('pay-filter-bar', this);">
+                <span class="filter-toggle-icon">🔍</span>
+                <span class="filter-toggle-label">Recherche / tri</span>
+            </button>
+        </div>
 
-        <label>Filtrer par mois :</label>
-        <input type="hidden" name="filterField" value="month"/>
-        <input type="month" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>"/>
+        <form id="pay-filter-bar" method="get" action="<%= contextPath %>/pay" class="filter-bar">
+            <input type="hidden" name="action" value="list"/>
+            <% if (currentEmployee != null) { %>
+                <input type="hidden" name="employeeId" value="<%= currentEmployee.getId() %>"/>
+            <% } %>
 
-        <label>Trier par :</label>
-        <select name="sortField">
-            <option value="">-- Aucun --</option>
-            <option value="date" <%= "date".equals(sortField) ? "selected" : "" %>>Date</option>
-            <option value="net" <%= "net".equals(sortField) ? "selected" : "" %>>Net à payer</option>
-        </select>
-        <select name="sortOrder">
-            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
-            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
-        </select>
+            <label>Filtrer par mois :</label>
+            <input type="hidden" name="filterField" value="month"/>
+            <input type="month" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>"/>
 
-        <button type="submit">Appliquer</button>
-        <% if (currentEmployee != null) { %>
-            <a href="<%= contextPath %>/pay?action=list&employeeId=<%= currentEmployee.getId() %>">Réinitialiser</a>
-        <% } else { %>
-            <a href="<%= contextPath %>/pay?action=list">Réinitialiser</a>
-        <% } %>
-    </form>
+            <label>Trier par :</label>
+            <select name="sortField">
+                <option value="">-- Aucun --</option>
+                <option value="date" <%= "date".equals(sortField) ? "selected" : "" %>>Date</option>
+                <option value="net" <%= "net".equals(sortField) ? "selected" : "" %>>Net à payer</option>
+            </select>
+            <select name="sortOrder">
+                <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+                <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+            </select>
+
+            <button type="submit">Appliquer</button>
+            <% if (currentEmployee != null) { %>
+                <a href="<%= contextPath %>/pay?action=list&employeeId=<%= currentEmployee.getId() %>" class="btn-reset">Réinitialiser</a>
+            <% } else { %>
+                <a href="<%= contextPath %>/pay?action=list" class="btn-reset">Réinitialiser</a>
+            <% } %>
+        </form>
+    </div>
 
     <table class="table">
         <thead>
@@ -187,5 +195,25 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    (function initPayFilter() {
+        var el = document.getElementById('pay-filter-bar');
+        if (!el) return;
+        // el.classList.add('is-collapsed');
+    })();
+
+    function toggleFilter(id, btn) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var isCollapsed = el.classList.toggle('is-collapsed');
+        if (btn) {
+            var iconSpan = btn.querySelector('.filter-toggle-icon');
+            if (iconSpan) {
+                iconSpan.textContent = isCollapsed ? '🔍' : '➖';
+            }
+        }
+    }
+</script>
 </body>
 </html>

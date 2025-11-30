@@ -80,61 +80,70 @@
         <a class="btn" href="<%=contextPath%>/project?action=add">Créer un projet</a>
     </nav>
 
-    <!-- Formulaire de filtre/tri -->
-    <form method="get" action="<%= contextPath %>/project" style="margin: 1em 0;">
-        <input type="hidden" name="action" value="list"/>
+    <!-- Panneau de filtre/tri repliable -->
+    <div class="filter-panel">
+        <div class="filter-panel-header">
+            <button type="button" class="filter-toggle-btn" onclick="toggleFilter('project-filter-bar', this);">
+                <span class="filter-toggle-icon">🔍</span>
+                <span class="filter-toggle-label">Recherche / tri</span>
+            </button>
+        </div>
 
-        <label>Filtrer par :</label>
-        <select name="filterField">
-            <option value="">-- Aucun --</option>
-            <option value="name" <%= "name".equals(filterField) ? "selected" : "" %>>Nom du projet</option>
-            <option value="status" <%= "status".equals(filterField) ? "selected" : "" %>>Statut</option>
-            <option value="manager" <%= "manager".equals(filterField) ? "selected" : "" %>>Chef de projet</option>
-        </select>
+        <form id="project-filter-bar" method="get" action="<%= contextPath %>/project" class="filter-bar">
+            <input type="hidden" name="action" value="list"/>
 
-        <!-- Valeur du filtre: texte pour le nom, select pour statut/chef -->
-        <% if ("name".equals(filterField)) { %>
-            <input type="text" name="filterValue"
-                   value="<%= filterValue != null ? filterValue : "" %>"
-                   placeholder="Nom du projet contient..." />
-        <% } else if ("status".equals(filterField)) { %>
-            <select name="filterValue">
-                <option value="">-- Statut --</option>
-                <% for (ProjectStatus s : projectStatuses) { %>
-                    <option value="<%= s.name() %>" <%= s.name().equals(filterValue) ? "selected" : "" %>>
-                        <%= s.getTranslation() %>
-                    </option>
-                <% } %>
+            <label>Filtrer par :</label>
+            <select name="filterField">
+                <option value="">-- Aucun --</option>
+                <option value="name" <%= "name".equals(filterField) ? "selected" : "" %>>Nom du projet</option>
+                <option value="status" <%= "status".equals(filterField) ? "selected" : "" %>>Statut</option>
+                <option value="manager" <%= "manager".equals(filterField) ? "selected" : "" %>>Chef de projet</option>
             </select>
-        <% } else if ("manager".equals(filterField)) { %>
-            <select name="filterValue">
-                <option value="">-- Chef de projet --</option>
-                <% for (Employee e : allEmployees) { %>
-                    <option value="<%= e.getId() %>" <%= String.valueOf(e.getId()).equals(filterValue) ? "selected" : "" %>>
-                        <%= e.getLastName() %> <%= e.getFirstName() %>
-                    </option>
-                <% } %>
+
+            <!-- Valeur du filtre: texte pour le nom, select pour statut/chef -->
+            <% if ("name".equals(filterField)) { %>
+                <input type="text" name="filterValue"
+                       value="<%= filterValue != null ? filterValue : "" %>"
+                       placeholder="Nom du projet contient..." />
+            <% } else if ("status".equals(filterField)) { %>
+                <select name="filterValue">
+                    <option value="">-- Statut --</option>
+                    <% for (ProjectStatus s : projectStatuses) { %>
+                        <option value="<%= s.name() %>" <%= s.name().equals(filterValue) ? "selected" : "" %>>
+                            <%= s.getTranslation() %>
+                        </option>
+                    <% } %>
+                </select>
+            <% } else if ("manager".equals(filterField)) { %>
+                <select name="filterValue">
+                    <option value="">-- Chef de projet --</option>
+                    <% for (Employee e : allEmployees) { %>
+                        <option value="<%= e.getId() %>" <%= String.valueOf(e.getId()).equals(filterValue) ? "selected" : "" %>>
+                            <%= e.getLastName() %> <%= e.getFirstName() %>
+                        </option>
+                    <% } %>
+                </select>
+            <% } else { %>
+                <!-- Aucun filtre spécifique sélectionné : valeur vide -->
+                <input type="text" name="filterValue" value="" placeholder="Valeur" />
+            <% } %>
+
+            <label>Trier par :</label>
+            <select name="sortField">
+                <option value="">-- Aucun --</option>
+                <option value="name" <%= "name".equals(sortField) ? "selected" : "" %>>Nom du projet</option>
+                <option value="status" <%= "status".equals(sortField) ? "selected" : "" %>>Statut</option>
+                <option value="manager" <%= "manager".equals(sortField) ? "selected" : "" %>>Chef de projet</option>
             </select>
-        <% } else { %>
-            <!-- Aucun filtre spécifique sélectionné : valeur vide -->
-            <input type="text" name="filterValue" value="" placeholder="Valeur" />
-        <% } %>
+            <select name="sortOrder">
+                <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+                <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+            </select>
 
-        <label>Trier par :</label>
-        <select name="sortField">
-            <option value="">-- Aucun --</option>
-            <option value="name" <%= "name".equals(sortField) ? "selected" : "" %>>Nom du projet</option>
-            <option value="status" <%= "status".equals(sortField) ? "selected" : "" %>>Statut</option>
-            <option value="manager" <%= "manager".equals(sortField) ? "selected" : "" %>>Chef de projet</option>
-        </select>
-        <select name="sortOrder">
-            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
-            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
-        </select>
-
-        <button type="submit">Appliquer</button>
-        <a href="<%= contextPath %>/project?action=list">Réinitialiser</a>
-    </form>
+            <button type="submit">Appliquer</button>
+            <a href="<%= contextPath %>/project?action=list" class="btn-reset">Réinitialiser</a>
+        </form>
+    </div>
 
     <table class="table">
         <thead>
@@ -169,5 +178,25 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    (function initProjectFilter() {
+        var el = document.getElementById('project-filter-bar');
+        if (!el) return;
+        // el.classList.add('is-collapsed'); // à activer si tu veux la barre fermée au chargement
+    })();
+
+    function toggleFilter(id, btn) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var isCollapsed = el.classList.toggle('is-collapsed');
+        if (btn) {
+            var iconSpan = btn.querySelector('.filter-toggle-icon');
+            if (iconSpan) {
+                iconSpan.textContent = isCollapsed ? '🔍' : '➖';
+            }
+        }
+    }
+</script>
 </body>
 </html>

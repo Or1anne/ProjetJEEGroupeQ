@@ -69,70 +69,72 @@
 
 <div class="hero-body">
     <h2>Liste des employés</h2>
-    <%
-        if (PermissionChecker.hasPermission(request, "/employee", "add")) {
-    %>
     <nav>
         <a class="btn" href="<%= contextPath %>/employee?action=add">Ajouter un employé</a>
     </nav>
-    <%
-        }
-    %>
 
-    <!-- Formulaire filtre/tri -->
-    <form method="get" action="<%= contextPath %>/employee" style="margin: 1em 0;">
-        <input type="hidden" name="action" value="list"/>
+    <div class="filter-panel">
+        <div class="filter-panel-header">
+            <button type="button" class="filter-toggle-btn" onclick="toggleFilter('employee-filter-bar', this);">
+                <span class="filter-toggle-icon">🔍</span>
+                <span class="filter-toggle-label">Recherche / tri</span>
+            </button>
+        </div>
 
-        <label>Filtrer par :</label>
-        <select name="filterField">
-            <option value="">-- Aucun --</option>
-            <option value="grade" <%= "grade".equals(filterField) ? "selected" : "" %>>Grade</option>
-            <option value="department" <%= "department".equals(filterField) ? "selected" : "" %>>Département</option>
-            <option value="name" <%= "name".equals(filterField) ? "selected" : "" %>>Nom/Prénom</option>
-        </select>
+        <form id="employee-filter-bar" class="filter-bar" method="get" action="<%= contextPath %>/employee">
+            <input type="hidden" name="action" value="list"/>
 
-        <!-- valeur de filtre -->
-        <% if ("grade".equals(filterField)) { %>
-            <select name="filterValue">
-                <option value="">-- Grade --</option>
-                <% for (Grade g : grades) { %>
-                    <option value="<%= g.name() %>" <%= g.name().equals(filterValue) ? "selected" : "" %>>
-                        <%= g.getLabel() %>
-                    </option>
-                <% } %>
+            <label>Filtrer par :</label>
+            <select name="filterField">
+                <option value="">-- Aucun --</option>
+                <option value="grade" <%= "grade".equals(filterField) ? "selected" : "" %>>Grade</option>
+                <option value="department" <%= "department".equals(filterField) ? "selected" : "" %>>Département</option>
+                <option value="name" <%= "name".equals(filterField) ? "selected" : "" %>>Nom/Prénom</option>
             </select>
-        <% } else if ("department".equals(filterField)) { %>
-            <select name="filterValue">
-                <option value="">-- Département --</option>
-                <% for (Department d : departments) { %>
-                    <option value="<%= d.getId() %>" <%= String.valueOf(d.getId()).equals(filterValue) ? "selected" : "" %>>
-                        <%= d.getDepartmentName() %>
-                    </option>
-                <% } %>
+
+            <!-- valeur de filtre -->
+            <% if ("grade".equals(filterField)) { %>
+                <select name="filterValue">
+                    <option value="">-- Grade --</option>
+                    <% for (Grade g : grades) { %>
+                        <option value="<%= g.name() %>" <%= g.name().equals(filterValue) ? "selected" : "" %>>
+                            <%= g.getLabel() %>
+                        </option>
+                    <% } %>
+                </select>
+            <% } else if ("department".equals(filterField)) { %>
+                <select name="filterValue">
+                    <option value="">-- Département --</option>
+                    <% for (Department d : departments) { %>
+                        <option value="<%= d.getId() %>" <%= String.valueOf(d.getId()).equals(filterValue) ? "selected" : "" %>>
+                            <%= d.getDepartmentName() %>
+                        </option>
+                    <% } %>
+                </select>
+            <% } else if ("name".equals(filterField)) { %>
+                <input type="text" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>" placeholder="Rechercher par nom..."/>
+            <% } else { %>
+                <input type="text" name="filterValue" value="" placeholder="Valeur"/>
+            <% } %>
+
+            <label>Trier par :</label>
+            <select name="sortField">
+                <option value="">-- Aucun --</option>
+                <option value="lastName" <%= "lastName".equals(sortField) ? "selected" : "" %>>Nom</option>
+                <option value="firstName" <%= "firstName".equals(sortField) ? "selected" : "" %>>Prénom</option>
+                <option value="grade" <%= "grade".equals(sortField) ? "selected" : "" %>>Grade</option>
+                <option value="salary" <%= "salary".equals(sortField) ? "selected" : "" %>>Salaire</option>
+                <option value="department" <%= "department".equals(sortField) ? "selected" : "" %>>Département</option>
             </select>
-        <% } else if ("name".equals(filterField)) { %>
-            <input type="text" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>" placeholder="Rechercher par nom..."/>
-        <% } else { %>
-            <input type="text" name="filterValue" value="" placeholder="Valeur"/>
-        <% } %>
+            <select name="sortOrder">
+                <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+                <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+            </select>
 
-        <label>Trier par :</label>
-        <select name="sortField">
-            <option value="">-- Aucun --</option>
-            <option value="lastName" <%= "lastName".equals(sortField) ? "selected" : "" %>>Nom</option>
-            <option value="firstName" <%= "firstName".equals(sortField) ? "selected" : "" %>>Prénom</option>
-            <option value="grade" <%= "grade".equals(sortField) ? "selected" : "" %>>Grade</option>
-            <option value="salary" <%= "salary".equals(sortField) ? "selected" : "" %>>Salaire</option>
-            <option value="department" <%= "department".equals(sortField) ? "selected" : "" %>>Département</option>
-        </select>
-        <select name="sortOrder">
-            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
-            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
-        </select>
-
-        <button type="submit">Appliquer</button>
-        <a href="<%= contextPath %>/employee?action=list">Réinitialiser</a>
-    </form>
+            <button type="submit">Appliquer</button>
+            <a href="<%= contextPath %>/employee?action=list" class="btn-reset">Réinitialiser</a>
+        </form>
+    </div>
 
     <table class="table">
         <thead>
@@ -197,5 +199,26 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    (function initEmployeeFilter() {
+        var el = document.getElementById('employee-filter-bar');
+        if (!el) return;
+        // Par défaut: visible; si tu préfères fermé au chargement, ajoute la classe is-collapsed ici.
+        // el.classList.add('is-collapsed');
+    })();
+
+    function toggleFilter(id, btn) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var isCollapsed = el.classList.toggle('is-collapsed');
+        if (btn) {
+            var iconSpan = btn.querySelector('.filter-toggle-icon');
+            if (iconSpan) {
+                iconSpan.textContent = isCollapsed ? '🔍' : '➖';
+            }
+        }
+    }
+</script>
 </body>
 </html>

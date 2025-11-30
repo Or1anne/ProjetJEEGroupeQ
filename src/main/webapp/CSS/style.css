@@ -531,3 +531,195 @@ form input[type="submit"]:hover {
     font-weight: bold;
     font-size: 16px;
 }
+
+/* === Barre de filtre / tri pour les listes (ListEmployee, ListProject, etc.) === */
+
+.filter-bar {
+    width: 90%;
+    max-width: 1000px;
+    margin: 10px auto 25px auto;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-bar label {
+    font-weight: 600;
+    color: #278088;
+    margin-right: 4px;
+}
+
+.filter-bar select,
+.filter-bar input[type="text"],
+.filter-bar input[type="month"] {
+    min-width: 140px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    border: 1px solid #ccd8dd;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.filter-bar button[type="submit"] {
+    background-color: #278088;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar button[type="submit"]:hover {
+    background-color: #1f646a;
+    transform: translateY(-1px);
+}
+
+.filter-bar a {
+    color: #278088;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #278088;
+    background-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.filter-bar a:hover {
+    background-color: #278088;
+    color: #ffffff;
+}
+
+/* === Barre de filtre / tri repliable pour les listes === */
+
+.filter-panel {
+    width: 90%;
+    max-width: 1000px;
+    margin: 10px auto 25px auto;
+}
+
+.filter-panel-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #ffffff;
+    color: #278088;
+    border-radius: 999px;
+    border: 1px solid #278088;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.filter-toggle-btn:hover {
+    background-color: #278088;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.filter-toggle-icon {
+    font-size: 1rem;
+}
+
+.filter-toggle-label {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar {
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Boutons de la barre de filtre */
+.filter-bar button[type="submit"] {
+    background-color: #278088;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar button[type="submit"]:hover {
+    background-color: #1f646a;
+    transform: translateY(-1px);
+}
+
+.filter-bar .btn-reset {
+    color: #278088;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    border: 1px solid #278088;
+    background-color: transparent;
+    display: inline-block;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar .btn-reset:hover {
+    background-color: #278088;
+    color: #ffffff;
+}
+
+/* Etat initial : barre de filtre masquée (utilisé via JS/toggle) */
+.filter-bar.is-collapsed {
+    display: none;
+}
+
+/* Responsive : empile la barre de filtre sur mobile */
+@media (max-width: 768px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-bar select,
+    .filter-bar input[type="text"],
+    .filter-bar input[type="month"] {
+        width: 100%;
+    }
+
+    .filter-bar button[type="submit"],
+    .filter-bar .btn-reset {
+        width: 100%;
+        text-align: center;
+    }
+}
