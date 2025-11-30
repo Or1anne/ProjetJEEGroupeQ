@@ -24,7 +24,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Liste des fiches de paie</title>
-    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/CSS/style.css">
 </head>
 <body>
 <div class="hero-head">
@@ -91,7 +91,7 @@
 
     <div class="filter-panel">
         <div class="filter-panel-header">
-            <button type="button" class="filter-toggle-btn" onclick="toggleFilter('pay-filter-bar', this);">
+            <button type="button" class="filter-toggle-btn" data-target="pay-filter-bar" onclick="window.toggleFilter('pay-filter-bar', this);">
                 <span class="filter-toggle-icon">🔍</span>
                 <span class="filter-toggle-label">Recherche / tri</span>
             </button>
@@ -198,22 +198,41 @@
 
 <script type="text/javascript">
     (function initPayFilter() {
-        var el = document.getElementById('pay-filter-bar');
-        if (!el) return;
-        // el.classList.add('is-collapsed');
+        var formId = 'pay-filter-bar';
+        var form = document.getElementById(formId);
+        var btn = document.querySelector('.filter-toggle-btn[data-target="' + formId + '"]');
+        if (!form) return;
+        updateFilterToggleState(form, btn);
+        bindFilterFieldAutoSubmit(form);
     })();
 
-    function toggleFilter(id, btn) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        var isCollapsed = el.classList.toggle('is-collapsed');
+    function bindFilterFieldAutoSubmit(form) {
+        if (!form) return;
+        var select = form.querySelector('select[name="filterField"]');
+        if (!select) return;
+        select.addEventListener('change', function () {
+            form.submit();
+        });
+    }
+
+    function updateFilterToggleState(form, btn) {
+        if (!form) return;
+        var isCollapsed = form.classList.contains('is-collapsed');
+        form.setAttribute('aria-hidden', isCollapsed ? 'true' : 'false');
+        if (btn) btn.setAttribute('aria-expanded', (!isCollapsed).toString());
         if (btn) {
             var iconSpan = btn.querySelector('.filter-toggle-icon');
-            if (iconSpan) {
-                iconSpan.textContent = isCollapsed ? '🔍' : '➖';
-            }
+            if (iconSpan) iconSpan.textContent = isCollapsed ? '🔍' : '➖';
         }
     }
+
+    window.toggleFilter = function (id, btn) {
+        var form = document.getElementById(id);
+        if (!form) return;
+        form.classList.toggle('is-collapsed');
+        var targetBtn = btn || document.querySelector('.filter-toggle-btn[data-target="' + id + '"]');
+        updateFilterToggleState(form, targetBtn);
+    };
 </script>
 </body>
 </html>
