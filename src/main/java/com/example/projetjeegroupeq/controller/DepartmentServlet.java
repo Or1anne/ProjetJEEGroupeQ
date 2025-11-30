@@ -109,7 +109,8 @@ public class DepartmentServlet extends  HttpServlet {
                 case "add" -> showAddDepartmentForm(request, response);
                 case "edit" -> showEditDepartment(request, response);
                 case "view" -> handleViewDepartment(request, response);
-                case"list"-> showDepartmentList(request, response);
+                case "list"-> showDepartmentList(request, response);
+                case "delete" -> handleDeleteDepartement(request, response);
                 default -> response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
             }
     }
