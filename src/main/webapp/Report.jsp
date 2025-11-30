@@ -32,7 +32,6 @@
                     if (user != null) {
                         // Si connecté, on affiche Recherche et Gestion
                 %>
-                <a href="Search.jsp" class="navbar-item">Recherche</a>
                 <a href="Gestion.jsp" class="navbar-item">Gestion</a>
                 <%
                     }
@@ -71,7 +70,7 @@
 %>
 <div class="report-page">
 
-    <h1 class="hero-body">Statistiques</h1>
+    <h2 class="hero-body">Statistiques</h2>
 
     <!-- Grille type dashboard -->
     <div class="dashboard-grid stats-dashboard">

@@ -26,7 +26,6 @@
                                 session.setAttribute("loggedUser", emp);
                                 // Si connecté, on affiche Recherche et Gestion
                         %>
-                        <a href="Search.jsp" class="navbar-item">Recherche</a>
                         <a href="Gestion.jsp" class="navbar-item">Gestion</a>
                         <%
                             }

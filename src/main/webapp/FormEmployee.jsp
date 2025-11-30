@@ -15,7 +15,6 @@
         <div class="container">
             <div class="navbar-start">
                 <a href="index.jsp" class="navbar-item">Accueil</a>
-                <a href="Search.jsp" class="navbar-item">Recherche</a>
                 <a href="Gestion.jsp" class="navbar-item">Gestion</a>
             </div>
 
