@@ -24,7 +24,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Liste des fiches de paie</title>
-    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/CSS/style.css">
 </head>
 <body>
 <div class="hero-head">
@@ -89,35 +89,43 @@
         %>
     </nav>
 
-    <!-- Formulaire filtre/tri, principal cas : filtre par mois -->
-    <form method="get" action="<%= contextPath %>/pay" style="margin: 1em 0;">
-        <input type="hidden" name="action" value="list"/>
-        <% if (currentEmployee != null) { %>
-            <input type="hidden" name="employeeId" value="<%= currentEmployee.getId() %>"/>
-        <% } %>
+    <div class="filter-panel">
+        <div class="filter-panel-header">
+            <button type="button" class="filter-toggle-btn" data-target="pay-filter-bar" onclick="window.toggleFilter('pay-filter-bar', this);">
+                <span class="filter-toggle-icon">🔍</span>
+                <span class="filter-toggle-label">Recherche / tri</span>
+            </button>
+        </div>
 
-        <label>Filtrer par mois :</label>
-        <input type="hidden" name="filterField" value="month"/>
-        <input type="month" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>"/>
+        <form id="pay-filter-bar" method="get" action="<%= contextPath %>/pay" class="filter-bar">
+            <input type="hidden" name="action" value="list"/>
+            <% if (currentEmployee != null) { %>
+                <input type="hidden" name="employeeId" value="<%= currentEmployee.getId() %>"/>
+            <% } %>
 
-        <label>Trier par :</label>
-        <select name="sortField">
-            <option value="">-- Aucun --</option>
-            <option value="date" <%= "date".equals(sortField) ? "selected" : "" %>>Date</option>
-            <option value="net" <%= "net".equals(sortField) ? "selected" : "" %>>Net à payer</option>
-        </select>
-        <select name="sortOrder">
-            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
-            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
-        </select>
+            <label>Filtrer par mois :</label>
+            <input type="hidden" name="filterField" value="month"/>
+            <input type="month" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>"/>
 
-        <button type="submit">Appliquer</button>
-        <% if (currentEmployee != null) { %>
-            <a href="<%= contextPath %>/pay?action=list&employeeId=<%= currentEmployee.getId() %>">Réinitialiser</a>
-        <% } else { %>
-            <a href="<%= contextPath %>/pay?action=list">Réinitialiser</a>
-        <% } %>
-    </form>
+            <label>Trier par :</label>
+            <select name="sortField">
+                <option value="">-- Aucun --</option>
+                <option value="date" <%= "date".equals(sortField) ? "selected" : "" %>>Date</option>
+                <option value="net" <%= "net".equals(sortField) ? "selected" : "" %>>Net à payer</option>
+            </select>
+            <select name="sortOrder">
+                <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+                <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+            </select>
+
+            <button type="submit">Appliquer</button>
+            <% if (currentEmployee != null) { %>
+                <a href="<%= contextPath %>/pay?action=list&employeeId=<%= currentEmployee.getId() %>" class="btn-reset">Réinitialiser</a>
+            <% } else { %>
+                <a href="<%= contextPath %>/pay?action=list" class="btn-reset">Réinitialiser</a>
+            <% } %>
+        </form>
+    </div>
 
     <table class="table">
         <thead>
@@ -187,5 +195,44 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    (function initPayFilter() {
+        var formId = 'pay-filter-bar';
+        var form = document.getElementById(formId);
+        var btn = document.querySelector('.filter-toggle-btn[data-target="' + formId + '"]');
+        if (!form) return;
+        updateFilterToggleState(form, btn);
+        bindFilterFieldAutoSubmit(form);
+    })();
+
+    function bindFilterFieldAutoSubmit(form) {
+        if (!form) return;
+        var select = form.querySelector('select[name="filterField"]');
+        if (!select) return;
+        select.addEventListener('change', function () {
+            form.submit();
+        });
+    }
+
+    function updateFilterToggleState(form, btn) {
+        if (!form) return;
+        var isCollapsed = form.classList.contains('is-collapsed');
+        form.setAttribute('aria-hidden', isCollapsed ? 'true' : 'false');
+        if (btn) btn.setAttribute('aria-expanded', (!isCollapsed).toString());
+        if (btn) {
+            var iconSpan = btn.querySelector('.filter-toggle-icon');
+            if (iconSpan) iconSpan.textContent = isCollapsed ? '🔍' : '➖';
+        }
+    }
+
+    window.toggleFilter = function (id, btn) {
+        var form = document.getElementById(id);
+        if (!form) return;
+        form.classList.toggle('is-collapsed');
+        var targetBtn = btn || document.querySelector('.filter-toggle-btn[data-target="' + id + '"]');
+        updateFilterToggleState(form, targetBtn);
+    };
+</script>
 </body>
 </html>

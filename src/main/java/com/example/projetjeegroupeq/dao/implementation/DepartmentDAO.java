@@ -103,22 +103,24 @@ public class DepartmentDAO implements DepartmentDAOI {
         EntityManager em = null;
         try {
             em = HibernateUtil.getEntityManager();
-
             em.getTransaction().begin();
 
-            Department departmentFound = em.find(Department.class, department.getId());
+            int depId = department.getId();
 
-            if (departmentFound == null) {
-                System.err.println("Aucun département trouvé avec l'id : " + department.getId());
-                em.getTransaction().rollback();
-                return;
-            }
+            em.createQuery("UPDATE Employee e SET e.department = NULL WHERE e.department.id = :did")
+                    .setParameter("did", depId)
+                    .executeUpdate();
 
-            em.remove(departmentFound);
+            em.createQuery("DELETE FROM Department d WHERE d.id = :did")
+                    .setParameter("did", depId)
+                    .executeUpdate();
 
             em.getTransaction().commit();
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la suppression d'un département : " + e.getMessage());
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Erreur lors de la suppression d'un département : " + e.getMessage(), e);
         } finally {
             if (em != null) {
                 em.close();

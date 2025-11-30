@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Liste des départements</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/CSS/style.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/CSS/style.css">
 </head>
 <body>
 <div class="hero-head">
@@ -74,27 +74,36 @@
         }
     %>
 
-    <form method="get" action="<%= contextPath %>/department" style="margin: 1em 0;">
-        <input type="hidden" name="action" value="list"/>
+    <div class="filter-panel">
+        <div class="filter-panel-header">
+            <button type="button" class="filter-toggle-btn" data-target="department-filter-bar" onclick="window.toggleFilter('department-filter-bar', this);">
+                <span class="filter-toggle-icon">🔍</span>
+                <span class="filter-toggle-label">Recherche / tri</span>
+            </button>
+        </div>
 
-        <label>Filtrer par nom :</label>
-        <input type="hidden" name="filterField" value="name"/>
-        <input type="text" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>" placeholder="Nom contient..."/>
+        <form id="department-filter-bar" method="get" action="<%= contextPath %>/department" class="filter-bar">
+            <input type="hidden" name="action" value="list"/>
 
-        <label>Trier par :</label>
-        <select name="sortField">
-            <option value="">-- Aucun --</option>
-            <option value="id" <%= "id".equals(sortField) ? "selected" : "" %>>ID</option>
-            <option value="name" <%= "name".equals(sortField) ? "selected" : "" %>>Nom</option>
-        </select>
-        <select name="sortOrder">
-            <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
-            <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
-        </select>
+            <label>Filtrer par nom :</label>
+            <input type="hidden" name="filterField" value="name"/>
+            <input type="text" name="filterValue" value="<%= filterValue != null ? filterValue : "" %>" placeholder="Nom contient..."/>
 
-        <button type="submit">Appliquer</button>
-        <a href="<%= contextPath %>/department?action=list">Réinitialiser</a>
-    </form>
+            <label>Trier par :</label>
+            <select name="sortField">
+                <option value="">-- Aucun --</option>
+                <option value="id" <%= "id".equals(sortField) ? "selected" : "" %>>ID</option>
+                <option value="name" <%= "name".equals(sortField) ? "selected" : "" %>>Nom</option>
+            </select>
+            <select name="sortOrder">
+                <option value="asc" <%= sortOrder == null || "asc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Croissant</option>
+                <option value="desc" <%= "desc".equalsIgnoreCase(sortOrder) ? "selected" : "" %>>Décroissant</option>
+            </select>
+
+            <button type="submit">Appliquer</button>
+            <a href="<%= contextPath %>/department?action=list" class="btn-reset">Réinitialiser</a>
+        </form>
+    </div>
 
     <table class="table">
         <thead>
@@ -159,5 +168,44 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    (function initDepartmentFilter() {
+        var formId = 'department-filter-bar';
+        var form = document.getElementById(formId);
+        var btn = document.querySelector('.filter-toggle-btn[data-target="' + formId + '"]');
+        if (!form) return;
+        updateFilterToggleState(form, btn);
+        bindFilterFieldAutoSubmit(form);
+    })();
+
+    function bindFilterFieldAutoSubmit(form) {
+        if (!form) return;
+        var select = form.querySelector('select[name="filterField"]');
+        if (!select) return;
+        select.addEventListener('change', function () {
+            form.submit();
+        });
+    }
+
+    function updateFilterToggleState(form, btn) {
+        if (!form) return;
+        var isCollapsed = form.classList.contains('is-collapsed');
+        form.setAttribute('aria-hidden', isCollapsed ? 'true' : 'false');
+        if (btn) btn.setAttribute('aria-expanded', (!isCollapsed).toString());
+        if (btn) {
+            var iconSpan = btn.querySelector('.filter-toggle-icon');
+            if (iconSpan) iconSpan.textContent = isCollapsed ? '🔍' : '➖';
+        }
+    }
+
+    window.toggleFilter = function (id, btn) {
+        var form = document.getElementById(id);
+        if (!form) return;
+        form.classList.toggle('is-collapsed');
+        var targetBtn = btn || document.querySelector('.filter-toggle-btn[data-target="' + id + '"]');
+        updateFilterToggleState(form, targetBtn);
+    };
+</script>
 </body>
 </html>

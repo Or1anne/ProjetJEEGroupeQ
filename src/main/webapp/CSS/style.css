@@ -531,3 +531,235 @@ form input[type="submit"]:hover {
     font-weight: bold;
     font-size: 16px;
 }
+
+/* === Barre de filtre / tri pour les listes (ListEmployee, ListProject, etc.) === */
+
+.filter-bar {
+    width: 90%;
+    max-width: 1000px;
+    margin: 10px auto 25px auto;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-bar label {
+    font-weight: 600;
+    color: #278088;
+    margin-right: 4px;
+}
+
+.filter-bar select,
+.filter-bar input[type="text"],
+.filter-bar input[type="month"] {
+    min-width: 140px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    border: 1px solid #ccd8dd;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.filter-bar button[type="submit"] {
+    background-color: #278088;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar button[type="submit"]:hover {
+    background-color: #1f646a;
+    transform: translateY(-1px);
+}
+
+.filter-bar a {
+    color: #278088;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #278088;
+    background-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.filter-bar a:hover {
+    background-color: #278088;
+    color: #ffffff;
+}
+
+/* === Barre de filtre / tri repliable pour les listes === */
+
+.filter-panel {
+    width: 90%;
+    max-width: 1000px;
+    margin: 10px auto 25px auto;
+}
+
+.filter-panel-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #ffffff;
+    color: #278088;
+    border-radius: 999px;
+    border: 1px solid #278088;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.filter-toggle-btn:hover {
+    background-color: #278088;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.filter-toggle-icon {
+    font-size: 1rem;
+}
+
+.filter-toggle-label {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar {
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Boutons de la barre de filtre */
+.filter-bar button[type="submit"] {
+    background-color: #278088;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar button[type="submit"]:hover {
+    background-color: #1f646a;
+    transform: translateY(-1px);
+}
+
+.filter-bar .btn-reset {
+    color: #278088;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    border: 1px solid #278088;
+    background-color: transparent;
+    display: inline-block;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.filter-bar .btn-reset:hover {
+    background-color: #278088;
+    color: #ffffff;
+}
+
+/* Etat initial : barre de filtre masquée (utilisé via JS/toggle) */
+.filter-bar.is-collapsed {
+    /* Masquer visuellement avec une animation (max-height) permet des transitions douces */
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    transition: max-height 0.28s ease, opacity 0.2s ease, padding 0.2s ease;
+    pointer-events: none !important; /* empêche les clics quand replié */
+}
+
+/* Par défaut, on donne une hauteur maxi raisonnable et une transition pour l'ouverture */
+.filter-bar {
+    max-height: 1200px; /* assez grand pour contenir le contenu */
+    transition: max-height 0.28s ease, opacity 0.2s ease, padding 0.2s ease;
+    opacity: 1;
+}
+
+/* Renforcer le style du bouton toggle et des boutons du formulaire pour s'assurer qu'ils s'appliquent */
+.filter-toggle-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+}
+
+/* Bouton "Appliquer" : si le sélecteur précédent n'est appliqué (ex: bouton sans type), ciblons aussi .filter-bar button */
+.filter-bar button,
+.filter-bar input[type='submit'] {
+    background-color: #278088;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.filter-bar button:hover,
+.filter-bar input[type='submit']:hover {
+    background-color: #1f646a;
+    transform: translateY(-1px);
+}
+
+/* Lien de réinitialisation (classe btn-reset) */
+.filter-bar .btn-reset,
+.btn-reset {
+    color: #278088;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    border: 1px solid #278088;
+    background-color: transparent;
+    display: inline-block;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.filter-bar .btn-reset:hover,
+.btn-reset:hover {
+    background-color: #278088;
+    color: #ffffff;
+}
