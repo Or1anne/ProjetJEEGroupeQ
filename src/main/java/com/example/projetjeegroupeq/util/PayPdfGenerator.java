@@ -64,7 +64,7 @@ public class PayPdfGenerator {
         variables.put("${bonus}", String.format("%.2f", pay.getBonus()));
         variables.put("${deductions}", String.format("%.2f", pay.getDeductions()));
         variables.put("${net}", String.format("%.2f", pay.getSalary_net()));
-        variables.put("${dateActuelle}", sdf.format(new Date()));
+        variables.put("${dateActuelle}", sdf.format(pay.getDate()));
 
         String result = template;
         for (Map.Entry<String, String> entry : variables.entrySet()) {

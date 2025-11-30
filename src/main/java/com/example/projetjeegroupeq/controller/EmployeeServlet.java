@@ -7,6 +7,7 @@ import com.example.projetjeegroupeq.model.Department;
 import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.model.Grade;
 import com.example.projetjeegroupeq.model.Role;
+import com.example.projetjeegroupeq.util.PermissionChecker;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -38,7 +39,13 @@ public class EmployeeServlet extends HttpServlet {
 */
 
         switch (action.toLowerCase()) {
-            case "add" -> showEmployeeForm(req, resp, null, false);
+            case "add" -> {
+                // Vérifier les permissions via PermissionChecker (utilise PermissionConfig)
+                if (!PermissionChecker.checkPermission(req, resp, "/employee", "add")) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
+                showEmployeeForm(req, resp, null, false);
+            }
             case "edit" -> handleEdit(req, resp);
             case "delete" -> handleDelete(req, resp);
             case "view" -> handleView(req, resp);
@@ -64,6 +71,11 @@ public class EmployeeServlet extends HttpServlet {
             populateEmployeeFromRequest(req, payload);
 
             if ("add".equalsIgnoreCase(action)) {
+                // Vérifier les permissions via PermissionChecker (utilise PermissionConfig)
+                if (!PermissionChecker.checkPermission(req, resp, "/employee", "add")) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
+
                 String firstName = payload.getFirstName().trim().toLowerCase();
                 String lastName = payload.getLastName().trim().toLowerCase();
 
@@ -333,6 +345,5 @@ public class EmployeeServlet extends HttpServlet {
             throw new IllegalArgumentException("Identifiant invalide.");
         }
     }
-
 
 }

@@ -147,4 +147,45 @@ public class Employee {
     public List<EmployeeProject> getProjects() {
         return projects;
     }
+
+    /**
+     * Vérifie si cet employé a un rôle spécifique.
+     *
+     * @param roleName Le nom du rôle à vérifier (ex: "ADMIN", "RH", "EMPLOYE")
+     * @return true si l'employé a le rôle, false sinon
+     */
+    public boolean hasRole(String roleName) {
+        if (roleName == null || this.roles == null || this.roles.isEmpty()) {
+            return false;
+        }
+
+        for (EmployeeRole employeeRole : this.roles) {
+            Role role = employeeRole.getRole();
+            if (role != null && roleName.equalsIgnoreCase(role.getRoleName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Vérifie si cet employé a au moins un des rôles spécifiés.
+     *
+     * @param roleNames Les noms des rôles à vérifier
+     * @return true si l'employé a au moins un des rôles, false sinon
+     */
+    public boolean hasAnyRole(String... roleNames) {
+        if (roleNames == null || roleNames.length == 0) {
+            return false;
+        }
+
+        for (String roleName : roleNames) {
+            if (hasRole(roleName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
