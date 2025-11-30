@@ -2,6 +2,7 @@
 <%@ page import="com.example.projetjeegroupeq.model.Grade" %>
 <%@ page import="com.example.projetjeegroupeq.model.EmployeeRole" %>
 <%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
+<%@ page import="com.example.projetjeegroupeq.dao.implementation.EmployeeDAO" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -19,11 +20,15 @@
                 <%
                     // On récupère l’utilisateur connecté
                     Employee user = (Employee) session.getAttribute("loggedUser");
+                    // Recharger les données de l'employé depuis la base de données pour avoir les infos à jour
+                    EmployeeDAO employeeDAO = new EmployeeDAO();
+                    Employee emp = employeeDAO.searchById(user.getId());
+                    // Mettre à jour l'objet en session avec les données fraîches
+                    session.setAttribute("loggedUser", emp);
 
                     if (user != null) {
                         // Si connecté, on affiche Recherche et Gestion
                 %>
-                <a href="Search.jsp" class="navbar-item">Recherche</a>
                 <a href="Gestion.jsp" class="navbar-item">Gestion</a>
                 <%
                     }
@@ -58,16 +63,16 @@
         <div class="card">
             <h2>Informations Personnelles</h2>
             <ul>
-                <li><strong>Nom :</strong> <%= user.getLastName() != null ? user.getLastName() : "" %> </li>
-                <li><strong>Prénom :</strong> <%= user.getFirstName()%> </li>
-                <li><strong>Grade :</strong>  <%= user.getGrade() != null ? user.getGrade().getLabel() : "" %>
-                <li><strong>Poste :</strong> <%= user.getPost()%> </li>
-                <li><strong>Salaire :</strong> <%= user.getSalary()%> €</li>
-                <li><strong>Département :</strong> <%= user.getDepartment() != null ? user.getDepartment().getDepartmentName() : "Aucun" %> </li>
+                <li><strong>Nom :</strong> <%= emp.getLastName() != null ? emp.getLastName() : "" %> </li>
+                <li><strong>Prénom :</strong> <%= emp.getFirstName()%> </li>
+                <li><strong>Grade :</strong>  <%= emp.getGrade() != null ? emp.getGrade().getLabel() : "" %>
+                <li><strong>Poste :</strong> <%= emp.getPost()%> </li>
+                <li><strong>Salaire :</strong> <%= emp.getSalary()%> €</li>
+                <li><strong>Département :</strong> <%= emp.getDepartment() != null ? emp.getDepartment().getDepartmentName() : "Aucun" %> </li>
                 <li><strong>Projet(s) :</strong>
                     <ul>
                         <%
-                            if (user.getProjects() == null || user.getProjects().isEmpty()) {
+                            if (emp.getProjects() == null || emp.getProjects().isEmpty()) {
                         %>
                         <li>Aucun</li>
                         <%
@@ -86,15 +91,15 @@
             </ul>
             <h2>Informations du compte</h2>
             <ul>
-                <li><strong>Nom d'utilisateur :</strong> <%= user.getUsername() != null ? user.getUsername() : "" %></li>
+                <li><strong>Nom d'utilisateur :</strong> <%= emp.getUsername() != null ? emp.getUsername() : "" %></li>
                 <li><strong>Rôle :</strong>
                         <%
-                        if (user.getEmployeeRoles() == null || user.getEmployeeRoles().isEmpty()) {
+                        if (emp.getEmployeeRoles() == null || emp.getEmployeeRoles().isEmpty()) {
                         %>
                         <li>Aucun</li>
                         <%
                         } else {
-                            for (EmployeeRole er : user.getEmployeeRoles()) {
+                            for (EmployeeRole er : emp.getEmployeeRoles()) {
                         %>
                         <li><%= er.getRole().getRoleName() %></li>
                         <%

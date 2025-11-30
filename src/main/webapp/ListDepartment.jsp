@@ -24,7 +24,6 @@
                     if (user != null) {
                         // Si connecté, on affiche Recherche et Gestion
                 %>
-                <a href="Search.jsp" class="navbar-item">Recherche</a>
                 <a href="Gestion.jsp" class="navbar-item">Gestion</a>
                 <%
                     }
@@ -111,7 +110,7 @@
         <tr>
             <th>ID</th>
             <th>Nom</th>
-            <th>Description</th>
+            <th>Chef de département</th>
             <%
                 if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
             %>
@@ -134,8 +133,11 @@
             <td><%= dep.getId() %></td>
             <td><%= dep.getDepartmentName() %></td>
             <td>
-
+                <%= (dep.getChefDepartment() != null)
+                        ? dep.getChefDepartment().getFirstName() + " " + dep.getChefDepartment().getLastName()
+                        : "-" %>
             </td>
+
             <%
                 if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
             %>

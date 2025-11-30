@@ -12,6 +12,7 @@ import java.io.IOException;
         "/employee/*",
         "/department/*",
         "/project/*",
+        "/pay/*",
         "/AffectEmployeeProject.jsp",
         "/changePassword.jsp",
         "/editProfile.jsp",
@@ -33,7 +34,8 @@ import java.io.IOException;
         "/ViewDepartment.jsp",
         "/ViewEmployee.jsp",
         "/ViewPay.jsp",
-        "/ViewProject.jsp"
+        "/ViewProject.jsp",
+        "/Report.jsp",
 })
 public class AuthFilter implements Filter {
     @Override
