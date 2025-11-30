@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,7 @@
                         <a href="index.jsp" class="navbar-item">Accueil</a>
                         <%
                             // On récupère l’utilisateur connecté
-                            Object user = session.getAttribute("loggedUser");
+                            Employee user = (Employee) session.getAttribute("loggedUser");
 
                             if (user != null) {
                                 // Si connecté, on affiche Recherche et Gestion
@@ -50,6 +51,35 @@
         <div class="hero-body">
             <h2>Accueil</h2>
         </div>
+
+        <!-- Message si connecté -->
+        <%
+            if (user != null) {
+        %>
+        <div class="login-status-message connected-message">
+            <p class="welcome-text">
+                Bienvenue <strong><%= user.getFirstName() + " " + user.getLastName() %></strong> !
+            </p>
+
+            <div class="grade-info">
+                <p>Grade : <span><%= user.getGrade().getLabel() %></span></p>
+            </div>
+        </div>
+
+        <%
+        } else {
+        %>
+
+        <!-- Message si non connecté -->
+        <div class="login-status-message not-connected-message">
+            <strong>Vous n'êtes pas connecté</strong>
+            <p>Veuillez vous connecter pour accéder à l'application</p>
+            <a href="<%= request.getContextPath() %>/login">Se connecter</a>
+        </div>
+
+        <%
+            }
+        %>
     </section>
 </body>
 </html>

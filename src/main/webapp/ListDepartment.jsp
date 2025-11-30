@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 
 <%@ page import="com.example.projetjeegroupeq.model.Department" %>
+<%@ page import="com.example.projetjeegroupeq.util.PermissionChecker" %>
 
 <!DOCTYPE html>
 <html>
@@ -64,9 +65,15 @@
 %>
 <div class="hero-body">
     <h2>Liste des départements</h2>
+    <%
+        if (PermissionChecker.hasPermission(request, "/department", "add")) {
+    %>
     <nav>
         <a class="btn" href="<%= contextPath %>/department?action=add">Ajouter un département</a>
     </nav>
+    <%
+        }
+    %>
 
     <form method="get" action="<%= contextPath %>/department" style="margin: 1em 0;">
         <input type="hidden" name="action" value="list"/>
@@ -96,7 +103,13 @@
             <th>ID</th>
             <th>Nom</th>
             <th>Description</th>
+            <%
+                if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
+            %>
             <th>Action</th>
+            <%
+                }
+            %>
         </tr>
         </thead>
         <tbody>
@@ -114,11 +127,30 @@
             <td>
 
             </td>
+            <%
+                if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
+            %>
             <td>
-                <a href="<%= contextPath %>/department?action=edit&id=<%= dep.getId() %>">Modifier</a> |
+                <%
+                    if (PermissionChecker.hasPermission(request, "/department", "edit")) {
+                %>
+                <a href="<%= contextPath %>/department?action=edit&id=<%= dep.getId() %>">Modifier</a>
+                <%
+                    }
+                %>
+                <%
+                    if (PermissionChecker.hasPermission(request, "/department", "delete")) {
+                %>
+                |
                 <a href="<%= contextPath %>/department?action=delete&id=<%= dep.getId() %>"
                    onclick="return confirm('Supprimer ce département ?');">Supprimer</a>
+                <%
+                    }
+                %>
             </td>
+            <%
+                }
+            %>
         </tr>
         <%     }
         } %>

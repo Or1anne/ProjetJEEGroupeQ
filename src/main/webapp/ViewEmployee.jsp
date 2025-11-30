@@ -3,11 +3,12 @@
 <%@ page import="com.example.projetjeegroupeq.model.Grade" %>
 <%@ page import="com.example.projetjeegroupeq.model.EmployeeRole" %>
 <%@ page import="com.example.projetjeegroupeq.model.EmployeeProject" %>
+<%@ page import="com.example.projetjeegroupeq.util.PermissionChecker" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>View Employee</title>
+    <title>Informations de l'employé</title>
     <link rel="stylesheet" href="CSS/style.css" />
 </head>
 <body>
@@ -103,9 +104,36 @@
         </ul>
 
         <div class="form-action" style="display:flex;gap:10px;margin-top:12px;">
+            <%
+                if (PermissionChecker.hasPermission(request, "/employee", "edit")) {
+            %>
             <a class="button" href="employee?action=edit&id=${employee.id}">Modifier</a>
+            <%
+                }
+            %>
             <a class="button" href="employee">Retour</a>
+            <%
+                // Afficher "Historique des paies" si :
+                // - L'utilisateur est RH ou ADMIN (peut voir l'historique de n'importe qui)
+                // - OU l'utilisateur est l'employé en question (peut voir son propre historique)
+                Employee loggedUser = PermissionChecker.getLoggedUser(request);
+                boolean canViewPayHistory = false;
+                
+                if (loggedUser != null) {
+                    // Vérifier si l'utilisateur est RH ou ADMIN
+                    boolean isRHOrAdmin = PermissionChecker.hasRole(request, "RH", "ADMIN");
+                    // Vérifier si l'utilisateur est l'employé en question
+                    boolean isViewingOwnProfile = loggedUser.getId() == employee.getId();
+                    
+                    canViewPayHistory = isRHOrAdmin || isViewingOwnProfile;
+                }
+                
+                if (canViewPayHistory) {
+            %>
             <a class="button" href="<%= request.getContextPath() %>/pay?action=list&employeeId=${employee.id}">Historique des paies</a>
+            <%
+                }
+            %>
         </div>
     </div>
 </section>

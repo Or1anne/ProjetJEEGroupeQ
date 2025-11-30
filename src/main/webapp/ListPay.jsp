@@ -3,6 +3,8 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="com.example.projetjeegroupeq.model.Pay" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
+<%@ page import="com.example.projetjeegroupeq.util.PermissionChecker" %>
+<%@ include file="/WEB-INF/includes/PermissionHelper.jsp" %>
 
 <%
     List<Pay> pays = (List<Pay>) request.getAttribute("pays");
@@ -69,13 +71,22 @@
         Liste globale des fiches de paie
         <% } %></h2>
     <nav>
-        <% if (currentEmployee != null) { %>
+        <%
+            // Seuls RH et ADMIN peuvent créer des fiches de paie
+            if (PermissionChecker.hasPermission(request, "/pay", "add")) {
+                if (currentEmployee != null) {
+        %>
         <a href="<%= request.getContextPath() %>/pay?action=add&employeeId=<%= currentEmployee.getId() %>">
             Créer une fiche de paie
         </a>
-        <% } else { %>
+        <%
+                } else {
+        %>
         <a href="<%= request.getContextPath() %>/pay?action=add">Créer une fiche de paie</a>
-        <% } %>
+        <%
+                }
+            }
+        %>
     </nav>
 
     <!-- Formulaire filtre/tri, principal cas : filtre par mois -->
@@ -157,9 +168,16 @@
             <td style="color: red;">- <%= String.format("%.2f", p.getDeductions()) %> €</td> -->
             <td><strong><%= String.format("%.2f", p.getSalary_net()) %> €</strong></td>
             <td>
-                <a href="<%= request.getContextPath() %>/pay?action=pdf&payId=<%= p.getId() %>">Imprimer</a> |
-                <a href="<%= request.getContextPath() %>/pay?action=delete&payId=<%= p.getId() %>"
+                <a href="<%= request.getContextPath() %>/pay?action=pdf&payId=<%= p.getId() %>">Imprimer</a>
+                <%
+                    // Seul ADMIN peut supprimer des fiches de paie
+                    if (PermissionChecker.hasRole(request, "ADMIN")) {
+                %>
+                | <a href="<%= request.getContextPath() %>/pay?action=delete&payId=<%= p.getId() %><%= currentEmployee != null ? "&employeeId=" + currentEmployee.getId() : "" %>"
                    onclick="return confirm('Supprimer cette fiche ?');">Supprimer</a>
+                <%
+                    }
+                %>
             </td>
         </tr>
         <%
