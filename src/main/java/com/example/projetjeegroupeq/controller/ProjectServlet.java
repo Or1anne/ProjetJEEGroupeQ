@@ -11,6 +11,7 @@ import com.example.projetjeegroupeq.dao.sortingType.ProjectSortingType;
 import com.example.projetjeegroupeq.model.Employee;
 import com.example.projetjeegroupeq.model.Project;
 import com.example.projetjeegroupeq.model.ProjectStatus;
+import com.example.projetjeegroupeq.util.PermissionChecker;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -32,11 +33,23 @@ public class ProjectServlet extends HttpServlet {
 
         switch (action.toLowerCase()) {
             case "add" -> showProjectForm(req, resp, null, false);
-            case "edit" -> handleEdit(req, resp);
+            case "edit" -> {
+                // Vérifier les permissions : RH/ADMIN ou chef du projet
+                if (!checkEditProjectPermission(req, resp)) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
+                handleEdit(req, resp);
+            }
             case "delete" -> handleDelete(req, resp);
             case "view" -> handleView(req, resp);
             case "track" -> handleTrack(req, resp);
-            case "addemployees" -> showAddEmployeesForm(req, resp);
+            case "addemployees" -> {
+                // Vérifier les permissions : RH/ADMIN ou chef du projet
+                if (!checkAddEmployeesPermission(req, resp)) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
+                showAddEmployeesForm(req, resp);
+            }
             default -> resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
         }
     }
@@ -64,6 +77,11 @@ public class ProjectServlet extends HttpServlet {
             if ("add".equalsIgnoreCase(action)) {
                 projectDAO.add(payload);
             } else if ("edit".equalsIgnoreCase(action)) {
+                // Vérifier les permissions : RH/ADMIN ou chef du projet
+                if (!checkEditProjectPermission(req, resp)) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
+                
                 int id = parseId(req.getParameter("id"), "Identifiant projet manquant");
 
                 Project original = projectDAO.searchById(id);
@@ -78,10 +96,12 @@ public class ProjectServlet extends HttpServlet {
                     projectDAO.updateEmployees(original.getId(), idChef);
                 }
             } else if ("addEmployees".equalsIgnoreCase(action)) {
-                int id = parseId(req.getParameter("id"), "Identifiant projet manquant");
-
-               handleAddEmployees(req, resp);
-               return;
+                // Vérifier les permissions : RH/ADMIN ou chef du projet
+                if (!checkAddEmployeesPermission(req, resp)) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
+                handleAddEmployees(req, resp);
+                return;
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action invalide");
                 return;
@@ -327,6 +347,112 @@ public class ProjectServlet extends HttpServlet {
             return Integer.parseInt(trimmed);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Argument invalide");
+        }
+    }
+
+    /**
+     * Vérifie si l'utilisateur peut affecter des employés à un projet.
+     * L'utilisateur doit être RH/ADMIN ou chef du projet.
+     *
+     * @param req La requête HTTP
+     * @param resp La réponse HTTP
+     * @return true si l'utilisateur a les permissions, false sinon (et une erreur 403 a été envoyée)
+     * @throws IOException En cas d'erreur lors de l'envoi de la réponse
+     */
+    private boolean checkAddEmployeesPermission(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Employee loggedUser = PermissionChecker.getLoggedUser(req);
+        if (loggedUser == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return false;
+        }
+
+        // Récupérer l'ID du projet
+        String projectIdStr = req.getParameter("id");
+        if (projectIdStr == null || projectIdStr.isBlank()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Identifiant projet manquant");
+            return false;
+        }
+
+        try {
+            int projectId = Integer.parseInt(projectIdStr);
+            Project project = projectDAO.searchById(projectId);
+
+            if (project == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Projet introuvable");
+                return false;
+            }
+
+            // Vérifier si l'utilisateur est RH ou ADMIN
+            if (PermissionChecker.hasRole(req, "RH", "ADMIN")) {
+                return true;
+            }
+
+            // Vérifier si l'utilisateur est chef de ce projet
+            if (PermissionChecker.isProjectChief(req, projectId)) {
+                return true;
+            }
+
+            // Pas de permission
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN,
+                "Accès refusé : Seuls les RH, ADMIN ou le chef de projet peuvent affecter des employés à ce projet.");
+            return false;
+
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Identifiant projet invalide");
+            return false;
+        }
+    }
+
+    /**
+     * Vérifie si l'utilisateur peut modifier un projet.
+     * L'utilisateur doit être RH/ADMIN ou chef du projet.
+     *
+     * @param req La requête HTTP
+     * @param resp La réponse HTTP
+     * @return true si l'utilisateur a les permissions, false sinon (et une erreur 403 a été envoyée)
+     * @throws IOException En cas d'erreur lors de l'envoi de la réponse
+     */
+    private boolean checkEditProjectPermission(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Employee loggedUser = PermissionChecker.getLoggedUser(req);
+        if (loggedUser == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return false;
+        }
+
+        // Récupérer l'ID du projet
+        String projectIdStr = req.getParameter("id");
+        if (projectIdStr == null || projectIdStr.isBlank()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Identifiant projet manquant");
+            return false;
+        }
+
+        try {
+            int projectId = Integer.parseInt(projectIdStr);
+            Project project = projectDAO.searchById(projectId);
+
+            if (project == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Projet introuvable");
+                return false;
+            }
+
+            // Vérifier si l'utilisateur est RH ou ADMIN
+            if (PermissionChecker.hasRole(req, "RH", "ADMIN")) {
+                return true;
+            }
+
+            // Vérifier si l'utilisateur est chef de ce projet
+            if (PermissionChecker.isProjectChief(req, projectId)) {
+                return true;
+            }
+
+            // Pas de permission
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN,
+                "Accès refusé : Seuls les RH, ADMIN ou le chef de projet peuvent modifier ce projet.");
+            return false;
+
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Identifiant projet invalide");
+            return false;
         }
     }
 

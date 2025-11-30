@@ -130,5 +130,99 @@ public class PermissionChecker {
         }
         return RoleUtil.hasAnyRole(loggedUser, roleNames);
     }
+
+    /**
+     * Vérifie si l'utilisateur est chef d'un département spécifique.
+     * 
+     * @param req La requête HTTP
+     * @param departmentId L'ID du département
+     * @return true si l'utilisateur est chef de ce département
+     */
+    public static boolean isDepartmentChief(HttpServletRequest req, int departmentId) {
+        Employee loggedUser = getLoggedUser(req);
+        if (loggedUser == null) {
+            return false;
+        }
+        return FunctionUtil.isDepartmentChief(loggedUser, departmentId);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est chef d'un projet spécifique.
+     * 
+     * @param req La requête HTTP
+     * @param projectId L'ID du projet
+     * @return true si l'utilisateur est chef de ce projet
+     */
+    public static boolean isProjectChief(HttpServletRequest req, int projectId) {
+        Employee loggedUser = getLoggedUser(req);
+        if (loggedUser == null) {
+            return false;
+        }
+        return FunctionUtil.isProjectChief(loggedUser, projectId);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est chef d'au moins un département.
+     * 
+     * @param req La requête HTTP
+     * @return true si l'utilisateur est chef d'au moins un département
+     */
+    public static boolean isAnyDepartmentChief(HttpServletRequest req) {
+        Employee loggedUser = getLoggedUser(req);
+        if (loggedUser == null) {
+            return false;
+        }
+        return FunctionUtil.isAnyDepartmentChief(loggedUser);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est chef d'au moins un projet.
+     * 
+     * @param req La requête HTTP
+     * @return true si l'utilisateur est chef d'au moins un projet
+     */
+    public static boolean isAnyProjectChief(HttpServletRequest req) {
+        Employee loggedUser = getLoggedUser(req);
+        if (loggedUser == null) {
+            return false;
+        }
+        return FunctionUtil.isAnyProjectChief(loggedUser);
+    }
+
+    /**
+     * Vérifie si l'utilisateur peut accéder à une ressource basée sur des permissions contextuelles.
+     * Combine les vérifications de rôles et de fonctions (chef de département/projet).
+     * 
+     * @param req La requête HTTP
+     * @param requiredRoles Les rôles requis (ADMIN, RH, etc.)
+     * @param departmentId L'ID du département (optionnel, null si non applicable)
+     * @param projectId L'ID du projet (optionnel, null si non applicable)
+     * @return true si l'utilisateur a les permissions (rôle OU fonction)
+     */
+    public static boolean hasContextualPermission(HttpServletRequest req, String[] requiredRoles, 
+                                                   Integer departmentId, Integer projectId) {
+        Employee loggedUser = getLoggedUser(req);
+        if (loggedUser == null) {
+            return false;
+        }
+
+        // Vérifier d'abord les rôles
+        if (requiredRoles != null && requiredRoles.length > 0) {
+            if (RoleUtil.hasAnyRole(loggedUser, requiredRoles)) {
+                return true;
+            }
+        }
+
+        // Vérifier les fonctions (chef de département ou chef de projet)
+        if (departmentId != null && FunctionUtil.isDepartmentChief(loggedUser, departmentId)) {
+            return true;
+        }
+
+        if (projectId != null && FunctionUtil.isProjectChief(loggedUser, projectId)) {
+            return true;
+        }
+
+        return false;
+    }
 }
 

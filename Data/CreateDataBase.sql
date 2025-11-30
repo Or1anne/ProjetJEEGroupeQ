@@ -149,7 +149,7 @@ VALUES ('ProjetQ', 'WORKED_ON'),
 INSERT INTO employee (lastName, firstName, grade, post, salary, username, password, idDepartment) VALUES
                                                                                                       ('NGO', 'Jonathan', 'INTERNS_APPRENTICES', 'Barista', 1200, 'jngo', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Production')),
                                                                                                       ('BODIER', 'Fantine', 'EXECUTIVE_MANAGEMENT', 'Directeur financier', 15000, 'fbodier', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Finances')),
-                                                                                                      ('Martin', 'Sophie', 'MIDDLE_MANAGEMENT', 'Responsable RH', 6500, 'smartin', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Ressources humaines')),
+                                                                                                      ('Martin', 'Sophie', 'MIDDLE_MANAGEMENT', 'Responsable RH', 6500, 'rh', 'rh', (SELECT idDepartment FROM department WHERE departmentName='Ressources humaines')),
                                                                                                       ('Dupont', 'Lucas', 'SKILLED_EMPLOYEES', 'Dévelopeur', 4200, 'ldupont', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Informatique')),
                                                                                                       ('Keller', 'Anna', 'EMPLOYEES', 'Assistant juridique', 3300, 'akeller', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Juridique')),
                                                                                                       ('Morel', 'Thomas', 'MIDDLE_MANAGEMENT', 'Responsable R&D', 9800, 'tmorel', 'departement', (SELECT idDepartment FROM department WHERE departmentName='Recherche et développement')),
@@ -173,7 +173,7 @@ VALUES (
 UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='tmorel')
 WHERE departmentName='Recherche et développement';
 
-UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='smartin')
+UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='rh')
 WHERE departmentName='Ressources humaines';
 
 UPDATE department SET idChefDep = (SELECT idEmployee FROM employee WHERE username='eroche')
@@ -186,7 +186,11 @@ UPDATE project SET idChefPro = (SELECT idEmployee FROM employee WHERE username='
 
 -- Rôles employés
 INSERT INTO employeeRole (idEmployee, idRole) VALUES
-                                                  ((SELECT idEmployee FROM employee WHERE username='smartin'), (SELECT idRole FROM role WHERE roleName='EMPLOYE')),
+                                                  ((SELECT idEmployee FROM employee WHERE username='rh'), (SELECT idRole FROM role WHERE roleName='RH')),
+                                                  ((SELECT idEmployee FROM employee WHERE username='eroche'), (SELECT idRole FROM role WHERE roleName='RH')),
+                                                  ((SELECT idEmployee FROM employee WHERE username='akeller'), (SELECT idRole FROM role WHERE roleName='EMPLOYE')),
+                                                  ((SELECT idEmployee FROM employee WHERE username='molsen'), (SELECT idRole FROM role WHERE roleName='EMPLOYE')),
+                                                  ((SELECT idEmployee FROM employee WHERE username='psilva'), (SELECT idRole FROM role WHERE roleName='EMPLOYE')),
                                                   ((SELECT idEmployee FROM employee WHERE username='tmorel'), (SELECT idRole FROM role WHERE roleName='RH')),
                                                   ((SELECT idEmployee FROM employee WHERE username='ldupont'), (SELECT idRole FROM role WHERE roleName='EMPLOYE'));
 
@@ -209,14 +213,14 @@ INSERT INTO employeeProject VALUES
                                 ((SELECT idEmployee FROM employee WHERE username='molsen'),
                                  (SELECT idProject FROM project WHERE name='X')),
 
-                                ((SELECT idEmployee FROM employee WHERE username='smartin'),
+                                ((SELECT idEmployee FROM employee WHERE username='rh'),
                                  (SELECT idProject FROM project WHERE name='ProjetQ'));
 
 -- Insertion fiche de paie
 INSERT INTO pay (date, bonus, deductions, net, idEmployee) VALUES
                                                                ('2025-01-31', 200, 50, 3450, (SELECT idEmployee FROM employee WHERE username='akeller')),
                                                                ('2025-01-31', 400, 100, 4300, (SELECT idEmployee FROM employee WHERE username='ldupont')),
-                                                               ('2025-01-31', 800, 250, 7050, (SELECT idEmployee FROM employee WHERE username='smartin')),
+                                                               ('2025-01-31', 800, 250, 7050, (SELECT idEmployee FROM employee WHERE username='rh')),
                                                                ('2025-01-31', 100, 500, 17600, (SELECT idEmployee FROM employee WHERE username='eroche')),
                                                                ('2025-01-31', 600, 150, 6550, (SELECT idEmployee FROM employee WHERE username='molsen')),
                                                                ('2025-01-31', 100, 50, 2850, (SELECT idEmployee FROM employee WHERE username='psilva'));

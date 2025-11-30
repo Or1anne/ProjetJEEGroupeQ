@@ -103,7 +103,7 @@
             <th>Nom</th>
             <th>Chef de département</th>
             <%
-                if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
+                if (PermissionChecker.hasPermission(request, "/department", "edit") || PermissionChecker.hasPermission(request, "/department", "delete")) {
             %>
             <th>Action</th>
             <%
@@ -130,7 +130,7 @@
             </td>
 
             <%
-                if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
+                if (PermissionChecker.hasPermission(request, "/department", "edit") || PermissionChecker.hasPermission(request, "/department", "delete")) {
             %>
             <td>
                 <%

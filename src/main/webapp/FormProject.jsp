@@ -101,21 +101,30 @@
                     <select id="managerId" name="managerId" required>
                         <option value="">-- Choisir un chef de projet --</option>
                         <%
+                            // Récupérer l'ID du chef de projet actuel pour la présélection
+                            Integer currentChefId = null;
+                            if (project.getChefProj() != null) {
+                                currentChefId = project.getChefProj().getId();
+                            }
                             for (Employee e : employees) {
-                                boolean selected = (project.getChefProj() != null && project.getChefProj().getId() == e.getId());
+                                // Vérifier si c'est le chef de projet actuel
+                                boolean isCurrentChef = (currentChefId != null && currentChefId == e.getId());
+                                boolean selected = isCurrentChef;
 
-                                boolean same = false;
-                                if (project.getEmployees() != null) {
+                                // Si ce n'est pas le chef actuel, vérifier s'il est membre du projet
+                                boolean isProjectMember = false;
+                                if (!isCurrentChef && project.getEmployees() != null) {
                                     for (EmployeeProject ee : project.getEmployees()) {
                                         if (ee.getEmployee() != null && ee.getEmployee().getId() == e.getId()) {
-                                            same = true;
-                                            break; // on peut sortir dès qu'on a trouvé
+                                            isProjectMember = true;
+                                            break;
                                         }
                                     }
                                 }
 
-                                // Si l'employé est déjà membre du projet, on NE l'affiche PAS comme chef possible
-                                if (same) {
+                                // Si l'employé est déjà membre du projet (mais pas le chef actuel), on NE l'affiche PAS comme chef possible
+                                // Le chef actuel doit toujours être affiché et présélectionné
+                                if (isProjectMember && !isCurrentChef) {
                                     continue;
                                 }
                         %>

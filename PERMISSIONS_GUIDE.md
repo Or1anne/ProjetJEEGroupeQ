@@ -212,7 +212,100 @@ src/main/webapp/
         └── PermissionHelper.jsp   # Helper pour les JSP
 ```
 
+## Permissions Basées sur les Fonctions (Chefs de Département/Projet)
+
+Le système supporte également les permissions basées sur les fonctions, pas seulement les rôles.
+
+### Vérifier si un utilisateur est chef de département/projet
+
+```java
+// Dans un servlet
+if (PermissionChecker.isDepartmentChief(req, departmentId)) {
+    // L'utilisateur est chef de ce département
+}
+
+if (PermissionChecker.isProjectChief(req, projectId)) {
+    // L'utilisateur est chef de ce projet
+}
+
+// Vérifier s'il est chef d'au moins un département/projet
+if (PermissionChecker.isAnyDepartmentChief(req)) {
+    // L'utilisateur est chef d'au moins un département
+}
+```
+
+### Permissions contextuelles (rôles OU fonctions)
+
+```java
+// Exemple : Un employé peut voir les fiches de paie de son département s'il est :
+// - RH/ADMIN (rôle)
+// - OU chef du département de l'employé (fonction)
+Employee targetEmployee = employeeDAO.searchById(employeeId);
+Integer departmentId = targetEmployee.getDepartment() != null ? 
+    targetEmployee.getDepartment().getId() : null;
+
+boolean canView = PermissionChecker.hasContextualPermission(
+    req, 
+    new String[]{"RH", "ADMIN"},  // Rôles requis
+    departmentId,                  // ID du département (optionnel)
+    null                           // ID du projet (optionnel)
+);
+```
+
+### Exemple dans une JSP
+
+```jsp
+<%
+    // Afficher un bouton seulement si l'utilisateur est RH/ADMIN 
+    // OU chef du département
+    Employee targetEmployee = (Employee) request.getAttribute("employee");
+    boolean canEdit = false;
+    
+    if (PermissionChecker.hasRole(request, "RH", "ADMIN")) {
+        canEdit = true;
+    } else if (targetEmployee != null && targetEmployee.getDepartment() != null) {
+        canEdit = PermissionChecker.isDepartmentChief(
+            request, 
+            targetEmployee.getDepartment().getId()
+        );
+    }
+    
+    if (canEdit) {
+%>
+    <a href="/employee?action=edit&id=<%= targetEmployee.getId() %>">Modifier</a>
+<%
+    }
+%>
+```
+
+### Exemple : Permissions pour les projets
+
+```java
+// Dans ProjectServlet
+int projectId = Integer.parseInt(req.getParameter("id"));
+Project project = projectDAO.searchById(projectId);
+
+// Vérifier si l'utilisateur peut modifier le projet
+boolean canEdit = PermissionChecker.hasContextualPermission(
+    req,
+    new String[]{"RH", "ADMIN"},  // Rôles requis
+    null,                          // Pas de département
+    projectId                      // ID du projet
+);
+
+if (!canEdit) {
+    resp.sendError(HttpServletResponse.SC_FORBIDDEN, 
+        "Seuls les RH, ADMIN ou le chef de projet peuvent modifier ce projet.");
+    return;
+}
+```
+
 ## Conclusion
 
 Avec ce système, ajouter une nouvelle permission ne nécessite qu'une seule ligne dans `PermissionConfig.java`. Le reste est géré automatiquement par le filtre et les helpers !
+
+Le système supporte maintenant :
+- **Permissions basées sur les rôles** (ADMIN, RH, EMPLOYE)
+- **Permissions basées sur les fonctions** (Chef de département, Chef de projet)
+- **Permissions contextuelles** (combinaison de rôles ET fonctions)
 

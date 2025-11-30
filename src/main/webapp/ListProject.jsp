@@ -5,6 +5,7 @@
 <%@ page import="java.util.Collections" %>
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <%@ page import="com.example.projetjeegroupeq.model.ProjectStatus" %>
+<%@ page import="com.example.projetjeegroupeq.util.PermissionChecker" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,9 +76,15 @@
 
 <div class="hero-body">
     <h2>Liste des projets</h2>
+    <%
+        if (PermissionChecker.hasPermission(request, "/project", "add")) {
+    %>
     <nav>
         <a class="btn" href="<%=contextPath%>/project?action=add">Créer un projet</a>
     </nav>
+    <%
+        }
+    %>
 
     <!-- Formulaire de filtre/tri -->
     <form method="get" action="<%= contextPath %>/project" style="margin: 1em 0;">
@@ -158,10 +165,46 @@
                 <td><%= p.getChefProj() != null ? p.getChefProj().getLastName() + " " + p.getChefProj().getFirstName() : "-"%></td>
                 <td><%= p.getStatus() != null ? p.getStatus().getTranslation() : "-"%></td>
                 <td>
+                    <%
+                        // Vérifier si l'utilisateur peut affecter des employés à ce projet
+                        // Soit il est RH (peut tout faire), soit il est chef de ce projet
+                        Employee loggedUser = (Employee) session.getAttribute("loggedUser");
+                        boolean canAssignEmployees = false;
+                        boolean canEdit = false;
+                        
+                        if (loggedUser != null) {
+                            // Vérifier si l'utilisateur est RH/ADMIN
+                            if (PermissionChecker.hasRole(request, "RH", "ADMIN")) {
+                                canAssignEmployees = true;
+                                canEdit = true;
+                            } 
+                            // OU vérifier si l'utilisateur est chef de ce projet
+                            else if (PermissionChecker.isProjectChief(request, p.getId())) {
+                                canAssignEmployees = true;
+                                canEdit = true;
+                            }
+                        }
+                        
+                        if (canAssignEmployees) {
+                    %>
                     <a href="<%= contextPath %>/project?action=addEmployees&id=<%= p.getId() %>">Affecter employés</a> |
-                    <a href="<%= contextPath %>/project?action=edit&id=<%= p.getId() %>">Modifier</a> |
+                    <%
+                        }
+                        if (canEdit) {
+                    %>
+                    <a href="<%= contextPath %>/project?action=edit&id=<%= p.getId() %>">Modifier</a>
+                    <%
+                        }
+                    %>
+                    <%
+                        if (PermissionChecker.hasPermission(request, "/project", "delete")) {
+                    %>
+                    |
                     <a href="<%= contextPath %>/project?action=delete&id=<%= p.getId() %>"
                        onclick="return confirm('Supprimer ce projet ?');">Supprimer</a>
+                    <%
+                        }
+                    %>
                 </td>
             </tr>
         <% }} %>

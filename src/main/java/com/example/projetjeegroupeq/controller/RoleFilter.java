@@ -62,18 +62,25 @@ public class RoleFilter implements Filter {
         // On extrait la route et l'action depuis la requête
         String action = req.getParameter("action");
         
-        // Pour les requêtes POST, on vérifie aussi l'action
-        if ("POST".equalsIgnoreCase(method)) {
-            String postAction = req.getParameter("action");
-            if (!PermissionChecker.checkPermission(req, resp, normalizedPath, postAction)) {
-                return; // L'erreur 403 a déjà été envoyée
-            }
-        } else {
-            // Pour les requêtes GET
-            if (!PermissionChecker.checkPermission(req, resp, normalizedPath, action)) {
-                return; // L'erreur 403 a déjà été envoyée
+        // Actions qui nécessitent des vérifications contextuelles (gérées par les servlets)
+        // Le filtre ne doit pas les bloquer, les servlets gèrent les permissions
+        boolean requiresContextualCheck = isContextualAction(normalizedPath, action);
+        
+        if (!requiresContextualCheck) {
+            // Pour les requêtes POST, on vérifie aussi l'action
+            if ("POST".equalsIgnoreCase(method)) {
+                String postAction = req.getParameter("action");
+                if (!PermissionChecker.checkPermission(req, resp, normalizedPath, postAction)) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
+            } else {
+                // Pour les requêtes GET
+                if (!PermissionChecker.checkPermission(req, resp, normalizedPath, action)) {
+                    return; // L'erreur 403 a déjà été envoyée
+                }
             }
         }
+        // Si requiresContextualCheck est true, on laisse passer et le servlet gère les permissions
 
         chain.doFilter(request, response);
     }
@@ -90,6 +97,31 @@ public class RoleFilter implements Filter {
         }
         
         return requestURI;
+    }
+
+    /**
+     * Vérifie si une action nécessite des vérifications contextuelles (chef de projet/département).
+     * Ces actions sont gérées par les servlets qui vérifient les permissions contextuelles.
+     * 
+     * @param route La route (ex: "/project")
+     * @param action L'action (ex: "edit", "addemployees")
+     * @return true si l'action nécessite une vérification contextuelle
+     */
+    private boolean isContextualAction(String route, String action) {
+        if (action == null || action.isBlank()) {
+            return false;
+        }
+        
+        // Actions de projet qui nécessitent une vérification contextuelle (chef de projet)
+        if ("/project".equals(route)) {
+            return "edit".equalsIgnoreCase(action) || 
+                   "addemployees".equalsIgnoreCase(action);
+        }
+        
+        // Ajouter d'autres routes avec vérifications contextuelles si nécessaire
+        // Exemple : "/department" avec action "edit" si on veut permettre aux chefs de département
+        
+        return false;
     }
 
     /**
