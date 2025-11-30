@@ -57,6 +57,19 @@
 
 
 <section class="hero-body">
+    <%
+        // Récupérer le message de succès depuis la session (pour éviter les problèmes d'encodage)
+        String successMessage = (String) session.getAttribute("passwordChangeSuccess");
+        if (successMessage != null && !successMessage.isBlank()) {
+            // Supprimer le message de la session après l'avoir affiché
+            session.removeAttribute("passwordChangeSuccess");
+    %>
+    <div class="success" style="padding: 10px; margin-bottom: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 4px;">
+        <%= successMessage %>
+    </div>
+    <%
+        }
+    %>
     <nav>
         <a href="changePassword.jsp">Changer le mot de passe</a>
     </nav>

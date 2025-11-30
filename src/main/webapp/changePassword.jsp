@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,11 +10,11 @@
             const newPwd = document.getElementById('newPassword').value;
             const confirmPwd = document.getElementById('confirmPassword').value;
             if (newPwd.length < 6) {
-                alert('New password must be at least 6 characters.');
+                alert('Le mot de passe doit faire au moins 6 caractères');
                 return false;
             }
             if (newPwd !== confirmPwd) {
-                alert('New password and confirmation do not match.');
+                alert('Les mots de passe ne correspondent pas');
                 return false;
             }
             return true;
@@ -27,10 +28,10 @@
             <div class="navbar-start">
                 <a href="index.jsp" class="navbar-item">Accueil</a>
                 <%
-                    // On récupère l’utilisateur connecté
-                    Object user = session.getAttribute("loggedUser");
+                    // On récupère l'utilisateur connecté
+                    Employee loggedUser = (Employee) session.getAttribute("loggedUser");
 
-                    if (user != null) {
+                    if (loggedUser != null) {
                         // Si connecté, on affiche Recherche et Gestion
                 %>
                 <a href="Gestion.jsp" class="navbar-item">Gestion</a>
@@ -41,7 +42,7 @@
 
             <div class="navbar-end">
                 <%
-                    if (user != null) {
+                    if (loggedUser != null) {
                         // Si connecté
                 %>
                 <a href="Profile.jsp" class="navbar-item">Profil</a>
@@ -60,12 +61,26 @@
 </div>
 <section class="hero-body">
 
-    <p class="success">${message}</p>
-    <p class="error">${error}</p>
+    <%
+        String message = request.getParameter("message");
+        String error = (String) request.getAttribute("error");
+    %>
+    <% if (message != null && !message.isBlank()) { %>
+        <p class="success"><%= message %></p>
+    <% } %>
+    <% if (error != null && !error.isBlank()) { %>
+        <p class="error"><%= error %></p>
+    <% } %>
 
-    <form action="ChangePasswordServlet" method="post" onsubmit="return validatePasswords()">
+    <form action="<%= request.getContextPath() %>/ChangePasswordServlet" method="post" onsubmit="return validatePasswords()">
         <h2>Changer le mot de passe</h2>
-        <input type="hidden" name="id" value="${user.id}" />
+        <%
+            if (loggedUser != null) {
+        %>
+        <input type="hidden" name="id" value="<%= loggedUser.getId() %>" />
+        <%
+            }
+        %>
 
         <label for="currentPassword">Mot de passe actuel</label>
         <input id="currentPassword" name="currentPassword" type="password" required />
