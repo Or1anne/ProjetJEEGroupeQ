@@ -101,7 +101,7 @@
         <tr>
             <th>ID</th>
             <th>Nom</th>
-            <th>Description</th>
+            <th>Chef de département</th>
             <%
                 if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
             %>
@@ -124,8 +124,11 @@
             <td><%= dep.getId() %></td>
             <td><%= dep.getDepartmentName() %></td>
             <td>
-
+                <%= (dep.getChefDepartment() != null)
+                        ? dep.getChefDepartment().getFirstName() + " " + dep.getChefDepartment().getLastName()
+                        : "-" %>
             </td>
+
             <%
                 if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
             %>
