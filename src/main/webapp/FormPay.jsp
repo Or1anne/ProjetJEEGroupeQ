@@ -45,73 +45,89 @@
         </div>
     </nav>
 </div>
+
 <%
     Employee prefill = (Employee) request.getAttribute("prefillEmployee");
 %>
+
 <div class="hero-body">
     <nav>
-        <a href="ListPay.jsp">Liste des fiches de paie</a>
+        <a href="${pageContext.request.contextPath}/pay">Liste des fiches de paie</a>
     </nav>
-<div class="form-container">
-    <form action="<%= request.getContextPath() %>/pay" method="post" class="form">
-    <h2>Créer une fiche de paie</h2>
-        <label>Employé </label>
-        <% if (prefill != null) { %>
 
-        <!-- Cas : employé déjà connu -->
-        <input type="hidden" name="employeeId" value="<%= prefill.getId() %>">
-        <input type="text" value="<%= prefill.getFirstName() + " " + prefill.getLastName() %>" disabled>
+    <div class="form-container">
+        <form action="<%= request.getContextPath() %>/pay" method="post" class="form">
+            <h2>Créer une fiche de paie</h2>
 
-        <% } else { %>
+            <label>Employé </label>
+            <% if (prefill != null) { %>
 
-        <!-- Cas global : choix manuel -->
-        <select name="employeeId" required>
-            <option value="">-- Sélectionner un employé --</option>
-            <%
-                List<Employee> employees = new com.example.projetjeegroupeq.dao.implementation.EmployeeDAO().getAll();
-                for (Employee e : employees) {
-            %>
-            <option value="<%= e.getId() %>"><%= e.getFirstName() %> <%= e.getLastName() %></option>
+            <!-- Cas : employé déjà connu -->
+            <input type="hidden" name="employeeId" value="<%= prefill.getId() %>">
+            <input type="text" value="<%= prefill.getFirstName() + " " + prefill.getLastName() %>" disabled>
+
+            <% } else { %>
+
+            <!-- Cas global : choix manuel -->
+            <select id="employeeSelect" name="employeeId" required>
+                <option value="">-- Sélectionner un employé --</option>
+                <%
+                    List<Employee> employees = new com.example.projetjeegroupeq.dao.implementation.EmployeeDAO().getAll();
+                    for (Employee e : employees) {
+                %>
+                <option value="<%= e.getId() %>" data-salary="<%= e.getSalary() %>">
+                    <%= e.getFirstName() %> <%= e.getLastName() %>
+                </option>
+                <% } %>
+            </select>
+
             <% } %>
-        </select>
 
-        <% } %>
+            <label>Mois concerné </label>
+            <input type="month" name="month" required>
 
-        <label>Mois concerné </label>
-        <input type="month" name="month" required>
+            <label>Salaire de base (€) </label>
+            <% if (prefill != null) { %>
+            <input type="number" name="baseSalary" value="<%= prefill.getSalary() %>" readonly>
+            <% } else { %>
+            <input type="number" id="baseSalary" name="baseSalary" step="0.01" readonly required>
+            <% } %>
 
-        <label>Salaire de base (€) </label>
-        <% if (prefill != null) { %>
-        <input type="number" name="baseSalary" value="<%= prefill.getSalary() %>" readonly>
-        <% } else { %>
-        <input type="number" name="baseSalary" step="0.01" required>
-        <% } %>
+            <label>Primes (€)</label>
+            <input type="number" name="bonus" step="0.01">
 
-        <label>Primes (€)</label>
-        <input type="number" name="bonus" step="0.01">
+            <label>Déductions (€)</label>
+            <input type="number" name="deduction" step="0.01">
 
-        <label>Déductions (€)</label>
-        <input type="number" name="deduction" step="0.01">
+            <button type="button" onclick="calculateNet()">Calculer le net</button>
 
-        <button type="button" onclick="calculateNet()">Calculer le net</button>
+            <div id="result">
+                <p><strong>Net à payer :</strong> <span id="netValue">0.00</span> €</p>
+            </div>
 
-        <div id="result">
-            <p><strong>Net à payer :</strong> <span id="netValue">0.00</span> €</p>
-        </div>
+            <input type="submit" value="Enregistrer">
+        </form>
+    </div>
 
-        <input type="submit" value="Enregistrer">
-    </form>
-</div>
+    <script>
+        // Auto remplissage du salaire de base
+        const select = document.getElementById("employeeSelect");
+        if (select) {
+            select.addEventListener("change", function () {
+                const salary = this.options[this.selectedIndex].getAttribute("data-salary");
+                document.getElementById("baseSalary").value = salary || "";
+            });
+        }
 
-<script>
-    function calculateNet() {
-        const base = parseFloat(document.querySelector('[name=baseSalary]').value) || 0;
-        const bonus = parseFloat(document.querySelector('[name=bonus]').value) || 0;
-        const deduction = parseFloat(document.querySelector('[name=deduction]').value) || 0;
-        const net = base + bonus - deduction;
-        document.getElementById('netValue').textContent = net.toFixed(2);
-    }
-</script>
+        // Calcul du net
+        function calculateNet() {
+            const base = parseFloat(document.querySelector('[name=baseSalary]').value) || 0;
+            const bonus = parseFloat(document.querySelector('[name=bonus]').value) || 0;
+            const deduction = parseFloat(document.querySelector('[name=deduction]').value) || 0;
+            const net = base + bonus - deduction;
+            document.getElementById('netValue').textContent = net.toFixed(2);
+        }
+    </script>
 </div>
 </body>
 </html>
