@@ -39,6 +39,9 @@ public class Employee {
     @JoinColumn(name = "idDepartment")
     private Department department;
 
+    @OneToMany(mappedBy = "ChefProj")
+    private List<Project> projectsManaged;
+
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     private List<EmployeeProject> projects;
 
@@ -63,6 +66,14 @@ public class Employee {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public List<Project> getProjectsManaged() {
+        return projectsManaged;
+    }
+
+    public void setProjectsManaged(List<Project> projectsManaged) {
+        this.projectsManaged = projectsManaged;
     }
 
     public void setLastName(String lastName) {

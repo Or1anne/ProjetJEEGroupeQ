@@ -179,22 +179,28 @@ public class ProjectDAO implements ProjectDAOI {
 
         try {
             em = HibernateUtil.getEntityManager();
-
             em.getTransaction().begin();
 
-            Project projectFound = em.find(Project.class, project.getId());
+            int projectId = project.getId();
 
-            if (projectFound == null) {
-                System.err.println("Aucun projet trouvé avec l'id : " + project.getId());
-                em.getTransaction().rollback();
-                return;
-            }
+            em.createQuery("DELETE FROM EmployeeProject ep WHERE ep.project.id = :pid")
+                    .setParameter("pid", projectId)
+                    .executeUpdate();
 
-            em.remove(projectFound);
+            em.createQuery("UPDATE Project p SET p.ChefProj = NULL WHERE p.id = :pid")
+                    .setParameter("pid", projectId)
+                    .executeUpdate();
+
+            em.createQuery("DELETE FROM Project p WHERE p.id = :pid")
+                    .setParameter("pid", projectId)
+                    .executeUpdate();
 
             em.getTransaction().commit();
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la suppression d'un projet : " + e.getMessage());
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Erreur lors de la suppression d'un projet : " + e.getMessage(), e);
         } finally {
             if (em != null) {
                 em.close();
