@@ -4,6 +4,7 @@
 <%@ page import="com.example.projetjeegroupeq.model.Employee" %>
 <%@ page import="com.example.projetjeegroupeq.model.Grade" %>
 <%@ page import="com.example.projetjeegroupeq.model.Department" %>
+<%@ page import="com.example.projetjeegroupeq.util.PermissionChecker" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,8 +23,23 @@
             </div>
 
             <div class="navbar-end">
+                <%
+                    // On récupère l’utilisateur connecté
+                    Object user = session.getAttribute("loggedUser");
+
+                    if (user != null) {
+                        // Si connecté
+                %>
                 <a href="Profile.jsp" class="navbar-item">Profil</a>
-                <a href="FormConnection.jsp" class="navbar-item">Logout</a>
+                <a href="<%= request.getContextPath() %>/logout" class="navbar-item">Déconnexion</a>
+                <%
+                } else {
+                    // Si pas connecté
+                %>
+                <a href="<%= request.getContextPath() %>/login" class="navbar-item">Connexion</a>
+                <%
+                    }
+                %>
             </div>
         </div>
     </nav>
@@ -53,9 +69,15 @@
 
 <div class="hero-body">
     <h2>Liste des employés</h2>
+    <%
+        if (PermissionChecker.hasPermission(request, "/employee", "add")) {
+    %>
     <nav>
         <a class="btn" href="<%= contextPath %>/employee?action=add">Ajouter un employé</a>
     </nav>
+    <%
+        }
+    %>
 
     <!-- Formulaire filtre/tri -->
     <form method="get" action="<%= contextPath %>/employee" style="margin: 1em 0;">
@@ -120,7 +142,13 @@
             <th>Grade</th>
             <th>Poste</th>
             <th>Département</th>
+            <%
+                if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
+            %>
             <th>Actions</th>
+            <%
+                }
+            %>
         </tr>
         </thead>
         <tbody>
@@ -139,11 +167,30 @@
                 <td><%= employee.getGrade() != null ? employee.getGrade().getLabel() : "" %></td>
                 <td><%= employee.getPost() != null ? employee.getPost() : "" %></td>
                 <td><%= department != null ? department.getDepartmentName() : "-" %></td>
+                <%
+                    if (PermissionChecker.hasPermission(request, "/employee", "edit") || PermissionChecker.hasPermission(request, "/employee", "delete")) {
+                %>
                 <td>
-                    <a href="<%= contextPath %>/employee?action=edit&id=<%= employee.getId() %>">Modifier</a> |
+                    <%
+                        if (PermissionChecker.hasPermission(request, "/employee", "edit")) {
+                    %>
+                    <a href="<%= contextPath %>/employee?action=edit&id=<%= employee.getId() %>">Modifier</a>
+                    <%
+                        }
+                    %>
+                    <%
+                        if (PermissionChecker.hasPermission(request, "/employee", "delete")) {
+                    %>
+                    |
                     <a href="<%= contextPath %>/employee?action=delete&id=<%= employee.getId() %>"
                        onclick="return confirm('Supprimer cet employé ?');">Supprimer</a>
+                    <%
+                        }
+                    %>
                 </td>
+                <%
+                    }
+                %>
             </tr>
         <%     }
            } %>

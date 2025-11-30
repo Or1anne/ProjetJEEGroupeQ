@@ -20,8 +20,23 @@
             </div>
 
             <div class="navbar-end">
+                <%
+                    // On récupère l’utilisateur connecté
+                    Object user = session.getAttribute("loggedUser");
+
+                    if (user != null) {
+                        // Si connecté
+                %>
                 <a href="Profile.jsp" class="navbar-item">Profil</a>
-                <a href="FormConnection.jsp" class="navbar-item">Logout</a>
+                <a href="<%= request.getContextPath() %>/logout" class="navbar-item">Déconnexion</a>
+                <%
+                } else {
+                    // Si pas connecté
+                %>
+                <a href="<%= request.getContextPath() %>/login" class="navbar-item">Connexion</a>
+                <%
+                    }
+                %>
             </div>
         </div>
     </nav>
