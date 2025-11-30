@@ -71,6 +71,12 @@ public class ProjectServlet extends HttpServlet {
                 if (original == null) throw new IllegalArgumentException("Le projet à modifier n'existe plus");
 
                 projectDAO.update(original, payload);
+
+                if (payload.getChefProj() != null) {
+                    List<Integer> idChef = new ArrayList<>();
+                    idChef.add(payload.getChefProj().getId());
+                    projectDAO.updateEmployees(original.getId(), idChef);
+                }
             } else if ("addEmployees".equalsIgnoreCase(action)) {
                 int id = parseId(req.getParameter("id"), "Identifiant projet manquant");
 
@@ -260,6 +266,10 @@ public class ProjectServlet extends HttpServlet {
                 employeeIds.add(Integer.parseInt(s));
             }
         }
+
+        Project original = projectDAO.searchById(projectId);
+
+        if (original.getChefProj() != null) employeeIds.add(original.getChefProj().getId());
 
         projectDAO.updateEmployees(projectId, employeeIds);
         resp.sendRedirect(req.getContextPath() + "/project?action=list");
